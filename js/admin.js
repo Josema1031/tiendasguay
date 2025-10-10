@@ -23,7 +23,18 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    const tiendaId = "MATES-GUAY"; // cambiar para nuevas tiendas
+    function getTiendaId() {
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get("tienda");
+  if (fromUrl) {
+    sessionStorage.setItem("tiendaId", fromUrl);
+    return fromUrl;
+  }
+  return sessionStorage.getItem("tiendaId") || "MATES-GUAY";
+}
+const tiendaId = getTiendaId();
+document.getElementById("MATES-GUAY").textContent = tiendaId; // sigue funcionando tu encabezado :contentReference[oaicite:5]{index=5}
+
     const productosRef = collection(db, "tiendas", tiendaId, "productos");
 
     // 🔑 FUNCIÓN LOGIN MANUAL

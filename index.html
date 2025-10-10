@@ -5,70 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MATES GUAY</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="shortcut icon" href="imag/ChatGPT Image 14 ago 2025, 11_56_59.png" type="image/x-icon"> <!--cambiar para nuevas tiendas -->
-<!-- Open Graph Meta Tags para WhatsApp y redes sociales -->
-<meta property="og:title" content="Mates Guay - Mates y Accesorios de Calidad" />
-<meta property="og:description" content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!" />
-<meta property="og:image" content="https://josema1031.github.io/matesguay/imag/logo_600x315.png" />
-<meta property="og:url" content="https://josema1031.github.io/matesguay/" />
-<meta property="og:type" content="website" />
+  <link rel="shortcut icon" href="imag/logo.png" type="image/x-icon">
 
-<!-- Para mejor compatibilidad con WhatsApp/Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mates Guay - Mates y Accesorios de Calidad">
-<meta name="twitter:description" content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!">
-<meta name="twitter:image" content="https://josema1031.github.io/matesguay/imag/logo_600x315.png">
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Mates Guay - Mates y Accesorios de Calidad" />
+  <meta property="og:description" content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!" />
+  <meta property="og:image" content="https://josema1031.github.io/matesguay/imag/logo_600x315.png" />
+  <meta property="og:url" content="https://josema1031.github.io/matesguay/" />
+  <meta property="og:type" content="website" />
 
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mates Guay - Mates y Accesorios de Calidad">
+  <meta name="twitter:description" content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!">
+  <meta name="twitter:image" content="https://josema1031.github.io/matesguay/imag/logo_600x315.png">
 </head>
 
 <body>
-  <header class="header">
-  <div class="logo-contenedor">
-    <img src="imag/ChatGPT Image 14 ago 2025, 11_56_59.png" alt="LOGO-MATES-GUAY" class="logo"> <!--cambiar para nuevas tiendas -->
-    <h1>MATES GUAY</h1> <!--cambiar para nuevas tiendas -->
+  <div id="loader" style="
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #fff; display: flex;
+    justify-content: center; align-items: center;
+    font-family: sans-serif; font-size: 1.2em;
+    z-index: 9999; color: #333;">
+    Cargando tu tienda...
   </div>
-  <p>Diseño, tradición y sabor en un solo mate</p>
+
+  <!-- ✅ HEADER DINÁMICO -->
+  <header id="header-tienda" style="
+    display:flex; align-items:center; justify-content:center;
+    gap:20px; padding:20px; flex-wrap:wrap;
+    background:#007bff; color:white;">
+    <img id="logo-tienda" src="" alt="Logo tienda" style="
+      height:110px; width:auto; object-fit:contain;
+      border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.3);
+      transition:transform 0.25s ease, filter 0.25s ease;
+      filter:drop-shadow(0 3px 6px rgba(0,0,0,0.25));">
+    <h1 id="nombre-tienda" style="
+      margin:0; font-size:2.6rem; font-weight:900;
+      text-shadow:0 2px 5px rgba(0,0,0,0.4);
+      letter-spacing:1px;"></h1>
   </header>
 
- <div id="menu-categorias">
-  <button onclick="filtrarCategoria('todo')">Todos</button>
-  <button onclick="filtrarCategoria('Imperial')">Imperial</button>
-  <!--<button onclick="filtrarCategoria('Imperial Con Base de Alpaca')">Imperial Con Base de Alpaca</button>-->
-  <!--<button onclick="filtrarCategoria('Imperial Con Cuero Repujado y bolitas de Bronc')"> Imperial Con Cuero Repujado y bolitas de Bronce</button>-->
-  <!--<button onclick="filtrarCategoria('Imperial conbinado de acero y Alpaca')">Imperial conbinado de acero y Alpaca</button>-->
-  <!--<button onclick="filtrarCategoria('Imperial sincelado')">Imperial sincelado</button>-->
-  <!--<button onclick="filtrarCategoria('Reforzado con bolitas de Bronce')">Reforzado con bolitas de Bronce </button>-->
-  <button onclick="filtrarCategoria('Torpedo')">Torpedo</button>
-  <button onclick="filtrarCategoria('Camionero')">Camionero</button>
-  <button onclick="filtrarCategoria('Combo')">Combo</button>
-  <button onclick="filtrarCategoria('Oferta')">Oferta</button>
-  
- </div>
+ <!-- <p style="text-align:center; margin-top:8px; font-size:1.1rem; font-weight:500; color:#222;">
+    Diseño, tradición y sabor en un solo mate
+  </p>-->
 
-
-  <div id="loader" style="text-align:center; margin: 30px 0; font-size: 18px;">
-  <p>Cargando productos...</p>
+  <!-- MENÚ DE CATEGORÍAS -->
+  <div id="menu-categorias">
+    <button onclick="filtrarCategoria('todo')">Todos</button>
+    <button onclick="filtrarCategoria('Imperial')">Imperial</button>
+    <button onclick="filtrarCategoria('Torpedo')">Torpedo</button>
+    <button onclick="filtrarCategoria('Camionero')">Camionero</button>
+    <button onclick="filtrarCategoria('Combo')">Combo</button>
+    <button onclick="filtrarCategoria('Oferta')">Oferta</button>
   </div>
 
+  <!-- PRODUCTOS -->
   <main>
     <input type="text" id="buscador" placeholder="Buscar productos..." style="width: 35%; padding: 10px; margin-bottom: 20px; font-size: 16px;">
     <div class="productos" id="contenedor-productos"></div>
-    <div style="text-align:center; margin: 20px;"><button id="btn-mostrar-mas" onclick="mostrarMasProductos()">Más productos</button></div>
-   </main>
+    <div style="text-align:center; margin: 20px;">
+      <button id="btn-mostrar-mas" onclick="mostrarMasProductos()">Más productos</button>
+    </div>
+  </main>
 
+  <!-- CARRITO -->
   <div id="carrito-flotante">
-<button id="toggle-carrito">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
-
+    <button id="toggle-carrito">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
     <div id="carrito-contenido" class="oculto">
-        <h2>Carrito de Compra</h2>
-        <ul id="lista-carrito"></ul>
-        <p id="total">Total: $0</p>
-        <button id="btn-vaciar" style="background: gray; color: white; margin-top: 10px;">Vaciar carrito</button>
-        <button id="btn-enviar">Enviar pedido por WhatsApp</button>
-      </div>
+      <h2>Carrito de Compra</h2>
+      <ul id="lista-carrito"></ul>
+      <p id="total">Total: $0</p>
+      <button id="btn-vaciar" style="background: gray; color: white; margin-top: 10px;">Vaciar carrito</button>
+      <button id="btn-enviar">Enviar pedido por WhatsApp</button>
+    </div>
   </div>
 
-
+  <!-- MODAL PRODUCTO -->
   <div id="modal-producto" class="modal oculto">
     <div class="modal-contenido">
       <span class="cerrar" onclick="cerrarModal()">&times;</span>
@@ -80,49 +94,121 @@
     </div>
   </div>
 
-  <footer id="footer">
-  <p><strong>📍 Ubicación:</strong> Calle Juan Castares N° 374, Gualeguay (ER)</p> <!--cambiar para nuevas tiendas -->
-  <p><strong>🕒 Horario de atención:</strong> Lunes a Viernes de 8:30 a 12:30 y Sábado de 08:00 a 10:00 hs</p> <!--cambiar para nuevas tiendas -->
+  <!-- FOOTER -->
+  <footer id="footer" style="text-align:left; padding:20px; background:#003366; color:white;">
+    <p><strong>📍 Ubicación:</strong> Calle Juan Castares N° 374, Gualeguay (ER)</p>
+    <p><strong>🕒 Horario de atención:</strong> Lunes a Viernes de 8:30 a 12:30 y Sábado de 08:00 a 10:00 hs</p>
   </footer>
 
- <!-- MODAL ELECCIÓN PRECIO -->
-<div id="modal-eleccion-precio" class="modal oculto">
-  <div class="modal-contenido">
-    <span class="cerrar" onclick="cerrarModalEleccion()">&times;</span>
-    <h3 id="titulo-eleccion">¿Cómo desea comprar?</h3>
-    <p id="nombre-producto-eleccion"></p>
-    <button id="btn-unitario">Por unidad</button>
-   
-  </div>
-</div>
+  <!-- SCRIPT PRINCIPAL -->
+  <script type="module" src="js/script.js"></script>
 
-<!-- Script principal -->
-<script type="module" src="js/script.js"></script>
-<script type="module">
-  import { tiendaConfig } from "./js/config.js";
+  <!-- CONFIGURACIÓN FIREBASE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
+      authDomain: "carniceriadonjose-48638.firebaseapp.com",
+      projectId: "carniceriadonjose-48638",
+      storageBucket: "carniceriadonjose-48638.appspot.com",
+      messagingSenderId: "322531750471",
+      appId: "1:322531750471:web:78e290c9c81eecc7be3762"
+    };
 
-  // Logo y nombre
-  document.querySelector(".logo").src = tiendaConfig.logo;
-  document.querySelector(".logo").alt = tiendaConfig.nombre;
-  document.querySelector("header h1").textContent = tiendaConfig.nombre;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  // Footer
-  document.querySelector("#footer").innerHTML = `
-    <p><strong>📍 Ubicación:</strong> ${tiendaConfig.direccion}</p>
-    <p><strong>🕒 Horario de atención:</strong> ${tiendaConfig.horarios}</p>
-    <p><strong>📱 WhatsApp:</strong> <a href="https://wa.me/${tiendaConfig.whatsapp}" target="_blank">${tiendaConfig.whatsapp}</a></p
-  `;
+    // 🔍 Obtener tiendaId
+    function getTiendaId() {
+      const params = new URLSearchParams(window.location.search);
+      const fromUrl = params.get("tienda");
+      if (fromUrl) {
+        localStorage.setItem("tiendaId", fromUrl);
+        return fromUrl;
+      }
+      return localStorage.getItem("tiendaId") || "MATES-GUAY";
+    }
+    const tiendaId = getTiendaId();
 
-  // Metadatos dinámicos
-  document.querySelector("meta[property='og:title']").setAttribute("content", tiendaConfig.nombre);
-  document.querySelector("meta[property='og:image']").setAttribute("content", tiendaConfig.metaImage);
-  document.querySelector("meta[property='og:url']").setAttribute("content", window.location.href);
+    // 📄 Cargar configuración
+    async function cargarConfig() {
+      const ref = doc(db, "tiendas", tiendaId, "config", "datos");
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return null;
+      return snap.data();
+    }
 
-  document.querySelector("meta[name='twitter:title']").setAttribute("content", tiendaConfig.nombre);
-  document.querySelector("meta[name='twitter:image']").setAttribute("content", tiendaConfig.metaImage);
-</script>
+    // 🧠 Aplicar configuración visual
+    async function aplicarConfig() {
+      const cfg = await cargarConfig();
+      if (!cfg) return;
 
+      // Header
+      const header = document.getElementById("header-tienda");
+      const logoEl = document.getElementById("logo-tienda");
+      const nombreEl = document.getElementById("nombre-tienda");
+
+      header.style.background = cfg.colorHeader || "#007bff";
+      header.style.color = cfg.colorHeaderText || "#ffffff";
+
+      // Logo
+      if (cfg.logo && logoEl) {
+        logoEl.src = cfg.logo;
+        logoEl.alt = cfg.nombre || tiendaId;
+        logoEl.style.display = "block";
+      } else {
+        logoEl.src = "https://via.placeholder.com/100x100?text=Logo";
+        logoEl.alt = "Logo genérico";
+      }
+
+      logoEl.style.height = "110px";
+      logoEl.style.width = "auto";
+      logoEl.style.objectFit = "contain";
+      logoEl.style.borderRadius = "10px";
+      logoEl.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+      logoEl.style.transition = "transform 0.25s ease, filter 0.25s ease";
+      logoEl.style.filter = "drop-shadow(0 3px 6px rgba(0,0,0,0.25))";
+      logoEl.onmouseover = () => (logoEl.style.transform = "scale(1.08)");
+      logoEl.onmouseout = () => (logoEl.style.transform = "scale(1)");
+
+      // Nombre
+      nombreEl.textContent = cfg.nombre || "Mi Tienda";
+      nombreEl.style.color = cfg.colorHeaderText || "#ffffff";
+      nombreEl.style.fontSize = "2.6rem";
+      nombreEl.style.fontWeight = "900";
+      nombreEl.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
+
+      // Footer
+      const footer = document.getElementById("footer");
+      if (footer) {
+        footer.style.background = cfg.colorFooter || "#003366";
+        footer.style.color = cfg.colorFooterText || "#ffffff";
+        footer.innerHTML = `
+          <p><strong>📍 Dirección:</strong> ${cfg.direccion || "Sin dirección especificada"}</p>
+          <p><strong>🕒 Horario:</strong> ${cfg.horarios || "Horario no disponible"}</p>
+          <p><strong>📞 WhatsApp:</strong> 
+            <a href="https://wa.me/${cfg.whatsapp}" target="_blank" style="color:${cfg.colorFooterText || "#fff"};">
+              ${cfg.whatsapp}
+            </a>
+          </p>
+        `;
+      }
+
+      // Botón carrito
+      const btnCarrito = document.getElementById("toggle-carrito");
+      if (btnCarrito && cfg.colorBoton) {
+        btnCarrito.style.background = cfg.colorBoton;
+        btnCarrito.style.border = "none";
+        btnCarrito.style.color = "#000";
+        btnCarrito.style.fontWeight = "600";
+      }
+
+      document.title = cfg.nombre || "Tienda";
+    }
+
+    aplicarConfig();
+  </script>
 </body>
 </html>
-

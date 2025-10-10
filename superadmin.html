@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Central - MultiTiendas Gualeguay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="imag/LOGO-ADMINISTRADOR.png" type="image/x-icon">
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      background: #f4f7fb;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(135deg, #007bff, #20f1f5);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.6em;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 15px;
+    }
+    th {
+      background: #007bff;
+      color: white;
+      font-weight: 600;
+    }
+    tr:hover {
+      background: #eef7ff;
+    }
+    img {
+      height: 60px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 5px;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #005dc1;
+    }
+    .danger {
+      background: #dc3545;
+    }
+    .danger:hover {
+      background: #b52a36;
+    }
+    #loader {
+      text-align: center;
+      font-size: 1.2em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>⚙️ Panel Central de Control - MultiTiendas Gualeguay</header>
+  <main>
+    <div id="loader">Cargando tiendas...</div>
+    <table id="tabla-tiendas" style="display:none;">
+      <thead>
+        <tr>
+          <th>Logo</th>
+          <th>Nombre</th>
+          <th>WhatsApp</th>
+          <th>Dirección</th>
+          <th>Horarios</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import QRCode from "https://esm.sh/qrcode@1.5.3";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
+  authDomain: "carniceriadonjose-48638.firebaseapp.com",
+  projectId: "carniceriadonjose-48638",
+  storageBucket: "carniceriadonjose-48638.appspot.com",
+  messagingSenderId: "322531750471",
+  appId: "1:322531750471:web:78e290c9c81eecc7be3762"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const tabla = document.getElementById("tabla-tiendas");
+const tbody = tabla.querySelector("tbody");
+const loader = document.getElementById("loader");
+
+async function cargarTiendas() {
+  try {
+    const snapshot = await getDocs(collection(db, "tiendas"));
+    tbody.innerHTML = "";
+
+    if (snapshot.empty) {
+      loader.textContent = "No hay tiendas registradas aún.";
+      return;
+    }
+
+    for (const tiendaDoc of snapshot.docs) {
+      const tiendaId = tiendaDoc.id;
+      const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+      const configSnap = await getDoc(configRef);
+      if (!configSnap.exists()) continue;
+
+      const datos = configSnap.data();
+      const urlTienda = `https://josema1031.github.io/matesguay/index.html?tienda=${tiendaId}`;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><img src="${datos.logo || 'https://via.placeholder.com/80'}" alt="logo"></td>
+        <td><strong>${datos.nombre || tiendaId}</strong></td>
+        <td>${datos.whatsapp || '-'}</td>
+        <td>${datos.direccion || '-'}</td>
+        <td>${datos.horarios || '-'}</td>
+        <td>
+          <button onclick="window.open('${urlTienda}', '_blank')">🛍️ Ver Tienda</button>
+          <button onclick="window.open('admin.html?tienda=${tiendaId}', '_blank')">🧰 Admin</button>
+          <button onclick="mostrarQR('${tiendaId}', '${urlTienda}', '${datos.nombre || tiendaId}')">🔳 QR</button>
+          <button class="danger" onclick="eliminarTienda('${tiendaId}')">🗑️ Eliminar</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    tabla.style.display = "table";
+    loader.style.display = "none";
+  } catch (error) {
+    console.error(error);
+    loader.textContent = "❌ Error al cargar tiendas.";
+  }
+}
+
+// 🔴 eliminar sólo la configuración (no los productos)
+window.eliminarTienda = async function (tiendaId) {
+  if (!confirm(`¿Seguro que querés eliminar la tienda "${tiendaId}"?`)) return;
+  try {
+    await deleteDoc(doc(db, "tiendas", tiendaId, "config", "datos"));
+    alert("✅ Tienda eliminada (config). Los productos quedan guardados por seguridad.");
+    cargarTiendas();
+  } catch (error) {
+    console.error(error);
+    alert("❌ Error al eliminar la tienda.");
+  }
+};
+
+// 🧾 GENERAR QR
+window.mostrarQR = async function (tiendaId, url, nombre) {
+  const qrContainer = document.createElement("div");
+  qrContainer.style.position = "fixed";
+  qrContainer.style.top = "0";
+  qrContainer.style.left = "0";
+  qrContainer.style.width = "100%";
+  qrContainer.style.height = "100%";
+  qrContainer.style.background = "rgba(0,0,0,0.7)";
+  qrContainer.style.display = "flex";
+  qrContainer.style.flexDirection = "column";
+  qrContainer.style.alignItems = "center";
+  qrContainer.style.justifyContent = "center";
+  qrContainer.style.zIndex = "9999";
+
+  const card = document.createElement("div");
+  card.style.background = "white";
+  card.style.padding = "25px";
+  card.style.borderRadius = "10px";
+  card.style.textAlign = "center";
+  card.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)";
+  card.style.maxWidth = "350px";
+
+  const title = document.createElement("h2");
+  title.textContent = `QR de ${nombre}`;
+  title.style.marginBottom = "10px";
+
+  const canvas = document.createElement("canvas");
+  await QRCode.toCanvas(canvas, url, { width: 250, color: { dark: "#000", light: "#fff" } });
+
+  const link = document.createElement("a");
+  link.textContent = "⬇️ Descargar QR";
+  link.href = canvas.toDataURL("image/png");
+  link.download = `${tiendaId}-QR.png`;
+  link.style.display = "inline-block";
+  link.style.marginTop = "10px";
+  link.style.background = "#007bff";
+  link.style.color = "white";
+  link.style.padding = "8px 14px";
+  link.style.borderRadius = "6px";
+  link.style.textDecoration = "none";
+
+  const close = document.createElement("button");
+  close.textContent = "Cerrar";
+  close.style.marginTop = "12px";
+  close.style.background = "#dc3545";
+  close.style.color = "white";
+  close.style.border = "none";
+  close.style.padding = "8px 14px";
+  close.style.borderRadius = "6px";
+  close.style.cursor = "pointer";
+  close.onclick = () => qrContainer.remove();
+
+  card.appendChild(title);
+  card.appendChild(canvas);
+  card.appendChild(link);
+  card.appendChild(close);
+  qrContainer.appendChild(card);
+  document.body.appendChild(qrContainer);
+};
+
+cargarTiendas();
+</script>
+
+
+
+</body>
+</html>
