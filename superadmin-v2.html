@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>SuperAdmin V2 — MultiTiendas Gualeguay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{--c1:#007bff;--c1d:#005dc1;--ok:#28a745;--bad:#dc3545;--bg:#f4f7fb;--txt:#333}
+    body{margin:0;background:var(--bg);font-family:Poppins,system-ui,Arial,sans-serif;color:var(--txt)}
+    header{background:linear-gradient(135deg,var(--c1),#20f1f5);color:#fff;padding:16px;text-align:center;font-weight:800}
+    main{max-width:1100px;margin:20px auto;padding:0 16px}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+    .kpi{background:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.08);padding:14px}
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:10px 0}
+    input[type="search"]{flex:1;padding:10px;border-radius:10px;border:1px solid #ddd}
+    button{background:var(--c1);color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer}
+    button:hover{background:var(--c1d)}
+    .danger{background:var(--bad)}
+    .danger:hover{filter:brightness(.95)}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+    th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+    th{background:#eff6ff}
+    tr:hover{background:#f8fbff}
+    img.logo{height:44px;border-radius:8px;object-fit:contain}
+    .pill{padding:3px 8px;border-radius:999px;font-size:12px}
+    .ok{background:#e9f8ee;color:#1e7e34}
+    .off{background:#fdecec;color:#b02a37}
+    .pagination{display:flex;gap:8px;justify-content:center;margin:12px}
+    /* Modales y animación */
+    @keyframes aparecer{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    @keyframes desvanecer{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.9)}}
+    .modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(3px)}
+    .modal-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:aparecer .25s ease}
+  </style>
+</head>
+<body>
+  <header>⚙️ SuperAdmin V2 — MultiTiendas Gualeguay</header>
+  <main>
+    <div class="row">
+      <input id="buscar" type="search" placeholder="Buscar por nombre o ID de tienda…" />
+      <div>
+        <button id="refrescar">🔄 Actualizar</button>
+        <button onclick="window.location.href='creador.html'">➕ Nueva tienda</button>
+      </div>
+    </div>
+    <select id="filtroPlan">
+  <option value="">Todos los planes</option>
+  <option value="Basico">Básico</option>
+  <option value="Profesional">Profesional</option>
+  <option value="Premium">Premium</option>
+</select>
+
+
+    <div class="stats">
+      <div class="kpi"><div>Total de tiendas</div><h2 id="k-total">—</h2></div>
+      <div class="kpi"><div>Activas</div><h2 id="k-activas">—</h2></div>
+      <div class="kpi"><div>Suspendidas</div><h2 id="k-off">—</h2></div>
+      <div class="kpi"><div>Total de productos</div><h2 id="k-prod">—</h2></div>
+    </div>
+    <!-- ============================================ -->
+<!-- 📊 GRÁFICO DE ESTADÍSTICAS -->
+<!-- ============================================ -->
+<!-- ============================================ -->
+<!-- 📊 GRÁFICO DE ESTADÍSTICAS (ajuste responsivo) -->
+<!-- ============================================ -->
+<div style="
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.06);
+  margin-bottom:20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+">
+  <div style="width:300px;max-width:90%;">
+    <canvas id="graficoTiendas"></canvas>
+  </div>
+</div>
+
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <div id="loader">Cargando tiendas…</div>
+    <table id="tabla" style="display:none;">
+      <thead>
+        <tr>
+          <th>Logo</th>
+          <th>Nombre</th>
+          <th>Plan</th>
+          <th>Estado</th>
+          <th>Productos</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="pagination">
+      <button id="prev" disabled>⟵ Anterior</button>
+      <button id="next" disabled>Siguiente ⟶</button>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, getDocs, doc, getDoc, deleteDoc,
+      query, orderBy, limit, startAfter
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import QRCode from "https://esm.sh/qrcode@1.5.3";
+
+    // 👉 Tu config (reemplaza si usas otro proyecto para prod)
+    const firebaseConfig = {
+      apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
+      authDomain: "carniceriadonjose-48638.firebaseapp.com",
+      projectId: "carniceriadonjose-48638",
+      storageBucket: "carniceriadonjose-48638.appspot.com",
+      messagingSenderId: "322531750471",
+      appId: "1:322531750471:web:78e290c9c81eecc7be3762"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Base URL automática (local / GitHub Pages / dominio)
+    function getBaseURL(){
+      const { origin, pathname } = window.location;
+      if (origin.includes("127.0.0.1") || origin.includes("localhost")) return origin;
+      const repo = pathname.split("/")[1];
+      return `${origin}/${repo}`;
+    }
+    const BASE_URL = getBaseURL();
+
+    // Estado de paginación
+    const pageSize = 25;
+    let lastDoc = null;
+    let stack = []; // para volver atrás
+    let cacheTiendas = []; // para búsqueda rápida del renderizado actual
+
+    const $ = (id)=>document.getElementById(id);
+    const tbody = document.querySelector("tbody");
+
+    $("refrescar").onclick = ()=>loadPage(true);
+    $("buscar").addEventListener("input", onBuscar);
+    $("prev").onclick = prevPage;
+    $("next").onclick = nextPage;
+
+    async function loadPage(reset=false){
+      $("loader").style.display = "block";
+      $("tabla").style.display = "none";
+      if (reset){ lastDoc = null; stack = []; }
+
+      let q = query(collection(db,"tiendas"), orderBy("__name__"), limit(pageSize));
+      if (lastDoc) q = query(collection(db,"tiendas"), orderBy("__name__"), startAfter(lastDoc), limit(pageSize));
+
+      const snap = await getDocs(q);
+      cacheTiendas = snap.docs.map(d=>({ id:d.id, ref:d.ref }));
+
+      // KPI básicas + render
+      await renderTabla(cacheTiendas);
+
+      $("loader").style.display = "none";
+      $("tabla").style.display = "table";
+
+      // paginación
+      $("prev").disabled = stack.length===0;
+      $("next").disabled = snap.docs.length < pageSize;
+      lastDoc = snap.docs[snap.docs.length-1] || null;
+      if (snap.docs.length>0) stack.push(snap.docs[0]); // guardo inicio de página
+    }
+
+    async function renderTabla(items){
+      tbody.innerHTML = "";
+      let total = 0, activas = 0, off = 0, totalProd = 0;
+
+      for (const it of items) {
+  const tiendaId = it.id;
+  total++;
+
+  // 🔹 Obtener documento principal y subdocumento config/datos
+  const tiendaDoc = await getDoc(it.ref);
+  const data = tiendaDoc.exists() ? tiendaDoc.data() : {};
+
+  const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+  const configSnap = await getDoc(configRef);
+  const config = configSnap.exists() ? configSnap.data() : {}; // ✅ ahora siempre definido
+
+  const activo = data.activo !== false;
+  if (activo) activas++; else off++;
+
+  const productosSnap = await getDocs(collection(db, "tiendas", tiendaId, "productos"));
+  totalProd += productosSnap.size;
+
+  // 🔹 Fila completa con todos tus botones + nuevo “Cambiar plan”
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><img class="logo" src="${config.logo || 'https://via.placeholder.com/100'}" alt="logo"></td>
+    <td>${config.nombre || tiendaId}</td>
+    <td>${config.plan || data.plan || "—"}</td>
+    <td><span class="pill ${activo ? "ok" : "off"}">${activo ? "Activa" : "Suspendida"}</span></td>
+    <td>${productosSnap.size}</td>
+    <td>
+      <button onclick="window.open('${BASE_URL}/index.html?tienda=${tiendaId}', '_blank')">🌐 Ver tienda</button>
+      <button onclick="window.open('${BASE_URL}/admin.html?tienda=${tiendaId}', '_blank')">🧰 Ver Admin</button>
+      <button onclick="mostrarQR('${tiendaId}','${BASE_URL}/index.html?tienda=${tiendaId}','${tiendaId}')">📱 QR</button>
+      <button onclick="toggleEstado('${tiendaId}', ${activo})">${activo ? "⛔ Suspender" : "✅ Activar"}</button> 
+      <button onclick="eliminarTienda('${tiendaId}')">🗑️ Eliminar</button>   
+      <button onclick="cambiarPlan('${tiendaId}', '${config.plan || data.plan || "Basico"}')">💼 Cambiar plan</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+
+
+      $("k-total").textContent = total.toString();
+      $("k-activas").textContent = activas.toString();
+      $("k-off").textContent = off.toString();
+      $("k-prod").textContent = totalProd.toString();
+      // ============================================
+// 📊 ACTUALIZAR GRÁFICO DE ESTADÍSTICAS
+// ============================================
+
+// Eliminar gráfico previo si existe
+if (window.graficoTiendasInstance) {
+  window.graficoTiendasInstance.destroy();
+}
+
+// Crear gráfico nuevo
+const ctx = document.getElementById("graficoTiendas").getContext("2d");
+window.graficoTiendasInstance = new Chart(ctx, {
+  type: "doughnut",
+  data: {
+    labels: ["Activas", "Suspendidas"],
+    datasets: [{
+      data: [activas, off],
+      backgroundColor: ["#28a745", "#dc3545"],
+      borderWidth: 2,
+      borderColor: "#fff"
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: "bottom" },
+      title: {
+        display: true,
+        text: "Estado de Tiendas",
+        font: { size: 16, weight: "bold" }
+      }
+    }
+  }
+});
+
+    }
+
+    function onBuscar(e){
+      const q = e.target.value.trim().toLowerCase();
+      if (!q){ // recargar página visible
+        renderTabla(cacheTiendas);
+        return;
+      }
+      const filtrados = cacheTiendas.filter(t => (t.id.toLowerCase().includes(q)));
+      renderTabla(filtrados);
+    }
+
+    async function nextPage(){ await loadPage(false); }
+    async function prevPage(){
+      if (stack.length<=1) return;
+      // “retroceder”: recargar desde ante-último inicio
+      stack.pop(); // actual
+      lastDoc = null;
+      const startFrom = stack[stack.length-1];
+      // reconstruyo consulta desde ese doc
+      $("loader").style.display = "block"; $("tabla").style.display="none";
+      const q = query(collection(db,"tiendas"), orderBy("__name__"), startAfter(startFrom), limit(pageSize));
+      const snap = await getDocs(q);
+      cacheTiendas = snap.docs.map(d=>({ id:d.id, ref:d.ref }));
+      await renderTabla(cacheTiendas);
+      $("loader").style.display = "none"; $("tabla").style.display="table";
+      $("prev").disabled = stack.length<=1;
+      $("next").disabled = snap.docs.length < pageSize;
+      lastDoc = snap.docs[snap.docs.length-1] || null;
+    }
+
+    // ===== Modales reutilizables
+    function modalMensaje(texto, color="#007bff"){
+      const wrap = document.createElement("div"); wrap.className="modal-wrap";
+      const card = document.createElement("div"); card.className="modal-card";
+      const p = document.createElement("p"); p.textContent = texto; p.style.color = color;
+      const b = document.createElement("button"); b.textContent="Cerrar";
+      b.style.cssText = `background:${color};color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer`;
+      b.onclick = ()=>{ card.style.animation="desvanecer .2s"; setTimeout(()=>wrap.remove(),180); };
+      card.appendChild(p); card.appendChild(b); wrap.appendChild(card); document.body.appendChild(wrap);
+    }
+
+    function modalConfirm(texto, onYes){
+      const wrap = document.createElement("div"); wrap.className="modal-wrap";
+      const card = document.createElement("div"); card.className="modal-card";
+      const p = document.createElement("p"); p.textContent = texto;
+      const box = document.createElement("div"); box.style.display="flex"; box.style.gap="10px"; box.style.justifyContent="center"; box.style.marginTop="8px";
+      const bNo = document.createElement("button"); bNo.textContent="Cancelar"; bNo.style.cssText="background:gray;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer";
+      const bSi = document.createElement("button"); bSi.textContent="Confirmar"; bSi.style.cssText="background:#dc3545;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer";
+      bNo.onclick = ()=>{ card.style.animation="desvanecer .2s"; setTimeout(()=>wrap.remove(),180); };
+      bSi.onclick = ()=>{ wrap.remove(); onYes(); };
+      box.appendChild(bNo); box.appendChild(bSi);
+      card.appendChild(p); card.appendChild(box); wrap.appendChild(card); document.body.appendChild(wrap);
+    }
+
+    // ===== Acciones
+    window.toggleEstado = async (tiendaId, estabaActiva)=>{
+      try{
+        // guardamos 'activo' en el documento raíz de la tienda
+        const ref = doc(db,"tiendas",tiendaId);
+        // necesitamos valor actual → get + set (merge)
+        const snap = await getDoc(ref);
+        const data = snap.exists()? snap.data(): {};
+        const nuevo = !estabaActiva;
+        // set usando fetch API de Firestore no disponible aquí; usamos update vía setDoc merge
+        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+        await setDoc(ref, { activo:nuevo }, { merge:true });
+        modalMensaje(nuevo? "✅ Tienda activada":"⏸️ Tienda suspendida", nuevo? "#28a745":"#b02a37");
+        await loadPage(true);
+      }catch(e){
+        console.error(e); modalMensaje("❌ No se pudo cambiar el estado","#dc3545");
+      }
+    };
+
+    window.eliminarTienda = async (tiendaId)=>{
+      modalConfirm(`¿Eliminar permanentemente la tienda "${tiendaId}"?`, async ()=>{
+        try{
+          // borrar productos
+          const prods = await getDocs(collection(db,"tiendas",tiendaId,"productos"));
+          for (const d of prods.docs){
+            await deleteDoc(doc(db,"tiendas",tiendaId,"productos",d.id));
+          }
+          // borrar config y doc raíz
+          await deleteDoc(doc(db,"tiendas",tiendaId,"config","datos"));
+          await deleteDoc(doc(db,"tiendas",tiendaId));
+          modalMensaje("✅ Tienda eliminada","#28a745");
+          await loadPage(true);
+        }catch(e){ console.error(e); modalMensaje("❌ Error al eliminar","#dc3545"); }
+      });
+    };
+
+    window.mostrarQR = async (tiendaId, url, nombre)=>{
+      const wrap = document.createElement("div"); wrap.className="modal-wrap";
+      const card = document.createElement("div"); card.className="modal-card"; card.style.textAlign="center";
+      const h = document.createElement("h3"); h.textContent = `QR — ${nombre}`; card.appendChild(h);
+      const canvas = document.createElement("canvas");
+      await QRCode.toCanvas(canvas, url, { width: 260 });
+      card.appendChild(canvas);
+      const p = document.createElement("p"); p.innerHTML = `<a href="${url}" target="_blank">${url}</a>`; card.appendChild(p);
+
+      const box = document.createElement("div"); box.style.display="flex"; box.style.gap="10px"; box.style.justifyContent="center";
+      const bPng = document.createElement("button"); bPng.textContent="📥 PNG";
+      bPng.onclick = ()=>{
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/png");
+        a.download = `QR_${nombre.replace(/\s+/g,"_")}.png`;
+        a.click();
+      };
+
+      const bPdf = document.createElement("button"); bPdf.textContent="🖨️ PDF";
+      bPdf.onclick = async ()=>{
+        try{
+          const jsPDFModule = await import("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js");
+          const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default?.jsPDF || window.jspdf?.jsPDF;
+          if (!jsPDF){ modalMensaje("❌ No se pudo cargar jsPDF","#dc3545"); return; }
+          const pdf = new jsPDF();
+          pdf.setFontSize(20);
+          pdf.text(nombre, 105, 25, { align:"center" });
+          const img = canvas.toDataURL("image/png");
+          pdf.addImage(img,"PNG",57,40,96,96);
+          pdf.setFontSize(12);
+          pdf.textWithLink(url,105,150,{ url, align:"center" });
+          pdf.save(`QR_${nombre.replace(/\s+/g,"_")}.pdf`);
+        }catch(e){ console.error(e); modalMensaje("❌ Error generando PDF","#dc3545"); }
+      };
+
+      const bClose = document.createElement("button"); bClose.textContent="Cerrar";
+      bClose.onclick = ()=>{ card.style.animation="desvanecer .2s"; setTimeout(()=>wrap.remove(),180); };
+
+      box.appendChild(bPng); box.appendChild(bPdf); box.appendChild(bClose);
+      card.appendChild(box); wrap.appendChild(card); document.body.appendChild(wrap);
+    };
+    // 🧩 Cambiar plan de una tienda existente
+import { updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+window.cambiarPlan = async function (tiendaId, planActual) {
+  const nuevoPlan = prompt(`El plan actual es: ${planActual}\n\nEscribí el nuevo plan (Basico, Profesional o Premium):`);
+  if (!nuevoPlan) return;
+
+  const planValido = ["Basico", "Profesional", "Premium"];
+  if (!planValido.includes(nuevoPlan)) {
+    alert("❌ Plan inválido. Debe ser: Basico, Profesional o Premium");
+    return;
+  }
+
+  try {
+    const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+    await updateDoc(configRef, { plan: nuevoPlan });
+    alert(`✅ Plan actualizado a ${nuevoPlan}`);
+    loadPage(true); // refrescar tabla
+  } catch (error) {
+    console.error("Error al cambiar el plan:", error);
+    alert("⚠️ No se pudo actualizar el plan");
+  }
+};
+
+
+    // init
+    loadPage(true);
+  </script>
+</body>
+</html>

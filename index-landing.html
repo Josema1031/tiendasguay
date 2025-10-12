@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>MultiTiendas Gualeguay — Digitalizamos tu negocio en minutos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Tienda online lista en minutos. Catálogo, QR y pedidos por WhatsApp. MultiTiendas Gualeguay." />
+  <link rel="icon" href="imag/LOGO-ADMINISTRADOR.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --c1:#007bff; --c1d:#005dc1; --c2:#28a745; --bg:#f4f7fb; --txt:#333;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Poppins,system-ui,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+    header{position:sticky;top:0;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06);z-index:10}
+    nav{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:14px}
+    nav a{color:#333;text-decoration:none;margin-left:18px;font-weight:600}
+    .cta{background:var(--c1);color:#fff;padding:10px 16px;border-radius:10px}
+    .cta:hover{background:var(--c1d)}
+    .hero{max-width:1100px;margin:30px auto;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:0 16px}
+    .tag{display:inline-block;background:#eaf2ff;color:var(--c1);padding:6px 10px;border-radius:999px;font-weight:700;margin-bottom:10px}
+    h1{font-size:42px;margin:.2rem 0}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:28px 0}
+    .card{background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:16px}
+    .precios{max-width:1100px;margin:40px auto;padding:0 16px}
+    .planes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .plan{background:#fff;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:18px}
+    .plan strong{font-size:28px}
+    .plan ul{padding-left:18px;line-height:1.8}
+    .btn{display:inline-block;background:var(--c2);color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none}
+    .btn:hover{filter:brightness(.95)}
+    .grid-tiendas{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:10px}
+    .ti{background:#fff;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:14px;text-align:center}
+    .ti img{height:64px;object-fit:contain}
+    footer{margin-top:40px;background:#0f172a;color:#cbd5e1}
+    .fwrap{max-width:1100px;margin:auto;padding:24px 16px;display:flex;justify-content:space-between;align-items:center}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="imag/LOGO-ADMINISTRADOR.png" alt="Logo" height="34" />
+        <strong>MultiTiendas Gualeguay</strong>
+      </div>
+      <div>
+        <a href="#planes">Planes</a>
+        <a href="#ejemplos">Ejemplos</a>
+        <a class="cta" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20mi%20tienda%20online">Quiero mi tienda</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <span class="tag">Tu catálogo online en minutos</span>
+      <h1>Digitalizamos tu negocio con <span style="color:var(--c1)">catálogo + QR + WhatsApp</span></h1>
+      <p>Mostrá tus productos, generá pedidos por WhatsApp y compartí un código QR listo para imprimir. Sin vueltas, sin programar.</p>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20mi%20tienda%20online">Hablar por WhatsApp</a>
+        <a class="cta" href="#planes">Ver planes</a>
+      </div>
+      <div class="cards">
+        <div class="card"><strong>QR incluido</strong><br/>Descargá PNG y PDF listos para el local.</div>
+        <div class="card"><strong>Pedidos fáciles</strong><br/>Tus clientes te escriben directo a WhatsApp.</div>
+        <div class="card"><strong>Diseño simple</strong><br/>Claro, rápido y funciona en cualquier celular.</div>
+      </div>
+    </div>
+    <div>
+      <img src="imag/LOGO-ADMINISTRADOR.png" alt="Vista previa" style="width:100%;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.18)">
+    </div>
+  </section>
+
+  <section id="planes" class="precios">
+    <h2>Planes y precios</h2>
+    <div class="planes">
+      <div class="plan">
+        <strong>Básico</strong>
+        <p>$20.000 / mes</p>
+        <ul>
+          <li>Hasta 20 productos</li>
+          <li>QR descargable</li>
+          <li>Pedidos por WhatsApp</li>
+        </ul>
+        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20el%20Plan%20B%C3%A1sico">Elegir Básico</a>
+      </div>
+      <div class="plan" style="border:2px solid var(--c1)">
+        <strong>Profesional</strong>
+        <p>$25.000 / mes</p>
+        <ul>
+          <li>Hasta 100 productos</li>
+          <li>Logo y colores</li>
+          <li>Soporte prioritario</li>
+        </ul>
+        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20el%20Plan%20Profesional">Elegir Profesional</a>
+      </div>
+      <div class="plan">
+        <strong>Premium</strong>
+        <p>$35.000 / mes</p>
+        <ul>
+          <li>Ilimitado + dominio propio</li>
+          <li>Estadísticas</li>
+          <li>Capacitación</li>
+        </ul>
+        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20el%20Plan%20Premium">Elegir Premium</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="ejemplos" class="precios">
+    <h2>Ejemplos de tiendas</h2>
+    <p>Algunas tiendas activas en la plataforma:</p>
+    <div id="grid-tiendas" class="grid-tiendas">
+      <!-- Se llena dinámicamente -->
+    </div>
+  </section>
+
+  <footer>
+    <div class="fwrap">
+      <div>© <span id="y"></span> MultiTiendas Gualeguay</div>
+      <div>Hecho con ❤️ en Gualeguay</div>
+    </div>
+  </footer>
+
+  <!-- Firebase + carga dinámica de ejemplos -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // 👉 Reemplazá si usás otro proyecto en producción
+    const firebaseConfig = {
+      apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
+      authDomain: "carniceriadonjose-48638.firebaseapp.com",
+      projectId: "carniceriadonjose-48638",
+      storageBucket: "carniceriadonjose-48638.appspot.com",
+      messagingSenderId: "322531750471",
+      appId: "1:322531750471:web:78e290c9c81eecc7be3762"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function getBaseURL(){
+      const { origin, pathname } = window.location;
+      if (origin.includes("127.0.0.1") || origin.includes("localhost")) return origin;
+      const repo = pathname.split("/")[1];
+      return `${origin}/${repo}`;
+    }
+    const BASE_URL = getBaseURL();
+
+    // Carga algunas tiendas (hasta 6) y arma cards con logo y link
+    async function cargarEjemplos(){
+      const grid = document.getElementById("grid-tiendas");
+      try {
+        const snapTiendas = await getDocs(collection(db, "tiendas"));
+        let count = 0;
+        for (const t of snapTiendas.docs){
+          const tiendaId = t.id;
+          const cfgSnap = await getDoc(doc(db,"tiendas",tiendaId,"config","datos"));
+          if (!cfgSnap.exists()) continue;
+          const d = cfgSnap.data();
+          const url = `${BASE_URL}/index.html?tienda=${tiendaId}`;
+          const div = document.createElement("a");
+          div.href = url; div.target = "_blank"; div.className = "ti";
+          div.innerHTML = `
+            <img src="${d.logo || 'https://via.placeholder.com/120x64?text=Logo'}" alt="${d.nombre || tiendaId}">
+            <h3>${d.nombre || tiendaId}</h3>
+            <small>Ver tienda →</small>
+          `;
+          grid.appendChild(div);
+          if (++count >= 6) break;
+        }
+      } catch(e){
+        grid.innerHTML = "<div class='ti'>No se pudieron cargar ejemplos por ahora.</div>";
+        console.error(e);
+      }
+    }
+
+    document.getElementById("y").textContent = new Date().getFullYear();
+    cargarEjemplos();
+  </script>
+</body>
+</html>

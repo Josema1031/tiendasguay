@@ -78,6 +78,34 @@
       font-size: 1.2em;
       color: #555;
     }
+
+
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes desvanecer {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+
+  .modal-animado {
+    animation: aparecer 0.3s ease;
+  }
+
   </style>
 </head>
 <body>
@@ -99,149 +127,325 @@
     </table>
   </main>
 
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import QRCode from "https://esm.sh/qrcode@1.5.3";
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    doc,
+    deleteDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import QRCode from "https://esm.sh/qrcode@1.5.3";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
-  authDomain: "carniceriadonjose-48638.firebaseapp.com",
-  projectId: "carniceriadonjose-48638",
-  storageBucket: "carniceriadonjose-48638.appspot.com",
-  messagingSenderId: "322531750471",
-  appId: "1:322531750471:web:78e290c9c81eecc7be3762"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
+    authDomain: "carniceriadonjose-48638.firebaseapp.com",
+    projectId: "carniceriadonjose-48638",
+    storageBucket: "carniceriadonjose-48638.appspot.com",
+    messagingSenderId: "322531750471",
+    appId: "1:322531750471:web:78e290c9c81eecc7be3762"
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-const tabla = document.getElementById("tabla-tiendas");
-const tbody = tabla.querySelector("tbody");
-const loader = document.getElementById("loader");
-
-async function cargarTiendas() {
-  try {
-    const snapshot = await getDocs(collection(db, "tiendas"));
-    tbody.innerHTML = "";
-
-    if (snapshot.empty) {
-      loader.textContent = "No hay tiendas registradas aún.";
-      return;
+  // ==============================
+  // 🧭 DETECTAR URL BASE SEGÚN ENTORNO
+  // ==============================
+  function getBaseURL() {
+    const { origin, pathname } = window.location;
+    if (origin.includes("127.0.0.1") || origin.includes("localhost")) {
+      return origin;
     }
+    const repo = pathname.split("/")[1];
+    return `${origin}/${repo}`;
+  }
+  const BASE_URL = getBaseURL();
 
-    for (const tiendaDoc of snapshot.docs) {
-      const tiendaId = tiendaDoc.id;
-      const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
-      const configSnap = await getDoc(configRef);
-      if (!configSnap.exists()) continue;
+  // ==============================
+  // ✨ MODAL DE MENSAJE (ÉXITO / ERROR / INFO)
+  // ==============================
+  function mostrarModal(texto, color = "#007bff") {
+    const modal = document.createElement("div");
+    modal.style.cssText = `
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,0.6); z-index:9999; backdrop-filter:blur(3px);
+    `;
+    const card = document.createElement("div");
+    card.classList.add("modal-animado");
+    card.style.cssText = `
+      background:white; padding:25px 40px; border-radius:12px; text-align:center;
+      font-family:sans-serif; color:#333; box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    `;
+    const mensaje = document.createElement("p");
+    mensaje.textContent = texto;
+    mensaje.style.color = color;
+    mensaje.style.fontSize = "16px";
+    mensaje.style.marginBottom = "15px";
+    const btn = document.createElement("button");
+    btn.textContent = "Cerrar";
+    btn.style.cssText = `
+      background:${color}; color:white; border:none; border-radius:8px;
+      padding:8px 16px; cursor:pointer; font-weight:bold;
+    `;
+    btn.onclick = () => {
+      card.style.animation = "desvanecer 0.2s ease";
+      setTimeout(() => modal.remove(), 180);
+    };
+    card.appendChild(mensaje);
+    card.appendChild(btn);
+    modal.appendChild(card);
+    document.body.appendChild(modal);
+  }
 
-      const datos = configSnap.data();
-      const urlTienda = `https://josema1031.github.io/matesguay/index.html?tienda=${tiendaId}`;
+  // ==============================
+  // ⚠️ MODAL DE CONFIRMACIÓN (CON ANIMACIÓN)
+  // ==============================
+  function mostrarConfirmacion(mensaje, callback) {
+    const modal = document.createElement("div");
+    modal.style.cssText = `
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,0.6); z-index:9999; backdrop-filter:blur(3px);
+    `;
+    const card = document.createElement("div");
+    card.classList.add("modal-animado");
+    card.style.cssText = `
+      background:white; padding:25px 40px; border-radius:12px; text-align:center;
+      font-family:sans-serif; box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    `;
+    const texto = document.createElement("p");
+    texto.textContent = mensaje;
+    texto.style.marginBottom = "15px";
+    texto.style.fontSize = "16px";
+    texto.style.color = "#333";
 
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><img src="${datos.logo || 'https://via.placeholder.com/80'}" alt="logo"></td>
-        <td><strong>${datos.nombre || tiendaId}</strong></td>
-        <td>${datos.whatsapp || '-'}</td>
-        <td>${datos.direccion || '-'}</td>
-        <td>${datos.horarios || '-'}</td>
-        <td>
-          <button onclick="window.open('${urlTienda}', '_blank')">🛍️ Ver Tienda</button>
-          <button onclick="window.open('admin.html?tienda=${tiendaId}', '_blank')">🧰 Admin</button>
-          <button onclick="mostrarQR('${tiendaId}', '${urlTienda}', '${datos.nombre || tiendaId}')">🔳 QR</button>
-          <button class="danger" onclick="eliminarTienda('${tiendaId}')">🗑️ Eliminar</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+    const btns = document.createElement("div");
+    btns.style.display = "flex";
+    btns.style.justifyContent = "center";
+    btns.style.gap = "10px";
+
+    const btnSi = document.createElement("button");
+    btnSi.textContent = "Eliminar";
+    btnSi.style.cssText = `
+      background:#dc3545; color:white; border:none; border-radius:8px;
+      padding:8px 16px; cursor:pointer; font-weight:bold;
+    `;
+    btnSi.onclick = () => {
+      modal.remove();
+      callback(true);
+    };
+
+    const btnNo = document.createElement("button");
+    btnNo.textContent = "Cancelar";
+    btnNo.style.cssText = `
+      background:gray; color:white; border:none; border-radius:8px;
+      padding:8px 16px; cursor:pointer; font-weight:bold;
+    `;
+    btnNo.onclick = () => {
+      card.style.animation = "desvanecer 0.2s ease";
+      setTimeout(() => modal.remove(), 180);
+    };
+
+    btns.appendChild(btnNo);
+    btns.appendChild(btnSi);
+    card.appendChild(texto);
+    card.appendChild(btns);
+    modal.appendChild(card);
+    document.body.appendChild(modal);
+  }
+
+  // ==============================
+  // ⚙️ CARGAR TODAS LAS TIENDAS
+  // ==============================
+  async function cargarTiendas() {
+    const tabla = document.getElementById("tabla-tiendas");
+    const tbody = tabla.querySelector("tbody");
+    const loader = document.getElementById("loader");
+
+    try {
+      const snapshot = await getDocs(collection(db, "tiendas"));
+      tbody.innerHTML = "";
+
+      if (snapshot.empty) {
+        loader.textContent = "No hay tiendas registradas aún.";
+        return;
+      }
+
+      for (const tiendaDoc of snapshot.docs) {
+        const tiendaId = tiendaDoc.id;
+        const configSnap = await getDocs(collection(db, "tiendas", tiendaId, "config"));
+        let datos = {};
+        configSnap.forEach((d) => (datos = d.data()));
+
+        const urlTienda = `${BASE_URL}/index.html?tienda=${tiendaId}`;
+        const urlAdmin = `${BASE_URL}/admin.html?tienda=${tiendaId}`;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><img src="${datos.logo || 'https://via.placeholder.com/80'}" alt="logo"></td>
+          <td><strong>${datos.nombre || tiendaId}</strong></td>
+          <td>${datos.whatsapp || '-'}</td>
+          <td>${datos.direccion || '-'}</td>
+          <td>${datos.horarios || '-'}</td>
+          <td>
+            <button onclick="window.open('${urlTienda}', '_blank')">🛍️ Ver Tienda</button>
+            <button onclick="window.open('${urlAdmin}', '_blank')">🧰 Admin</button>
+            <button onclick="mostrarQR('${tiendaId}', '${urlTienda}', '${(datos.nombre || tiendaId).replace(/'/g, "\\'")}')">🔳 QR</button>
+            <button class="danger" onclick="eliminarTienda('${tiendaId}')">🗑️ Eliminar</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      tabla.style.display = "table";
+      loader.style.display = "none";
+    } catch (error) {
+      console.error(error);
+      loader.textContent = "❌ Error al cargar tiendas.";
     }
-
-    tabla.style.display = "table";
-    loader.style.display = "none";
-  } catch (error) {
-    console.error(error);
-    loader.textContent = "❌ Error al cargar tiendas.";
   }
-}
 
-// 🔴 eliminar sólo la configuración (no los productos)
-window.eliminarTienda = async function (tiendaId) {
-  if (!confirm(`¿Seguro que querés eliminar la tienda "${tiendaId}"?`)) return;
-  try {
-    await deleteDoc(doc(db, "tiendas", tiendaId, "config", "datos"));
-    alert("✅ Tienda eliminada (config). Los productos quedan guardados por seguridad.");
-    cargarTiendas();
-  } catch (error) {
-    console.error(error);
-    alert("❌ Error al eliminar la tienda.");
-  }
-};
+  // ==============================
+  // 🔳 MOSTRAR QR CON ANIMACIÓN Y DESCARGA
+  // ==============================
 
-// 🧾 GENERAR QR
+// ==============================
+// 🔳 MOSTRAR QR CON DESCARGA PNG + PDF
+// ==============================
 window.mostrarQR = async function (tiendaId, url, nombre) {
-  const qrContainer = document.createElement("div");
-  qrContainer.style.position = "fixed";
-  qrContainer.style.top = "0";
-  qrContainer.style.left = "0";
-  qrContainer.style.width = "100%";
-  qrContainer.style.height = "100%";
-  qrContainer.style.background = "rgba(0,0,0,0.7)";
-  qrContainer.style.display = "flex";
-  qrContainer.style.flexDirection = "column";
-  qrContainer.style.alignItems = "center";
-  qrContainer.style.justifyContent = "center";
-  qrContainer.style.zIndex = "9999";
+  const modal = document.createElement("div");
+  modal.style.cssText = `
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display:flex; align-items:center; justify-content:center; z-index:9999;
+  `;
+  const cont = document.createElement("div");
+  cont.classList.add("modal-animado");
+  cont.style.cssText = `
+    background:white; padding:20px; border-radius:12px;
+    text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.3);
+  `;
 
-  const card = document.createElement("div");
-  card.style.background = "white";
-  card.style.padding = "25px";
-  card.style.borderRadius = "10px";
-  card.style.textAlign = "center";
-  card.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)";
-  card.style.maxWidth = "350px";
+  // Título
+  const titulo = document.createElement("h3");
+  titulo.textContent = `QR - ${nombre}`;
 
-  const title = document.createElement("h2");
-  title.textContent = `QR de ${nombre}`;
-  title.style.marginBottom = "10px";
-
+  // Generar QR
   const canvas = document.createElement("canvas");
-  await QRCode.toCanvas(canvas, url, { width: 250, color: { dark: "#000", light: "#fff" } });
+  await QRCode.toCanvas(canvas, url, { width: 250 });
 
-  const link = document.createElement("a");
-  link.textContent = "⬇️ Descargar QR";
-  link.href = canvas.toDataURL("image/png");
-  link.download = `${tiendaId}-QR.png`;
-  link.style.display = "inline-block";
-  link.style.marginTop = "10px";
-  link.style.background = "#007bff";
-  link.style.color = "white";
-  link.style.padding = "8px 14px";
-  link.style.borderRadius = "6px";
-  link.style.textDecoration = "none";
+  // Enlace debajo del QR
+  const enlace = document.createElement("p");
+  enlace.innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
 
-  const close = document.createElement("button");
-  close.textContent = "Cerrar";
-  close.style.marginTop = "12px";
-  close.style.background = "#dc3545";
-  close.style.color = "white";
-  close.style.border = "none";
-  close.style.padding = "8px 14px";
-  close.style.borderRadius = "6px";
-  close.style.cursor = "pointer";
-  close.onclick = () => qrContainer.remove();
+  // 📥 Botón de descarga PNG
+  const btnDescargar = document.createElement("button");
+  btnDescargar.textContent = "📥 Descargar PNG";
+  btnDescargar.style.cssText = `
+    background:#007bff; color:white; border:none; border-radius:8px;
+    padding:8px 16px; cursor:pointer; font-weight:bold; margin-right:10px;
+  `;
+  btnDescargar.onclick = () => {
+    const enlaceDescarga = document.createElement("a");
+    enlaceDescarga.href = canvas.toDataURL("image/png");
+    enlaceDescarga.download = `QR_${nombre.replace(/\s+/g, "_")}.png`;
+    enlaceDescarga.click();
+  };
 
-  card.appendChild(title);
-  card.appendChild(canvas);
-  card.appendChild(link);
-  card.appendChild(close);
-  qrContainer.appendChild(card);
-  document.body.appendChild(qrContainer);
+ // 🖨️ Botón de descarga PDF
+const btnPDF = document.createElement("button");
+btnPDF.textContent = "🖨️ Descargar PDF";
+btnPDF.style.cssText = `
+  background:#28a745; color:white; border:none; border-radius:8px;
+  padding:8px 16px; cursor:pointer; font-weight:bold; margin-right:10px;
+`;
+
+btnPDF.onclick = async () => {
+  // Importar correctamente jsPDF (funciona en todos los navegadores)
+  const jsPDFModule = await import("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js");
+  const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default?.jsPDF || window.jspdf?.jsPDF;
+
+  if (!jsPDF) {
+    alert("❌ No se pudo cargar jsPDF. Verificá tu conexión o la versión del script.");
+    return;
+  }
+
+  const pdf = new jsPDF();
+
+  // Título del PDF
+  pdf.setFontSize(20);
+  pdf.text(nombre, 105, 25, { align: "center" });
+
+  // Imagen del QR (centrada)
+  const imgData = canvas.toDataURL("image/png");
+  pdf.addImage(imgData, "PNG", 57, 40, 96, 96);
+
+  // Enlace de la tienda debajo del QR
+  pdf.setFontSize(12);
+  pdf.textWithLink(url, 105, 150, { url, align: "center" });
+
+  // Descargar PDF
+  pdf.save(`QR_${nombre.replace(/\s+/g, "_")}.pdf`);
 };
 
-cargarTiendas();
+
+
+  // Cerrar modal
+  const btnCerrar = document.createElement("button");
+  btnCerrar.textContent = "Cerrar";
+  btnCerrar.style.cssText = `
+    background:gray; color:white; border:none; border-radius:8px;
+    padding:8px 16px; cursor:pointer; font-weight:bold;
+  `;
+  btnCerrar.onclick = () => {
+    cont.style.animation = "desvanecer 0.2s ease";
+    setTimeout(() => modal.remove(), 180);
+  };
+
+  // Contenedor de botones
+  const btnContainer = document.createElement("div");
+  btnContainer.style.marginTop = "10px";
+  btnContainer.appendChild(btnDescargar);
+  btnContainer.appendChild(btnPDF);
+  btnContainer.appendChild(btnCerrar);
+
+  // Estructura del modal
+  cont.appendChild(titulo);
+  cont.appendChild(canvas);
+  cont.appendChild(enlace);
+  cont.appendChild(btnContainer);
+  modal.appendChild(cont);
+  document.body.appendChild(modal);
+};
+
+
+  // ==============================
+  // 🗑️ ELIMINAR TIENDA COMPLETA
+  // ==============================
+  window.eliminarTienda = async function (tiendaId) {
+    mostrarConfirmacion(`¿Eliminar permanentemente la tienda "${tiendaId}"?`, async (confirmado) => {
+      if (!confirmado) return;
+      try {
+        const productosSnap = await getDocs(collection(db, "tiendas", tiendaId, "productos"));
+        for (const productoDoc of productosSnap.docs) {
+          await deleteDoc(doc(db, "tiendas", tiendaId, "productos", productoDoc.id));
+        }
+        await deleteDoc(doc(db, "tiendas", tiendaId, "config", "datos"));
+        await deleteDoc(doc(db, "tiendas", tiendaId));
+        mostrarModal(`✅ Tienda "${tiendaId}" eliminada correctamente.`, "#28a745");
+        cargarTiendas();
+      } catch (error) {
+        console.error(error);
+        mostrarModal("❌ Error al eliminar la tienda. Revisá la consola.", "#dc3545");
+      }
+    });
+  };
+
+  // ==============================
+  // 🚀 INICIALIZAR PANEL
+  // ==============================
+  cargarTiendas();
 </script>
-
-
 
 </body>
 </html>

@@ -39,6 +39,23 @@ function getTiendaId() {
   return localStorage.getItem("tiendaId") || null;
 }
 const tiendaId = getTiendaId();
+// ============================================
+// 📊 CONTADOR AUTOMÁTICO DE VISITAS
+// Cada vez que se ingresa a la tienda, suma 1 al campo "visitas"
+// ============================================
+import { increment, updateDoc, doc as docRef } 
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+(async () => {
+  try {
+    const tiendaDoc = docRef(db, "tiendas", tiendaId);
+    await updateDoc(tiendaDoc, { visitas: increment(1) });
+    console.log(`✅ Contador de visitas actualizado para ${tiendaId}`);
+  } catch (error) {
+    console.warn("⚠️ No se pudo actualizar el contador de visitas:", error);
+  }
+})();
+
 
 // ============================================
 // ⚙️ FUNCIÓN: cargar configuración de la tienda
@@ -57,8 +74,41 @@ async function cargarConfig() {
   }
 }
 
+
+
 // Referencia a la colección de productos de la tienda actual
 const productosRef = collection(db, "tiendas", tiendaId, "productos");
+// ============================================
+// 🚫 VERIFICAR SI LA TIENDA ESTÁ SUSPENDIDA
+// Antes de cargar los productos, se consulta el campo "activo" en Firestore
+// Si es false, se detiene la ejecución y muestra un aviso visual
+// ============================================
+(async () => {
+  const tiendaRef = doc(db, "tiendas", tiendaId);
+  const tiendaSnap = await getDoc(tiendaRef);
+
+  if (tiendaSnap.exists() && tiendaSnap.data().activo === false) {
+    document.body.innerHTML = `
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        height:100vh;
+        flex-direction:column;
+        text-align:center;
+        background:#f9fafb;
+        color:#333;
+        font-family:sans-serif;
+      ">
+        <img src="https://cdn-icons-png.flaticon.com/512/726/726476.png" width="120" alt="Suspendida">
+        <h2 style="margin:20px 0 10px;">Tienda temporalmente suspendida</h2>
+        <p>Contactá al administrador para más información.</p>
+      </div>
+    `;
+    throw new Error("Tienda suspendida");
+  }
+})();
+
 
 // ============================================
 // 🛒 VARIABLES GLOBALES
@@ -415,3 +465,45 @@ window.addEventListener("storage", e => {
   await cargarProductos();
   mostrarCarrito();
 })();
+// ============================================
+// 📴 MODO SIN CONEXIÓN
+// Muestra un aviso cuando el usuario pierde Internet
+// y otro cuando se restablece la conexión
+// ============================================
+
+// Crear elemento del aviso
+const avisoConexion = document.createElement("div");
+avisoConexion.id = "avisoConexion";
+avisoConexion.style.cssText = `
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ff5252;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  font-family: system-ui, sans-serif;
+  z-index: 2000;
+  display: none;
+  transition: all 0.4s ease;
+`;
+avisoConexion.textContent = "⚠️ Conexión perdida. Esperando reconexión...";
+document.body.appendChild(avisoConexion);
+
+// Detectar pérdida de conexión
+window.addEventListener("offline", () => {
+  avisoConexion.style.display = "block";
+});
+
+// Detectar reconexión
+window.addEventListener("online", () => {
+  avisoConexion.style.background = "#4CAF50";
+  avisoConexion.textContent = "✅ Conexión restaurada.";
+  setTimeout(() => {
+    avisoConexion.style.display = "none";
+    avisoConexion.style.background = "#ff5252";
+    avisoConexion.textContent = "⚠️ Conexión perdida. Esperando reconexión...";
+  }, 3000);
+});

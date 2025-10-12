@@ -183,17 +183,51 @@ document.getElementById("MATES-GUAY").textContent = tiendaId; // sigue funcionan
 
     //    ➕ AGREGAR / GUARDAR PRODUCTO
 
-    window.agregarProducto = function () {
-      productos.unshift({
-        nombre: "",
-        precio: 0,
-        imagen: "",
-        categoria: "Arroz",
-        tipoVenta: "kg",
-        id: null
-      });
-      renderTabla();
-    };
+    // 🧩 CONTROL DE LÍMITE SEGÚN PLAN
+import { getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+window.agregarProducto = async function () {
+  try {
+    // Obtener el plan de la tienda desde Firestore
+    const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+    const configSnap = await getDoc(configRef);
+    const plan = configSnap.exists() ? configSnap.data().plan : "Basico";
+
+    // Definir límites según plan
+    let limite = 0;
+    if (plan === "Basico") limite = 20;
+    else if (plan === "Profesional") limite = 100;
+    else if (plan === "Premium") limite = Infinity;
+
+    // Contar productos actuales
+    const totalProductos = productos.length;
+
+    // Validar límite
+    if (totalProductos >= limite && limite !== Infinity) {
+      alert(`🚫 Tu plan (${plan}) permite un máximo de ${limite} productos.\nActualizá tu plan para continuar.`);
+      return;
+    }
+
+    // Si está dentro del límite, agregar producto normalmente
+    productos.unshift({
+      nombre: "",
+      precio: 0,
+      imagen: "",
+      categoria: "Arroz",
+      tipoVenta: "kg",
+      id: null
+    });
+    renderTabla();
+
+    // Mostrar contador visual (opcional)
+    const contador = document.getElementById("total-productos");
+    if (contador) contador.textContent = `${totalProductos + 1}`;
+  } catch (error) {
+    console.error("❌ Error al verificar el plan:", error);
+    alert("No se pudo verificar el plan. Intentá nuevamente.");
+  }
+};
+
 
     // 📋 RENDERIZAR TABLA DE PRODUCTOS
 

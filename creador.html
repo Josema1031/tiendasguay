@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Creador de Tiendas – Mates Guay</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
   <style>
     body {
       font-family: system-ui, Arial, sans-serif;
@@ -81,6 +83,15 @@
 <body>
 <div class="wrap">
   <h1>⚡ Creador Instantáneo de Tiendas Gualeguay </h1>
+  <div class="form-group">
+  <label>Seleccioná tu plan</label>
+  <select id="plan" required>
+    <option value="Basico">Básico</option>
+    <option value="Profesional">Profesional</option>
+    <option value="Premium">Premium</option>
+  </select>
+</div>
+
   <div class="card">
     <div class="row">
       <div>
@@ -192,7 +203,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-  import { getFirestore, doc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, collection, addDoc,getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
@@ -229,24 +240,48 @@
       logoUrlFinal = "https://via.placeholder.com/300x300?text=Sin+Logo";
     }
 
-    const direccion = (el("direccion").value || "").trim();
-    const horarios = (el("horarios").value || "").trim();
-    const metaImage = (el("metaImage").value || "").trim();
-    const colorHeader = el("colorHeader").value;
-    const colorFooter = el("colorFooter").value;
-    const colorHeaderText = el("colorHeaderText").value;
-    const colorFooterText = el("colorFooterText").value;
-    const colorBoton = el("colorBoton").value;
+const direccion = (el("direccion").value || "").trim();
+const horarios = (el("horarios").value || "").trim();
+const metaImage = (el("metaImage").value || "").trim();
+const colorHeader = el("colorHeader").value;
+const colorFooter = el("colorFooter").value;
+const colorHeaderText = el("colorHeaderText").value;
+const colorFooterText = el("colorFooterText").value;
+const colorBoton = el("colorBoton").value;
+const plan = el("plan").value; // ✅ Mover aquí
 
-    if (!tiendaId || !nombre || !whatsapp) {
-      el("msg").innerHTML = "❌ Completá Tienda ID, Nombre y WhatsApp.";
-      return;
-    }
+if (!tiendaId || !nombre || !whatsapp) {
+  el("msg").innerHTML = "❌ Completá Tienda ID, Nombre y WhatsApp.";
+  return;
+}
 
-    await setDoc(doc(db, "tiendas", tiendaId, "config", "datos"), {
-      nombre, whatsapp, logo: logoUrlFinal, direccion, horarios, metaImage,
-      colorHeader, colorFooter, colorHeaderText, colorFooterText, colorBoton
-    });
+const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+const configSnap = await getDoc(configRef);
+
+if (configSnap.exists()) {
+  const confirmar = confirm(`⚠️ La tienda "${tiendaId}" ya existe.\n¿Querés actualizar su plan y configuración?`);
+  if (!confirmar) return;
+
+  // Solo actualiza datos existentes
+  await updateDoc(configRef, {
+    plan,
+    nombre, whatsapp, direccion, horarios,
+    colorHeader, colorFooter, colorHeaderText, colorFooterText, colorBoton,
+    logo: logoUrlFinal
+  });
+
+  alert("✅ Tienda actualizada correctamente");
+  return;
+}
+
+// 🔹 Guardar todo junto (una sola vez)
+await setDoc(doc(db, "tiendas", tiendaId, "config", "datos"), {
+  nombre, whatsapp, direccion, horarios, logo: logoUrlFinal,
+  colorHeader, colorFooter, colorHeaderText, colorFooterText, colorBoton,
+  plan
+});
+
+
     // ✅ crea el documento raíz para visibilidad y control
 await setDoc(doc(db, "tiendas", tiendaId), { creado: new Date().toISOString() });
 
