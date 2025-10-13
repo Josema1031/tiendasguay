@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <title>SuperAdmin V2 — MultiTiendas Gualeguay</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     :root{--c1:#007bff;--c1d:#005dc1;--ok:#28a745;--bad:#dc3545;--bg:#f4f7fb;--txt:#333}
     body{margin:0;background:var(--bg);font-family:Poppins,system-ui,Arial,sans-serif;color:var(--txt)}
@@ -31,6 +32,21 @@
     @keyframes desvanecer{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.9)}}
     .modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(3px)}
     .modal-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:aparecer .25s ease}
+    @media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  th, td {
+    font-size: 13px;
+    padding: 8px;
+  }
+  header {
+    font-size: 1.2em;
+  }
+}
+
   </style>
 </head>
 <body>

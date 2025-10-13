@@ -305,3 +305,91 @@ button {
   color: #721c24;
 }
 
+#configuracion-tienda {
+  display: none;
+}
+/* ✨ Animación de aparición y desaparición */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-5px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-5px); }
+}
+
+/* Estilo del mensaje de confirmación */
+#mensaje-confirmacion-plan {
+  text-align: center;
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+  display: none;
+  animation: fadeInOut 6s ease-in-out forwards;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-5px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-5px); }
+}
+
+#mensaje-confirmacion-categorias {
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+
+/* === RESPONSIVE GLOBAL === */
+@media (max-width: 992px) {
+  body {
+    padding: 0 10px;
+  }
+  header, nav, footer {
+    flex-direction: column;
+    text-align: center;
+  }
+  nav a {
+    margin: 6px 0;
+  }
+  table {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  input, select, button, textarea {
+    width: 100% !important;
+    font-size: 15px !important;
+  }
+  .grid, .row, .form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .card, .plan, .producto {
+    max-width: 100%;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  h1, h2 {
+    font-size: 1.4rem !important;
+  }
+  table {
+    font-size: 12px;
+  }
+  #acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (max-width: 768px) {
+  .tabla-contenedor {
+    overflow-x: auto;
+  }
+  #tabla-productos {
+    min-width: 900px;
+  }
+}

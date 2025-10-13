@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración</title>
   <link rel="shortcut icon" href="imag/LOGO-ADMINISTRADOR.png" type="image/x-icon">
   <link rel="stylesheet" href="styleadmin.css">
@@ -59,11 +60,72 @@
   </div>
 </div>
 
-<p id="mensaje-limite" style="text-align:center; margin-top:10px; font-weight:600; color:#007bff;">
+<p id="plan-actual" style="text-align:center;font-weight:700;margin:10px 0 4px;color:#0b5ed7;"></p>
+<p id="plan-beneficios" style="text-align:center;margin:0;color:#444;font-size:14px;"></p>
+
+<!-- 💼 Botón Cambiar / Actualizar Plan -->
+<div id="boton-cambiar-plan" style="text-align:center; margin:10px 0; display:none;">
+  <button id="btnCambiarPlan" style="background:#f59e0b; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+    🔄 Cambiar / Actualizar Plan
+  </button>
+ 
+ 
+  
+  <!-- 🔽 Modal de selección -->
+  <div id="modalCambiarPlan" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4);">
+    <div style="background:white; width:90%; max-width:400px; margin:100px auto; padding:20px; border-radius:12px; text-align:center;">
+      <h3>Seleccioná el nuevo plan</h3>
+      <p style="color:#444;">Elegí a cuál plan querés actualizar:</p>
+      <button id="btnSubirProfesional" style="background:#10b981; color:white; border:none; padding:10px 18px; border-radius:8px; margin:5px;">Profesional 💼</button>
+      <button id="btnSubirPremium" style="background:#0b5ed7; color:white; border:none; padding:10px 18px; border-radius:8px; margin:5px;">Premium 🚀</button>
+      <div style="margin-top:10px;">
+        <button id="btnCerrarModal" style="background:#ccc; color:black; border:none; padding:6px 14px; border-radius:6px;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<p id="mensaje-confirmacion-plan" style="text-align:center; color:green; font-weight:bold; display:none; margin-top:10px;">
+  ✅ Solicitud enviada correctamente por WhatsApp.
 </p>
 
 
 
+
+<!-- 📊 Panel de Estadísticas -->
+<section id="panel-estadisticas" style="display:none; margin-top:30px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.08);">
+  <h2 style="text-align:center; color:#0b5ed7;">📊 Estadísticas de Productos</h2>
+  <canvas id="grafico-categorias" height="120"></canvas>
+</section>
+<!-- 🏷️ Sección de Categorías -->
+<section id="categorias-panel" style="margin-top:30px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.08);">
+  <h2>🏷️ Categorías de Productos</h2>
+  <p style="color:#555;">Agregá, eliminá o renombrá las categorías según tus productos haciendo doble click:</p>
+
+  <div id="lista-categorias" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px;"></div>
+
+  <div style="display:flex; gap:10px; align-items:center;">
+    <input type="text" id="nuevaCategoria" placeholder="Nueva categoría..." style="flex:1; padding:8px; border:1px solid #ccc; border-radius:6px;">
+    <button id="btnAgregarCategoria" style="background:#0b5ed7; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer;">Agregar</button>
+  </div>
+</section>
+
+<!-- ✅ Mensaje de confirmación animado -->
+<p id="mensaje-confirmacion-categorias"
+   style="display:none; text-align:center; color:green; font-weight:bold; margin-top:10px;">
+   ✅ Cambios guardados correctamente.
+</p>
+
+
+
+
+<!-- CDN Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<p id="mensaje-limite" style="text-align:center; margin-top:10px; font-weight:600; color:#007bff;">
+</p>
+
+
+<div class="tabla-contenedor">                
     <table id="tabla-productos">
       <thead>
         <tr>
@@ -83,6 +145,81 @@
       <tbody></tbody>
     </table>
   </div>
+  <hr style="margin:30px 0;">
+</div>
+  
+<section id="configuracion-tienda" style="background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+  <h2>⚙️ Configuración de la Tienda</h2>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:15px;">
+
+    <div>
+      <label>Nombre de la tienda:</label>
+      <input type="text" id="nombreTienda" class="campo-config">
+    </div>
+
+    <div>
+      <label>WhatsApp:</label>
+      <input type="text" id="whatsappTienda" class="campo-config">
+    </div>
+
+    <div>
+      <label>Dirección:</label>
+      <input type="text" id="direccionTienda" class="campo-config">
+    </div>
+
+    <div>
+      <label>Horarios:</label>
+      <input type="text" id="horariosTienda" class="campo-config">
+    </div>
+
+    <div>
+      <label for="tituloTienda">Título principal de la tienda:</label>
+      <input type="text" id="tituloTienda" class="campo-config" placeholder="Ej: Mates Guay - Tienda Oficial">
+    </div>
+
+    <div>
+      <label>Color Header:</label>
+      <input type="color" id="colorHeaderTienda" class="campo-config">
+    </div>
+
+    <div>
+      <label>Color Footer:</label>
+      <input type="color" id="colorFooterTienda" class="campo-config">
+    </div>
+
+    <div>
+      <label for="colorTituloTienda">🎨 Color del título:</label>
+      <input type="color" id="colorTituloTienda" value="#000000">
+    </div>
+
+    <div>
+      <label>Color del carrito:</label>
+      <input type="color" id="colorCarritoTienda" value="#ff6b00">
+    </div>
+
+    <div>
+      <label>Color del texto (descripciones):</label>
+      <input type="color" id="colorTextoTienda" value="#333333">
+    </div>
+
+    <div>
+      <label>Logo actual:</label><br>
+      <img id="logoPreview" src="" style="height:60px;border-radius:8px;object-fit:contain;background:#f5f5f5;padding:6px;">
+      <input type="file" id="logoTienda" accept="image/*" style="margin-top:8px;">
+      <br>
+      <label style="margin-top:8px;display:block;">O usar URL del logo:</label>
+      <input type="url" id="logoUrlTienda" placeholder="https://ejemplo.com/logo.png" style="width:100%;padding:6px;border-radius:6px;border:1px solid #ccc;">
+    </div>
+
+  </div>
+
+  <div style="text-align:center;">
+    <button id="btnGuardarConfig" style="margin-top:20px;padding:10px 18px;border:none;border-radius:8px;background:#007bff;color:#fff;cursor:pointer;">💾 Guardar configuración</button>
+  </div>
+</section>
+
+
 
 
   <div id="paginacion" style="text-align:center; margin-top:20px;"></div>

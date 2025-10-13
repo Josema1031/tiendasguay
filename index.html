@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MATES GUAY</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="shortcut icon" href="imag/logo.png" type="image/x-icon">
@@ -52,15 +52,10 @@
     Diseño, tradición y sabor en un solo mate
   </p>-->
 
-  <!-- MENÚ DE CATEGORÍAS -->
-  <div id="menu-categorias">
-    <button onclick="filtrarCategoria('todo')">Todos</button>
-    <button onclick="filtrarCategoria('Imperial')">Imperial</button>
-    <button onclick="filtrarCategoria('Torpedo')">Torpedo</button>
-    <button onclick="filtrarCategoria('Camionero')">Camionero</button>
-    <button onclick="filtrarCategoria('Combo')">Combo</button>
-    <button onclick="filtrarCategoria('Oferta')">Oferta</button>
-  </div>
+
+<!-- MENÚ DE CATEGORÍAS DINÁMICAS -->
+<div id="menu-categorias"></div>
+
 
   <!-- PRODUCTOS -->
   <main>
@@ -94,6 +89,12 @@
       <button id="modal-agregar">Agregar al carrito</button>
     </div>
   </div>
+
+ <p id="contador-visitas" style="text-align:center; color:#444; font-size:14px; margin-top:10px;">
+  👁️ Visitas: <span id="contador-visitas-numero">0</span>
+</p>
+
+
 
   <!-- FOOTER -->
   <footer id="footer" style="text-align:left; padding:20px; background:#003366; color:white;">
@@ -145,6 +146,7 @@
     async function aplicarConfig() {
       const cfg = await cargarConfig();
       if (!cfg) return;
+      
 
       // Header
       const header = document.getElementById("header-tienda");
@@ -205,6 +207,43 @@
         btnCarrito.style.color = "#000";
         btnCarrito.style.fontWeight = "600";
       }
+      // 🏷️ Cambiar color del título
+if (cfg.colorTitulo) {
+  const titulo = document.querySelector(".titulo-tienda, h1, h2");
+  if (titulo) titulo.style.color = cfg.colorTitulo;
+}
+
+      // ============================================
+// 🎨 NUEVAS CONFIGURACIONES VISUALES
+// ============================================
+
+// 🛒 Cambiar color del botón flotante del carrito (colorCarrito)
+if (cfg.colorCarrito) {
+  const botonCarrito = document.getElementById("toggle-carrito");
+  if (botonCarrito) {
+    botonCarrito.style.backgroundColor = cfg.colorCarrito;
+    botonCarrito.style.borderColor = cfg.colorCarrito;
+
+    // Detectar brillo del color para texto legible (blanco o negro)
+    const rgb = parseInt(cfg.colorCarrito.replace("#", ""), 16);
+    const r = (rgb >> 16) & 255;
+    const g = (rgb >> 8) & 255;
+    const b = rgb & 255;
+    const brillo = (r * 299 + g * 587 + b * 114) / 1000;
+    botonCarrito.style.color = brillo < 140 ? "#fff" : "#000";
+  }
+}
+
+// ✏️ Cambiar color del texto del footer (Dirección, Horario, WhatsApp)
+if (cfg.colorTexto) {
+  const footer = document.getElementById("footer");
+  if (footer) {
+    footer.querySelectorAll("p, a, strong").forEach(el => {
+      el.style.color = cfg.colorTexto;
+    });
+  }
+}
+
 
       document.title = cfg.nombre || "Tienda";
     }

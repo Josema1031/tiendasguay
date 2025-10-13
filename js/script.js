@@ -2,14 +2,28 @@
 // 🔧 CONFIGURACIÓN DE FIREBASE
 // Inicializa el proyecto y la conexión con la base de datos
 // ============================================
+// ✅ Importaciones unificadas (versión 10.12.2)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getFirestore,
   collection,
   getDocs,
   doc,
-  getDoc
+  getDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getStorage,
+  ref,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+
 
 // Configuración de Firebase del proyecto actual
 const firebaseConfig = {
@@ -25,6 +39,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ===========================================
+// 👀 CONTADOR DE VISITAS (crear/actualizar y mostrar)
+// ===========================================
+async function registrarVisita() {
+  const visitasRef = doc(db, "tiendas", tiendaId, "config", "visitas");
+  try {
+    await updateDoc(visitasRef, { total: increment(1) });
+  } catch (err) {
+    // Si el doc no existe, lo creamos con total=1
+    await setDoc(visitasRef, { total: 1 });
+  }
+}
+
+async function mostrarVisitas() {
+  const el = document.getElementById("contador-visitas-numero");
+  if (!el) return; // evita error si el elemento no existe en el HTML
+  const visitasRef = doc(db, "tiendas", tiendaId, "config", "visitas");
+  const snap = await getDoc(visitasRef);
+  el.textContent = snap.exists() ? (snap.data().total || 0) : "0";
+}
+
+
 // ============================================
 // 🏪 FUNCIÓN: obtener el ID de la tienda desde la URL
 // Lee el parámetro ?tienda= del enlace o desde localStorage
@@ -39,22 +75,48 @@ function getTiendaId() {
   return localStorage.getItem("tiendaId") || null;
 }
 const tiendaId = getTiendaId();
-// ============================================
-// 📊 CONTADOR AUTOMÁTICO DE VISITAS
-// Cada vez que se ingresa a la tienda, suma 1 al campo "visitas"
-// ============================================
-import { increment, updateDoc, doc as docRef } 
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-(async () => {
-  try {
-    const tiendaDoc = docRef(db, "tiendas", tiendaId);
-    await updateDoc(tiendaDoc, { visitas: increment(1) });
-    console.log(`✅ Contador de visitas actualizado para ${tiendaId}`);
-  } catch (error) {
-    console.warn("⚠️ No se pudo actualizar el contador de visitas:", error);
-  }
-})();
+// ============================================
+// 🏷️ CARGAR CATEGORÍAS EN TIEMPO REAL DESDE FIRESTORE
+// ============================================
+function cargarCategoriasEnTiempoReal() {
+  const catRef = doc(db, "tiendas", tiendaId, "config", "categorias");
+
+  // 👇 Escucha cambios en tiempo real
+  onSnapshot(catRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const categorias = docSnap.data().lista || [];
+      renderBotonesCategorias(categorias);
+    } else {
+      renderBotonesCategorias(["Todos"]);
+    }
+  }, (error) => {
+    console.error("Error escuchando categorías:", error);
+  });
+}
+
+function renderBotonesCategorias(categorias) {
+  const cont = document.getElementById("menu-categorias");
+  cont.innerHTML = "";
+
+  // 🟢 Siempre agregar "Todos" primero
+  const btnTodos = document.createElement("button");
+  btnTodos.textContent = "Todos";
+  btnTodos.onclick = () => filtrarCategoria("Todos");
+  cont.appendChild(btnTodos);
+
+  categorias.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.textContent = cat;
+    btn.onclick = () => filtrarCategoria(cat);
+    cont.appendChild(btn);
+  });
+}
+
+// 🚀 Llamar al iniciar la tienda
+cargarCategoriasEnTiempoReal();
+
+
 
 
 // ============================================
@@ -458,6 +520,50 @@ window.addEventListener("storage", e => {
 });
 
 // ============================================
+// 🎨 PERSONALIZACIÓN VISUAL DE LA TIENDA
+// ============================================
+(async () => {
+  const config = await cargarConfig();
+  if (!config) return;
+
+  // 🛒 Cambiar color del botón flotante del carrito
+  if (config.colorCarrito) {
+    const botonCarrito = document.getElementById("toggle-carrito");
+    if (botonCarrito) {
+      botonCarrito.style.backgroundColor = config.colorCarrito;
+      botonCarrito.style.borderColor = config.colorCarrito;
+
+      // Detectar brillo para elegir color de texto (blanco o negro)
+      const rgb = parseInt(config.colorCarrito.replace("#", ""), 16);
+      const r = (rgb >> 16) & 255;
+      const g = (rgb >> 8) & 255;
+      const b = rgb & 255;
+      const brillo = (r * 299 + g * 587 + b * 114) / 1000;
+      botonCarrito.style.color = brillo < 140 ? "#fff" : "#000";
+    }
+  }
+
+  // ✏️ Cambiar color del texto de las descripciones
+  if (config.colorTexto) {
+    // Selecciona los textos de dirección, horario y WhatsApp
+    document.querySelectorAll("#infoTienda, .info-tienda, .descripcion-tienda, .datos-tienda, p.descripcion-local").forEach(el => {
+      el.style.color = config.colorTexto;
+    });
+  }
+
+  // 🎨 También aplicamos header/footer si aún no estaban
+  if (config.colorHeader) {
+    const header = document.querySelector("header");
+    if (header) header.style.backgroundColor = config.colorHeader;
+  }
+  if (config.colorFooter) {
+    const footer = document.querySelector("footer");
+    if (footer) footer.style.backgroundColor = config.colorFooter;
+  }
+})();
+
+
+// ============================================
 // 🚀 INICIALIZACIÓN AUTOMÁTICA
 // Carga los productos y muestra el carrito al abrir la tienda
 // ============================================
@@ -506,4 +612,10 @@ window.addEventListener("online", () => {
     avisoConexion.style.background = "#ff5252";
     avisoConexion.textContent = "⚠️ Conexión perdida. Esperando reconexión...";
   }, 3000);
+});
+
+// Ejecutar cuando el DOM esté listo (seguro)
+window.addEventListener("DOMContentLoaded", async () => {
+  await registrarVisita();
+  await mostrarVisitas();
 });
