@@ -56,6 +56,127 @@
   }
 }
 
+/* === AJUSTES RESPONSIVE PARA HEADER Y CTA === */
+
+/* 🔸 General */
+nav img {
+  height: 170px;
+  width: auto;
+  object-fit: contain;
+}
+
+nav .cta {
+  font-size: 15px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* 🔹 Tablet */
+@media (max-width: 768px) {
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  nav img {
+    height: 100px;
+  }
+
+  nav .cta {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+}
+
+/* 🔹 Celular */
+@media (max-width: 480px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  nav img {
+    height: 150px;
+  }
+
+  nav .cta {
+    display: block;
+    font-size: 13px;
+    padding: 6px 10px;
+    width: auto;
+    border-radius: 6px;
+  }
+
+  nav a {
+    margin-left: 10px;
+    font-size: 13px;
+  }
+}
+/* === Borde uniforme para todas las cards === */
+.plan {
+  border: 3px solid #0b5ed7; /* celeste profesional */
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+.plan.basico { border-color: #2196f3; }     /* Azul claro */
+.plan.profesional { border-color: #0b5ed7; }/* Azul intermedio */
+.plan.premium { border-color: #007bff; }    /* Azul intenso */
+
+/* === CENTRADO Y DISTRIBUCIÓN DE BOTONES HERO === */
+.botones-landing {
+  display: flex;
+  justify-content: center;   /* 🔹 Centra horizontalmente */
+  align-items: center;       /* 🔹 Centra verticalmente */
+  gap: 10px;                 /* 🔹 Espacio entre los botones */
+  flex-wrap: wrap;           /* 🔹 Evita desbordes */
+  margin-top: 12px;
+}
+
+/* 🔹 Botones uniformes */
+.botones-landing a {
+  text-align: center;
+  min-width: 150px;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+/* 🟢 Tablet */
+@media (max-width: 768px) {
+  .botones-landing {
+    flex-wrap: nowrap; /* 🔹 Mantiene uno al lado del otro */
+    gap: 8px;
+  }
+  .botones-landing a {
+    flex: 1 1 auto;
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+}
+
+/* 📱 Celular */
+@media (max-width: 480px) {
+  .botones-landing {
+    flex-wrap: nowrap; /* 🔹 Siempre lado a lado */
+    justify-content: center;
+    gap: 6px;
+  }
+  .botones-landing a {
+    flex: 1 1 45%;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+
+
+
+
   </style>
 </head>
 <body>
@@ -63,7 +184,7 @@
     <nav>
       <div style="display:flex;align-items:center;gap:10px">
         <img src="imag/LOGO-LADINGPAGE.jpeg" alt="Logo" height="34" />
-        <strong>Vidriera Virtual</strong>
+      
       </div>
       <div>
         <a href="#planes">Planes</a>
@@ -78,10 +199,12 @@
       <span class="tag">Tu catálogo online en minutos</span>
       <h1>Digitalizamos tu negocio con <span style="color:var(--c1)">catálogo + QR + WhatsApp</span></h1>
       <p>Mostrá tus productos, generá pedidos por WhatsApp y compartí un código QR listo para imprimir. Sin vueltas, sin programar.</p>
-      <div style="display:flex;gap:10px;margin-top:12px">
-        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20mi%20tienda%20online">Hablar por WhatsApp</a>
-        <a class="cta" href="#planes">Ver planes</a>
-      </div>
+      <div class="botones-landing">
+  <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20mi%20tienda%20online">Hablar por WhatsApp</a>
+  <a class="cta" href="#planes">Ver planes</a>
+</div>
+
+
       <div class="cards">
         <div class="card"><strong>QR incluido</strong><br/>Descargá PNG y PDF listos para el local.</div>
         <div class="card"><strong>Pedidos fáciles</strong><br/>Tus clientes te escriben directo a WhatsApp.</div>
@@ -106,7 +229,7 @@
         </ul>
         <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20el%20Plan%20B%C3%A1sico">Elegir Básico</a>
       </div>
-      <div class="plan" style="border:2px solid var(--c1)">
+      <div class="plan">
         <strong>Profesional</strong>
         <p>$25.000 / mes</p>
         <ul>

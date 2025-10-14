@@ -1,4 +1,6 @@
-/* -------- Reset y estructura básica -------- */
+/* ==========================================================
+   🧱 RESETEO Y ESTRUCTURA BÁSICA
+   ========================================================== */
 * {
   box-sizing: border-box;
 }
@@ -9,21 +11,19 @@ body {
   padding: 0;
 }
 
-/* -------- Header y Logo -------- */
-
+/* ==========================================================
+   🧭 HEADER Y LOGO
+   ========================================================== */
 header {
-  background: #20f1f5;
   background: linear-gradient(0deg, rgba(32, 241, 245, 1) 0%, rgba(45, 142, 253, 1) 100%);
   color: black;
   text-align: center;
-   padding: 10px 0;
-  position: sticky; /* o fixed si querés que quede totalmente fijo */
-  z-index: 1000;    /* para que quede por encima de todo */
-   top: 0;  /* se pega al tope de la ventana */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* opcional, sombra */
+  padding: 10px 0;
+  position: sticky;
+  z-index: 1000;
+  top: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
-
 
 .header {
   text-align: center;
@@ -43,12 +43,12 @@ header {
   object-fit: contain;
 }
 
-
-/* -------- Grid de productos -------- */
+/* ==========================================================
+   🛒 GRID DE PRODUCTOS Y CARDS
+   ========================================================== */
 .productos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  /* Móviles */
   gap: 1rem;
   padding: 1rem;
   justify-items: center;
@@ -57,18 +57,16 @@ header {
 @media (min-width: 600px) {
   .productos {
     grid-template-columns: repeat(4, 1fr);
-    /* Tablets */
   }
 }
 
 @media (min-width: 1024px) {
   .productos {
     grid-template-columns: repeat(6, 1fr);
-    /* Escritorio */
   }
 }
 
-/* -------- Card -------- */
+/* --- CARD PRODUCTO --- */
 .card {
   width: 100%;
   max-width: 200px;
@@ -87,20 +85,15 @@ header {
   height: auto;
 }
 
-/* -------- Animación -------- */
+/* --- ANIMACIÓN DE ENTRADA --- */
 @keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-/* -------- Menú de categorías -------- */
+/* ==========================================================
+   🧩 MENÚ DE CATEGORÍAS
+   ========================================================== */
 #menu-categorias {
   text-align: center;
   margin: 20px 0;
@@ -129,7 +122,9 @@ header {
   transform: scale(1.08);
 }
 
-/* -------- Carrito -------- */
+/* ==========================================================
+   🛍️ CARRITO
+   ========================================================== */
 .carrito {
   padding: 1rem;
   background: #f7f7f7;
@@ -154,6 +149,7 @@ header {
   cursor: pointer;
 }
 
+/* --- BOTÓN FLOTANTE --- */
 #carrito-flotante {
   position: fixed;
   bottom: 70px;
@@ -162,7 +158,6 @@ header {
 }
 
 #toggle-carrito {
-  background: #20f1f5;
   background: linear-gradient(0deg, rgba(32, 241, 245, 1) 0%, rgba(45, 142, 253, 1) 100%);
   color: black;
   padding: 12px 16px;
@@ -198,13 +193,13 @@ header {
   cursor: pointer;
 }
 
-/* -------- Modal producto -------- */
+/* ==========================================================
+   🪟 MODAL DE PRODUCTO
+   ========================================================== */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
@@ -230,11 +225,11 @@ header {
   cursor: pointer;
 }
 
-/* -------- Botón mostrar más -------- */
+/* ==========================================================
+   ➕ BOTÓN “MOSTRAR MÁS”
+   ========================================================== */
 #btn-mostrar-mas {
-  background: #20f1f5;
   background: linear-gradient(0deg, rgba(32, 241, 245, 1) 0%, rgba(45, 142, 253, 1) 100%);
-  ;
   color: black;
   border: none;
   padding: 12px 24px;
@@ -253,17 +248,25 @@ header {
   transform: scale(1.05);
 }
 
-/* -------- Responsive -------- */
+/* ==========================================================
+   📱 RESPONSIVE DESIGN
+   ========================================================== */
 @media (max-width: 768px) {
-  header h1 {
-    font-size: 1.5rem;
+  #menu-categorias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
   }
 
   #menu-categorias button {
-    padding: 8px 12px;
-    font-size: 14px;
+    flex: 1 1 45%;      /* 🔹 Dos botones por fila */
+    padding: 10px 14px; /* 🔹 Mejor proporción táctil */
+    font-size: 15px;
     margin: 4px;
+    border-radius: 25px;
   }
+
 
   #buscador {
     width: 70% !important;
@@ -282,40 +285,31 @@ header {
     max-width: 350px;
   }
 
-  #btn-mostrar-mas {
-    width: 50%;
-  }
+  #btn-mostrar-mas { width: 50%; }
 }
 
 @media (max-width: 480px) {
-  header h1 {
-    font-size: 1.7rem;
-  }
+  header h1 { font-size: 1.7rem; }
+  header p { font-size: 0.9rem; }
 
-  header p {
-    font-size: 0.9rem;
-  }
-
-  #menu-categorias {
-    flex-wrap: wrap;
-  }
+  #menu-categorias { flex-wrap: wrap; }
 
   #menu-categorias button {
     font-size: 18px;
     padding: 6px 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
   }
+  
 
   #toggle-carrito {
     padding: 10px 14px;
     font-size: 16px;
   }
 
-  #carrito-contenido h2 {
-    font-size: 1rem;
-  }
+  #carrito-contenido h2 { font-size: 1rem; }
 
-  #btn-enviar,
-  #btn-vaciar {
+  #btn-enviar, #btn-vaciar {
     width: 100%;
     margin-top: 10px;
   }
@@ -325,57 +319,40 @@ header {
     margin-top: 10px;
   }
 
-  #btn-mostrar-mas {
-    width: 50%;
-  }
+  #btn-mostrar-mas { width: 50%; }
 
   #buscador {
     width: 50% !important;
     margin: 10px auto;
     display: block;
   }
-
 }
 
-.oculto {
-  display: none;
-}
+/* ==========================================================
+   🧾 OTROS ESTILOS GENERALES
+   ========================================================== */
+.oculto { display: none; }
 
 #footer {
-  background: #20f1f5;
   background: linear-gradient(0deg, rgba(32, 241, 245, 1) 0%, rgba(45, 142, 253, 1) 100%);
   color: black;
   text-align: left;
-  padding: 20px 20px 20px 30px;
+  padding: 20px 30px;
   margin-top: 40px;
   font-size: 14px;
   border-radius: 6px;
 }
 
-#footer p {
-  margin: 5px 0;
-}
+#footer p { margin: 5px 0; }
 
-/* Footer responsive en móviles */
 @media (max-width: 600px) {
   #footer {
     padding: 15px;
     font-size: 12px;
-
   }
 }
 
-.card {
-  position: relative;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-  background-color: white;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-  max-width: 250px;
-}
-
+/* --- DETALLES DE PRECIO --- */
 .precio {
   display: flex;
   justify-content: center;
@@ -407,11 +384,8 @@ header {
   top: 10px;
   left: 10px;
 }
-.card button[disabled] {
-  color: black;
-  opacity: 0.6;
-  font-weight: bold;
-}
+
+/* --- CARRITO LISTA --- */
 #lista-carrito li {
   display: flex;
   align-items: center;
@@ -419,10 +393,11 @@ header {
   flex-wrap: wrap;
 }
 
-#lista-carrito li span {
-  font-style: italic;
-}
+#lista-carrito li span { font-style: italic; }
 
+/* ==========================================================
+   🧮 DASHBOARD / ESTADOS DE STOCK
+   ========================================================== */
 .dashboard-card {
   flex: 1;
   padding: 15px;
@@ -432,12 +407,13 @@ header {
   font-weight: bold;
   font-size: 16px;
 }
-.low-stock-card {
-  background-color: #fff3cd; /* amarillo */
-}
-.no-stock-card {
-  background-color: #f8d7da; /* rojo */
-}
+
+.low-stock-card { background-color: #fff3cd; }
+.no-stock-card { background-color: #f8d7da; }
+
+/* ==========================================================
+   ⏳ LOADER / SPINNER
+   ========================================================== */
 .loader-pantalla {
   position: fixed;
   width: 100%;
@@ -448,6 +424,7 @@ header {
   align-items: center;
   z-index: 9999;
 }
+
 .spinner {
   border: 6px solid #f3f3f3;
   border-top: 6px solid #003366;
@@ -456,36 +433,34 @@ header {
   height: 60px;
   animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-footer {
-  text-align: left;
-}
+/* ==========================================================
+   🦶 FOOTER GENERAL
+   ========================================================== */
+footer { text-align: left; }
+
 @media (max-width: 600px) {
-  footer {
-    text-align: center;
-  }
+  footer { text-align: center; }
 }
 
-
-/* === RESPONSIVE GLOBAL === */
+/* ==========================================================
+   🌐 RESPONSIVE GLOBAL EXTRA
+   ========================================================== */
 @media (max-width: 992px) {
-  body {
-    padding: 0 10px;
-  }
+  body { padding: 0 10px; }
+
   header, nav, footer {
     flex-direction: column;
     text-align: center;
   }
-  nav a {
-    margin: 6px 0;
-  }
-  table {
-    font-size: 13px;
-  }
+
+  nav a { margin: 6px 0; }
+  table { font-size: 13px; }
 }
 
 @media (max-width: 768px) {
@@ -493,14 +468,17 @@ footer {
     width: 100% !important;
     font-size: 15px !important;
   }
+
   .grid, .row, .form-grid {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
+
   .card, .plan, .producto {
     max-width: 100%;
   }
+
   img {
     max-width: 100%;
     height: auto;
@@ -508,12 +486,9 @@ footer {
 }
 
 @media (max-width: 480px) {
-  h1, h2 {
-    font-size: 1.4rem !important;
-  }
-  table {
-    font-size: 12px;
-  }
+  h1, h2 { font-size: 1.4rem !important; }
+  table { font-size: 12px; }
+
   #acciones {
     display: flex;
     flex-direction: column;
