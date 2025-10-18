@@ -1,0 +1,142 @@
+[
+  {
+    "nombre": "Coca-Cola 500ml",
+    "precio": 1800,
+    "categoria": "Bebidas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/coca%20cola%20500ml.jpg?raw=true",
+    "stock": 40
+  },
+  {
+    "nombre": "Pepsi 500ml",
+    "precio": 1700,
+    "categoria": "Bebidas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/pepsi%20500%20ml.jpg?raw=true",
+    "stock": 35
+  },
+  {
+    "nombre": "Agua mineral 500ml",
+    "precio": 1000,
+    "categoria": "Bebidas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/agua%20mineral.jpg?raw=true",
+    "stock": 50
+  },
+  {
+    "nombre": "Fanta 500ml",
+    "precio": 1700,
+    "categoria": "Bebidas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/fanta%20500%20ml.jpg?raw=true",
+    "stock": 25
+  },
+  {
+    "nombre": "Chicles Beldent",
+    "precio": 800,
+    "categoria": "Golosinas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/belden.jpg?raw=true",
+    "stock": 60
+  },
+  {
+    "nombre": "Chocolate Milka 100g",
+    "precio": 2500,
+    "categoria": "Golosinas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/chocolate%20milka.jpg?raw=true",
+    "stock": 20
+  },
+  {
+    "nombre": "Alfajor Triple",
+    "precio": 1200,
+    "categoria": "Golosinas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/alfajor%20triple.jpg?raw=true",
+    "stock": 30
+  },
+  {
+    "nombre": "Papas fritas Lays 90g",
+    "precio": 2300,
+    "categoria": "Snacks",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/papa%20lays.jpg?raw=true",
+    "stock": 25
+  },
+  {
+    "nombre": "Maní salado 100g",
+    "precio": 1100,
+    "categoria": "Snacks",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/mani%20salado.jpg?raw=true",
+    "stock": 40
+  },
+  {
+    "nombre": "Cigarrillos Marlboro Box",
+    "precio": 5000,
+    "categoria": "Cigarrillos",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/malboro%20box.jpg?raw=true",
+    "stock": 15
+  },
+  {
+    "nombre": "Cigarrillos PhillipMorris Box",
+    "precio": 4800,
+    "categoria": "Cigarrillos",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/philipmorris.jpg?raw=true",
+    "stock": 10
+  },
+  {
+    "nombre": "Encendedor Bic",
+    "precio": 1200,
+    "categoria": "Accesorios",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/encendedor%20bic.jpg?raw=true",
+    "stock": 25
+  },
+  {
+    "nombre": "Galletitas Oreo",
+    "precio": 1600,
+    "categoria": "Golosinas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/galleta%20oreo.jpg?raw=true",
+    "stock": 28
+  },
+  {
+    "nombre": "Gaseosa Sprite 1.5L",
+    "precio": 3200,
+    "categoria": "Bebidas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/sprite%201,5.jpg?raw=true",
+    "stock": 18
+  },
+  {
+    "nombre": "Caramelos Butter Toffees",
+    "precio": 950,
+    "categoria": "Golosinas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/caramelo%20toffes.jpg?raw=true",
+    "stock": 50
+  },
+  {
+    "nombre": "Turrón de maní Arcor",
+    "precio": 900,
+    "categoria": "Golosinas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/turron%20arcor.jpg?raw=true",
+    "stock": 35
+  },
+  {
+    "nombre": "Gomitas Mogul 100g",
+    "precio": 1200,
+    "categoria": "Golosinas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/gomita%20mogul.jpg?raw=true",
+    "stock": 25
+  },
+  {
+    "nombre": "Agua saborizada Levité 500ml",
+    "precio": 1600,
+    "categoria": "Bebidas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/levite%20500ml.jpg?raw=true",
+    "stock": 40
+  },
+  {
+    "nombre": "Palitos salados 100g",
+    "precio": 1100,
+    "categoria": "Snacks",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/palito%20salados.jpg?raw=true",
+    "stock": 30
+  },
+  {
+    "nombre": "Cerveza Quilmes 1L",
+    "precio": 3500,
+    "categoria": "Bebidas",
+    "imagen": "https://github.com/Josema1031/tiendasguay/blob/main/imag/quilmes%201l.jpg?raw=true",
+    "stock": 22
+  }
+]

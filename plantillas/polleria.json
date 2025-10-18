@@ -1,0 +1,142 @@
+[
+  {
+    "nombre": "Pechuga de pollo",
+    "precio": 4500,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2016/03/05/22/34/chicken-1239180_1280.jpg",
+    "stock": 30
+  },
+  {
+    "nombre": "Muslo de pollo",
+    "precio": 3900,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2018/05/11/22/35/chicken-3396119_1280.jpg",
+    "stock": 25
+  },
+  {
+    "nombre": "Ala de pollo",
+    "precio": 3500,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2019/05/15/11/44/chicken-wings-4204981_1280.jpg",
+    "stock": 22
+  },
+  {
+    "nombre": "Suprema de pollo",
+    "precio": 4800,
+    "categoria": "Milanesas",
+    "imagen": "https://cdn.pixabay.com/photo/2019/05/01/09/29/chicken-4177082_1280.jpg",
+    "stock": 20
+  },
+  {
+    "nombre": "Filet de pechuga",
+    "precio": 4600,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2016/03/05/22/33/chicken-1239178_1280.jpg",
+    "stock": 28
+  },
+  {
+    "nombre": "Patamuslo con piel",
+    "precio": 3800,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2018/06/14/21/25/chicken-3470288_1280.jpg",
+    "stock": 18
+  },
+  {
+    "nombre": "Pechuga rellena con jamón y queso",
+    "precio": 5900,
+    "categoria": "Preparados",
+    "imagen": "https://cdn.pixabay.com/photo/2017/07/09/23/52/chicken-roll-2485703_1280.jpg",
+    "stock": 14
+  },
+  {
+    "nombre": "Pollo entero fresco",
+    "precio": 7200,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2018/04/13/21/42/chicken-3319178_1280.jpg",
+    "stock": 10
+  },
+  {
+    "nombre": "Pollo trozado",
+    "precio": 7400,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2020/02/17/19/19/chicken-4855707_1280.jpg",
+    "stock": 12
+  },
+  {
+    "nombre": "Milanesa de pollo casera",
+    "precio": 5200,
+    "categoria": "Milanesas",
+    "imagen": "https://cdn.pixabay.com/photo/2019/04/14/15/13/chicken-4126375_1280.jpg",
+    "stock": 20
+  },
+  {
+    "nombre": "Albóndigas de pollo",
+    "precio": 4800,
+    "categoria": "Preparados",
+    "imagen": "https://cdn.pixabay.com/photo/2018/06/07/17/06/meatballs-3459190_1280.jpg",
+    "stock": 18
+  },
+  {
+    "nombre": "Pollo al spiedo",
+    "precio": 8800,
+    "categoria": "Preparados",
+    "imagen": "https://cdn.pixabay.com/photo/2019/03/02/09/04/roasted-chicken-4028281_1280.jpg",
+    "stock": 8
+  },
+  {
+    "nombre": "Menudos de pollo",
+    "precio": 1800,
+    "categoria": "Menudencias",
+    "imagen": "https://cdn.pixabay.com/photo/2018/06/06/18/14/chicken-3457157_1280.jpg",
+    "stock": 30
+  },
+  {
+    "nombre": "Corazones de pollo",
+    "precio": 2900,
+    "categoria": "Menudencias",
+    "imagen": "https://cdn.pixabay.com/photo/2018/02/07/18/33/asado-3136516_1280.jpg",
+    "stock": 15
+  },
+  {
+    "nombre": "Hígado de pollo",
+    "precio": 2500,
+    "categoria": "Menudencias",
+    "imagen": "https://cdn.pixabay.com/photo/2019/03/02/09/06/liver-4028286_1280.jpg",
+    "stock": 25
+  },
+  {
+    "nombre": "Nuggets de pollo",
+    "precio": 4900,
+    "categoria": "Preparados",
+    "imagen": "https://cdn.pixabay.com/photo/2016/03/05/19/02/chicken-1239132_1280.jpg",
+    "stock": 20
+  },
+  {
+    "nombre": "Brochettes de pollo y vegetales",
+    "precio": 6200,
+    "categoria": "Preparados",
+    "imagen": "https://cdn.pixabay.com/photo/2018/04/04/22/54/chicken-3298649_1280.jpg",
+    "stock": 12
+  },
+  {
+    "nombre": "Pollo deshuesado para relleno",
+    "precio": 7600,
+    "categoria": "Pollo Fresco",
+    "imagen": "https://cdn.pixabay.com/photo/2019/05/14/10/34/chicken-4202615_1280.jpg",
+    "stock": 8
+  },
+  {
+    "nombre": "Milanesa de pollo con avena",
+    "precio": 5400,
+    "categoria": "Milanesas",
+    "imagen": "https://cdn.pixabay.com/photo/2022/07/14/21/12/milanesa-7322914_1280.jpg",
+    "stock": 14
+  },
+  {
+    "nombre": "Pollo trozado congelado",
+    "precio": 7200,
+    "categoria": "Pack",
+    "imagen": "https://cdn.pixabay.com/photo/2020/03/22/20/07/chicken-4959160_1280.jpg",
+    "stock": 10
+  }
+]

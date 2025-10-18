@@ -1,0 +1,5 @@
+[
+  { "nombre": "Remera básica", "precio": 8900, "categoria": "Indumentaria", "imagen": "https://placehold.co/300x300?text=Remera", "stock": 25 },
+  { "nombre": "Jean azul", "precio": 19500, "categoria": "Pantalones", "imagen": "https://placehold.co/300x300?text=Jean", "stock": 15 },
+  { "nombre": "Campera liviana", "precio": 25800, "categoria": "Abrigos", "imagen": "https://placehold.co/300x300?text=Campera", "stock": 10 }
+]

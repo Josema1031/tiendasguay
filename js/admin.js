@@ -23,6 +23,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+
+
 function getTiendaId() {
   const params = new URLSearchParams(window.location.search);
   const fromUrl = params.get("tienda");
@@ -37,6 +39,22 @@ const el = (id) => document.getElementById(id);
 document.getElementById("MATES-GUAY").textContent = tiendaId; // sigue funcionando tu encabezado :contentReference[oaicite:5]{index=5}
 
 const productosRef = collection(db, "tiendas", tiendaId, "productos");
+// ===============================
+// ⚖️ Unidades por rubro de tienda
+// ===============================
+const UNIDADES_POR_RUBRO = {
+  ropa: ["XS", "S", "M", "L", "XL", "XXL"],
+  carniceria: ["Kg", "Grs","Docena", "Unidad", "Porción"],
+  verduleria: ["Kg", "Grs", "Bolsa","Docena", "Unidad"],
+  polleria: ["Kg", "Grs","Unidad", "Pack"],
+  kiosko: ["Unidad", "Pack", "Caja"],
+  mates: ["Unidad", "Combo", "Set"],
+  default: ["Unidad", "Kg", "Grs"]
+};
+
+
+
+
 // ===============================
 // 🔐 Permisos/funcionalidades por plan
 // ===============================
@@ -225,8 +243,16 @@ window.login = async function () {
     // Ahora que el login fue exitoso, forzamos el cambio visual
     document.getElementById("login-container").style.display = "none";
     document.getElementById("admin-panel").style.display = "block";
-    mostrarProductos();
-    await initPlanUI();
+
+   await cargarRubroTienda();
+await cargarCategorias(); 
+mostrarProductos();
+await initPlanUI();
+
+
+
+
+
     // ✅ Mostrar Configuración de la Tienda solo después del login
     document.getElementById("configuracion-tienda").style.display = "block";
 
@@ -250,8 +276,13 @@ onAuthStateChanged(auth, async user => {
   if (user && loginManual === "true") {
     login.style.display = "none";
     panel.style.display = "block";
-    mostrarProductos();
-    await initPlanUI(); // 
+   await cargarRubroTienda();
+await cargarCategorias(); // 🟢 AGREGAR AQUÍ TAMBIÉN
+mostrarProductos();
+await initPlanUI();
+
+
+
   } else {
     login.style.display = "block";
     panel.style.display = "none";
@@ -271,6 +302,27 @@ let paginaActual = 1;
 const productosPorPagina = 10;
 window.productos = productos;
 
+
+
+// 🏷️ Cargar rubro actual de la tienda
+let rubroActual = "default";
+
+async function cargarRubroTienda() {
+  try {
+    const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+    const configSnap = await getDoc(configRef);
+    if (configSnap.exists()) {
+      const data = configSnap.data();
+      rubroActual = (data.rubro || "default").toLowerCase();
+      console.log("🛍️ Rubro detectado:", rubroActual);
+    } else {
+      console.warn("⚠️ No se encontró config para esta tienda");
+    }
+  } catch (error) {
+    console.error("❌ Error al cargar rubro:", error);
+  }
+}
+
 //📦 MOSTRAR PRODUCTOS (CON CACHÉ)
 
 async function mostrarProductos() {
@@ -285,21 +337,23 @@ async function mostrarProductos() {
   }
 
   try {
-    const snapshot = await getDocs(productosRef);
-    productos = snapshot.docs.map(docSnap => ({
+    const productosSnap = await getDocs(collection(db, "tiendas", tiendaId, "productos"));
+    productos = productosSnap.docs.map(docSnap => ({
       id: docSnap.id,
       ...docSnap.data()
     }));
-    productosOriginales = JSON.parse(JSON.stringify(productos)); // Copia profunda
+
+    productosOriginales = JSON.parse(JSON.stringify(productos));
     sessionStorage.setItem("productosAdmin", JSON.stringify(productos));
     renderTabla();
-    actualizarDashboard(); // ← Agregá esta línea
+    actualizarDashboard();
   } catch (error) {
     alert("❌ Error al cargar los productos desde Firebase");
     console.error(error);
   } finally {
-    document.getElementById("loader").style.display = "none"; // ocultar loader
+    document.getElementById("loader").style.display = "none";
   }
+
 }
 
 
@@ -309,10 +363,11 @@ document.getElementById("buscador-admin").addEventListener("input", function () 
   const texto = this.value.toLowerCase().trim();
 
   const filtrados = productos.filter(prod =>
-    prod.nombre.toLowerCase().includes(texto) ||
-    prod.categoria.toLowerCase().includes(texto) ||
+    (prod.nombre || "").toLowerCase().includes(texto) ||
+    (prod.categoria || "").toLowerCase().includes(texto) ||
     (prod.tipoVenta && prod.tipoVenta.toLowerCase().includes(texto))
   );
+
 
   paginaActual = 1; // Reinicia a la primera página
   renderTabla(filtrados, true); // <-- nuevo parámetro
@@ -410,8 +465,7 @@ window.agregarProducto = async function () {
 };
 
 
-// 📋 RENDERIZAR TABLA DE PRODUCTOS
-
+// 📋 RENDERIZAR TABLA DE PRODUCTOS (CORREGIDA Y OPTIMIZADA)
 function renderTabla(lista = productos, filtrado = false) {
   const tbody = document.querySelector("#tabla-productos tbody");
   tbody.innerHTML = "";
@@ -429,74 +483,78 @@ function renderTabla(lista = productos, filtrado = false) {
     fila.addEventListener("drop", drop);
 
     fila.innerHTML = `
-      <td><input type="text" value="${prod.nombre}" onchange="editar(${inicio + index}, 'nombre', this.value)"></td>
+      <td><input type="text" value="${prod.nombre || ''}" onchange="editar(${inicio + index}, 'nombre', this.value)"></td>
 
-      <td><input type="number" value="${prod.precio}" onchange="editar(${inicio + index}, 'precio', this.value)"></td>
+      <td><input type="number" value="${prod.precio ?? ''}" onchange="editar(${inicio + index}, 'precio', this.value)"></td>
       <td><input type="number" value="${prod.precioAnterior ?? ''}" onchange="editar(${inicio + index}, 'precioAnterior', this.value)"></td>
       <td><input type="number" value="${prod.descuento ?? ''}" onchange="editar(${inicio + index}, 'descuento', this.value)"></td>
       <td><input type="number" value="${prod.precioMayorista ?? ''}" onchange="editar(${inicio + index}, 'precioMayorista', this.value)"></td>
       <td><input type="number" value="${prod.unidadesPack ?? ''}" onchange="editar(${inicio + index}, 'unidadesPack', this.value)"></td>
-     <td>
-  <select id="categoria_${inicio + index}" onchange="editar(${inicio + index}, 'categoria', this.value)">
-  </select>
-</td>
 
-      <td><!-- Input para la cantidad -->
-      <input type="number" 
-         value="${prod.cantidad || ''}" 
-         onchange="editar(${inicio + index}, 'cantidad', this.value)" 
-         style="width: 40px; text-align: center;" 
-         min="0" step="0.01">
-
-        <!-- Select para la unidad -->
-        <select onchange="editar(${inicio + index}, 'unidad', this.value)" style="width: 70px;">
-          <option value="Unidad" ${prod.unidad === "Unidad" ? "selected" : ""}>Unidad</option>
-          <option value="Unidades" ${prod.unidad === "Unidades" ? "selected" : ""}>Unidades</option>
-           <option value="Sin Stock" ${prod.unidad === "Sin Stock" ? "selected" : ""}>Sin Stock</option>
-
+      <td>
+        <select id="categoria_${inicio + index}" onchange="editar(${inicio + index}, 'categoria', this.value)">
         </select>
       </td>
 
       <td>
-        <input type="text" value="${prod.imagen}" onchange="editar(${inicio + index}, 'imagen', this.value)" style="width: 90%; margin-top: 5px; text-align: center;">
-        <div style="text-align: center; margin-top: 5px;">  
-${prod.imagen
-        ? `<a href="${prod.imagen}" target="_blank">
-       <img src="${prod.imagen}" style="max-width: 100px; border-radius:6px; cursor:pointer;">
-     </a>`
-        : '❌ Sin imagen'}
+        <!-- Cantidad -->
+        <input type="number"
+               value="${prod.cantidad || ''}"
+               onchange="editar(${inicio + index}, 'cantidad', this.value)"
+               style="width: 40px; text-align: center;"
+               min="0" step="0.01">
+      </td>
 
+      <td>
+        <!-- Tipo de venta (dinámico por rubro) -->
+        <select onchange="editar(${inicio + index}, 'tipoVenta', this.value)" style="width: 80px;">
+          ${((UNIDADES_POR_RUBRO[rubroActual] || UNIDADES_POR_RUBRO.default)
+            .map(u => `<option value="${u}" ${prod.tipoVenta === u ? "selected" : ""}>${u}</option>`)
+            .join(''))}
+        </select>
+      </td>
+
+      <td>
+        <!-- Imagen del producto -->
+        <input type="text" value="${prod.imagen || ''}" onchange="editar(${inicio + index}, 'imagen', this.value)" style="width: 90%; margin-top: 5px; text-align: center;">
+        <div style="text-align: center; margin-top: 5px;">
+          ${prod.imagen
+            ? `<a href="${prod.imagen}" target="_blank">
+                 <img src="${prod.imagen}" style="max-width: 100px; border-radius:6px; cursor:pointer;">
+               </a>`
+            : '❌ Sin imagen'}
         </div>
       </td>
+
       <td><button onclick="eliminarProducto('${prod.id}', ${inicio + index})">🗑️ Eliminar</button></td>
       <td><input type="number" value="${prod.stock ?? 0}" onchange="editar(${inicio + index}, 'stock', this.value)"></td>
-
     `;
+
+    // 🔸 Resaltar si el producto está bajo de stock
     if (prod.stock !== undefined && prod.stock < 5) {
-      fila.classList.add("low-stock"); // resalta si queda menos de 5
+      fila.classList.add("low-stock");
     }
 
-    // === Ajustar categoría según el producto ===
-const selectCategoria = fila.querySelector(`#categoria_${inicio + index}`);
-if (selectCategoria) {
-  (window.categoriasGlobales || []).forEach(cat => {
-    const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    selectCategoria.appendChild(opt);
-  });
-  // 🟢 Asignar la categoría guardada del producto
-  selectCategoria.value = prod.categoria || "";
-}
-
+    // 🟢 Cargar categorías disponibles
+    const selectCategoria = fila.querySelector(`#categoria_${inicio + index}`);
+    if (selectCategoria) {
+      (window.categoriasGlobales || []).forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        selectCategoria.appendChild(opt);
+      });
+      // Asignar la categoría guardada
+      selectCategoria.value = prod.categoria || "";
+    }
 
     tbody.appendChild(fila);
-    actualizarSelectsCategoria(window.categoriasGlobales || []);
-
   });
-  // Ordenar productos por el campo 'orden'
+
+  // 🔸 Reordenar según el campo 'orden'
   productos.sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
-  // Solo actualizar productosOriginales y sessionStorage si no es filtrado
+
+  // 🔸 Actualizar caché solo si no es filtrado
   if (!filtrado) {
     productosOriginales = JSON.parse(JSON.stringify(productos));
     sessionStorage.setItem("productosAdmin", JSON.stringify(productos));
@@ -504,6 +562,7 @@ if (selectCategoria) {
 
   renderPaginacion(lista);
 }
+
 
 // 📄 FUNCION DASHBOARD
 function actualizarDashboard() {
@@ -539,8 +598,9 @@ function renderPaginacion(lista) {
     btn.style.color = i === paginaActual ? "white" : "black";
     btn.onclick = () => {
       paginaActual = i;
-      renderTabla();
+      renderTabla(productos);
     };
+
     contenedor.appendChild(btn);
   }
 }
@@ -633,6 +693,11 @@ window.guardarProductos = async function () {
         }
       }
     }
+    if (operaciones.length === 0) {
+      alert("No hay cambios para guardar.");
+      return;
+    }
+
     await Promise.all(operaciones);
 
     productosOriginales = JSON.parse(JSON.stringify(productos));
@@ -856,6 +921,16 @@ function renderGraficoCategorias(productos) {
 // 🏷️ GESTIÓN DE CATEGORÍAS SINCRONIZADA
 // ===============================
 async function cargarCategorias() {
+  // 🏷️ Categorías predeterminadas por rubro
+  const CATEGORIAS_POR_RUBRO = {
+    carniceria: ["Todos", "Carne", "Cerdo", "Pollo", "Embutidos", "Ofertas"],
+    verduleria: ["Todos", "Frutas", "Verduras", "Hortalizas", "Hierbas", "Ofertas"],
+    polleria: ["Todos", "Pollo Fresco", "Milanesas", "Supremas", "Menudencias", "Ofertas"],
+    kiosko: ["Todos", "Golosinas", "Bebidas", "Snacks", "Cigarrillos", "Ofertas"],
+    ropa: ["Todos", "Hombre", "Mujer", "Niños", "Accesorios", "Ofertas"],
+    mates: ["Todos", "Mates", "Bombillas", "Termos", "Combos", "Ofertas"]
+  };
+
   const catRef = doc(db, "tiendas", tiendaId, "config", "categorias");
   const catSnap = await getDoc(catRef);
 
@@ -863,9 +938,20 @@ async function cargarCategorias() {
   if (catSnap.exists()) {
     categorias = catSnap.data().lista || [];
   } else {
-    categorias = ["Imperial", "Camionero", "Combo", "Ofertas"];
+    // 🔹 Si no existen categorías en Firestore, intentar usar el rubro de la tienda
+    const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+    const configSnap = await getDoc(configRef);
+    const rubro = configSnap.exists() ? configSnap.data().rubro : "";
+
+    if (rubro && CATEGORIAS_POR_RUBRO[rubro]) {
+      categorias = CATEGORIAS_POR_RUBRO[rubro];
+    } else {
+      categorias = ["Todos", "General"];
+    }
+
     await setDoc(catRef, { lista: categorias });
   }
+
 
   window.categoriasGlobales = categorias; // ✅ agregado
   renderCategorias(categorias);
@@ -978,13 +1064,6 @@ function mostrarConfirmacionCategorias() {
   msg.style.animation = "fadeInOut 3s ease-in-out forwards";
   setTimeout(() => (msg.style.display = "none"), 3000);
 }
-
-// 🔄 Cargar al inicio
-cargarCategorias();
-
-
-
-
 
 
 document.getElementById("btnGuardarConfig").addEventListener("click", guardarConfigTienda);

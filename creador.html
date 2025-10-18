@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Creador de Tiendas – Mates Guay</title>
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
@@ -14,14 +15,17 @@
       margin: 0;
       padding: 20px;
     }
+
     .wrap {
       max-width: 900px;
       margin: auto;
     }
+
     h1 {
       margin: 10px 0 20px;
       text-align: center;
     }
+
     .card {
       background: #101935;
       border: 1px solid #1f2a48;
@@ -30,11 +34,13 @@
       margin-bottom: 16px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
+
     label {
       display: block;
       margin-top: 10px;
       font-weight: 600;
     }
+
     input {
       width: 50%;
       padding: 10px;
@@ -44,6 +50,7 @@
       color: #e6eefc;
       margin-top: 6px;
     }
+
     button {
       margin-top: 16px;
       padding: 12px 18px;
@@ -54,23 +61,28 @@
       background: linear-gradient(135deg, #20f1f5, #2d8efd);
       color: #0a0f1e;
     }
+
     .row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
+
     .ok {
       color: #66ffcc;
       margin-top: 8px;
     }
+
     .small {
       font-size: 0.9rem;
       opacity: 0.85;
     }
+
     a.link {
       color: #66d9ff;
       word-break: break-all;
     }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -78,361 +90,502 @@
     }
 
     form {
-  display: grid;
-  gap: 16px;
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+      display: grid;
+      gap: 16px;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
 
-@media (max-width: 600px) {
-  form {
-    padding: 14px;
-    box-shadow: none;
-  }
-  input, select, button {
-    font-size: 16px;
-  }
-}
+    @media (max-width: 600px) {
+      form {
+        padding: 14px;
+        box-shadow: none;
+      }
+
+      input,
+      select,
+      button {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>⚡ Creador Instantáneo de Tiendas Gualeguay </h1>
+    <div class="form-group">
+      <label>Seleccioná tu plan</label>
+      <select id="plan" required>
+        <option value="Basico">Básico</option>
+        <option value="Profesional">Profesional</option>
+        <option value="Premium">Premium</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Tipo de tienda</label>
+      <select id="rubro" required>
+        <option value="">-- Seleccionar rubro --</option>
+        <option value="carniceria">Carnicería</option>
+        <option value="verduleria">Verdulería</option>
+        <option value="polleria">Pollería</option>
+        <option value="kiosko">Kiosko</option>
+        <option value="ropa">Tienda de Ropa</option>
+        <option value="mates">Mates y artesanías</option>
+      </select>
+    </div>
+
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label>Tienda ID (sin espacios)</label>
+          <input id="tiendaId" placeholder="MATES-GUAY-LOCAL-12" />
+        </div>
+        <div>
+          <label>Nombre público</label>
+          <input id="nombre" placeholder="Mates Guay – Local 12" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>WhatsApp (solo números, con país)</label>
+          <input id="whatsapp" placeholder="5492644429649" />
+        </div>
+        <div>
+          <label>Imagen para redes (OpenGraph/Twitter) – opcional</label>
+          <input id="metaImage" placeholder="https://.../600x315.png" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Dirección</label>
+          <input id="direccion" placeholder="Calle y número, Ciudad (Prov.)" />
+        </div>
+        <div>
+          <label>Horarios</label>
+          <input id="horarios" placeholder="Lunes a Sábado 9 a 13 y 17 a 20 hs" />
+        </div>
+      </div>
+
+      <!-- Logo -->
+      <label>Logo de la tienda</label>
+      <input id="logoUrl" placeholder="https://.../logo.png (opcional)">
+      <p style="font-size:0.85em; opacity:0.8;">O subí una imagen desde tu dispositivo:</p>
+      <input type="file" id="logoFile" accept="image/*">
+      <img id="preview-logo-upload" src="" alt="Vista previa del logo"
+        style="max-height:80px; margin-top:10px; display:none; border-radius:8px;">
+
+      <!-- 🎨 Paleta de colores -->
+      <h3 style="margin-top:20px;">🎨 Personalización de colores</h3>
+      <div class="row">
+        <div>
+          <label>Color de fondo del Header</label>
+          <input id="colorHeader" type="color" value="#007bff" />
+        </div>
+        <div>
+          <label>Color de texto del Header</label>
+          <input id="colorHeaderText" type="color" value="#ffffff" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Color de fondo del Footer</label>
+          <input id="colorFooter" type="color" value="#003366" />
+        </div>
+        <div>
+          <label>Color de texto del Footer</label>
+          <input id="colorFooterText" type="color" value="#ffffff" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Color del botón del carrito</label>
+          <input id="colorBoton" type="color" value="#20f1f5" />
+        </div>
+      </div>
+
+      <button id="crear">Crear tienda</button>
+      <div id="msg" class="ok"></div>
+    </div>
+
+    <!-- 👀 Vista previa -->
+    <div class="card" style="margin-top:25px;">
+      <h3>👀 Vista previa en vivo</h3>
+      <div id="preview" style="border:1px solid #333; border-radius:10px; overflow:hidden;">
+        <header id="preview-header" style="background:#007bff; color:white; padding:15px; text-align:center;">
+          <img id="preview-logo" src="" alt="" style="max-height:60px; vertical-align:middle; margin-right:10px;">
+          <span id="preview-nombre" style="font-size:1.5em; font-weight:700;">Tu tienda</span>
+        </header>
+        <main style="padding:20px; background:#f7f7f7; color:#222;">
+          <p>🧉 Así se verá tu tienda digital.</p>
+          <div id="preview-info" style="margin-top:20px; font-size:0.95em;">
+            <!-- 🛍️ Vista previa de productos -->
+            <div id="preview-productos"
+              style="margin-top:25px; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px;">
+            </div>
+
+            <p><strong>📍 Dirección:</strong> <span id="preview-direccion">Sin dirección</span></p>
+            <p><strong>🕒 Horario:</strong> <span id="preview-horario">Sin horario</span></p>
+            <p><strong>📱 WhatsApp:</strong> <span id="preview-whatsapp">---</span></p>
+          </div>
+        </main>
+        <footer id="preview-footer" style="background:#003366; color:white; text-align:center; padding:10px;">
+          <small>© 2025 Tu Tienda</small>
+        </footer>
+      </div>
+    </div>
+    
+
+
+    <div class="card">
+      <h3>Links rápidos</h3>
+      <p class="small">Se mostrarán cuando la tienda esté creada:</p>
+      <div class="grid">
+        <div>🔗 Tienda pública: <a id="linkPublico" class="link" target="_blank"></a></div>
+        <div>🛠️ Panel admin: <a id="linkAdmin" class="link" target="_blank"></a></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+    import { getFirestore, doc, setDoc, collection, addDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
+      authDomain: "carniceriadonjose-48638.firebaseapp.com",
+      projectId: "carniceriadonjose-48638",
+      storageBucket: "carniceriadonjose-48638.appspot.com",
+      messagingSenderId: "322531750471",
+      appId: "1:322531750471:web:78e290c9c81eecc7be3762"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const el = id => document.getElementById(id);
+
+    // 📦 CREAR TIENDA
+    async function crearTienda() {
+      const tiendaId = (el("tiendaId").value || "").trim();
+      const nombre = (el("nombre").value || "").trim();
+      const whatsapp = (el("whatsapp").value || "").trim();
+
+      // 📸 Lógica combinada de logo
+      let logoUrlFinal = "";
+      const file = el("logoFile").files[0];
+      const linkManual = el("logoUrl").value.trim();
+
+      if (file) {
+        const storageRef = ref(storage, `logos/${tiendaId}/${file.name}`);
+        await uploadBytes(storageRef, file);
+        logoUrlFinal = await getDownloadURL(storageRef);
+      } else if (linkManual) {
+        logoUrlFinal = linkManual;
+      } else {
+        // 🔹 Logo sugerido según rubro (con URLs absolutas)
+        const rubroSeleccionado = el("rubro").value;
+        const logosSugeridos = {
+          carniceria: "https://josema1031.github.io/multitiendas/logos/carniceria.png",
+          verduleria: "https://josema1031.github.io/multitiendas/logos/verduleria.png",
+          polleria: "https://josema1031.github.io/multitiendas/logos/polleria.png",
+          kiosko: "https://josema1031.github.io/multitiendas/logos/kiosko.png",
+          ropa: "https://josema1031.github.io/multitiendas/logos/ropa.png",
+          mates: "https://josema1031.github.io/multitiendas/logos/mates.png"
+        };
+        logoUrlFinal = logosSugeridos[rubroSeleccionado] || "https://placehold.co/300x300?text=Sin+Logo";
+      }
+
+      const direccion = (el("direccion").value || "").trim();
+      const horarios = (el("horarios").value || "").trim();
+      const metaImage = (el("metaImage").value || "").trim();
+      const colorHeader = el("colorHeader").value;
+      const colorFooter = el("colorFooter").value;
+      const colorHeaderText = el("colorHeaderText").value;
+      const colorFooterText = el("colorFooterText").value;
+      const colorBoton = el("colorBoton").value;
+      const plan = el("plan").value;
+      const rubro = el("rubro").value;
+
+      if (!tiendaId || !nombre || !whatsapp) {
+        el("msg").innerHTML = "❌ Completá Tienda ID, Nombre y WhatsApp.";
+        return;
+      }
+
+      // ✅ Evitar guardar valor vacío en Firestore
+      if (!logoUrlFinal || logoUrlFinal.trim() === "") {
+        logoUrlFinal = "https://placehold.co/300x300?text=Sin+Logo";
+      }
+
+      const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
+      const configSnap = await getDoc(configRef);
+
+      if (configSnap.exists()) {
+        const confirmar = confirm(`⚠️ La tienda "${tiendaId}" ya existe.\n¿Querés actualizar su plan y configuración?`);
+        if (!confirmar) return;
+
+        await updateDoc(configRef, {
+          plan,
+          nombre,
+          whatsapp,
+          direccion,
+          horarios,
+          colorHeader,
+          colorFooter,
+          colorHeaderText,
+          colorFooterText,
+          colorBoton,
+          logo: logoUrlFinal,
+          rubro
+        });
+
+        alert("✅ Tienda actualizada correctamente");
+        return;
+      }
+
+      // 🔹 Guardar configuración inicial
+      await setDoc(doc(db, "tiendas", tiendaId, "config", "datos"), {
+        nombre,
+        whatsapp,
+        direccion,
+        horarios,
+        logo: logoUrlFinal,
+        colorHeader,
+        colorFooter,
+        colorHeaderText,
+        colorFooterText,
+        colorBoton,
+        plan,
+        rubro
+      });
+
+      // ✅ Documento raíz
+      await setDoc(doc(db, "tiendas", tiendaId), { creado: new Date().toISOString() });
+
+
+      // 🧉 Cargar productos iniciales según el rubro
+      const productosRef = collection(db, "tiendas", tiendaId, "productos");
+
+      if (rubro) {
+        // Si hay rubro, cargar los productos base desde la plantilla correspondiente
+        try {
+          const response = await fetch(`plantillas/${rubro}.json`);
+          const productosBase = await response.json();
+          for (const p of productosBase) await addDoc(productosRef, p);
+          console.log(`✅ Productos base cargados para ${rubro}`);
+        } catch (error) {
+          console.warn("⚠️ No se pudieron cargar los productos predeterminados:", error);
+        }
+      } else {
+        // Si no se seleccionó rubro, cargar productos demo genéricos
+        const demo = [
+          { nombre: "Mate Imperial", precio: 18000, categoria: "Imperial", imagen: logoUrlFinal, stock: 10, orden: 0 },
+          { nombre: "Bombilla de acero", precio: 5000, categoria: "Oferta", imagen: "https://placehold.co/300x300?text=Producto", stock: 20, orden: 1 },
+          { nombre: "Combo mate + bombilla", precio: 21000, categoria: "Combo", imagen: "https://placehold.co/300x300?text=Producto", stock: 5, orden: 2 }
+        ];
+        for (const p of demo) await addDoc(productosRef, p);
+        console.log("🧩 Cargados productos demo por defecto (sin rubro)");
+      }
+
+
+      // 🌐 Generar enlaces
+      const base = window.location.origin + window.location.pathname.replace("creador.html", "");
+      const linkPublico = `${base}index.html?tienda=${encodeURIComponent(tiendaId)}`;
+      const linkAdmin = `${base}admin.html?tienda=${encodeURIComponent(tiendaId)}`;
+
+      el("linkPublico").href = linkPublico;
+      el("linkPublico").textContent = linkPublico;
+      el("linkAdmin").href = linkAdmin;
+      el("linkAdmin").textContent = linkAdmin;
+
+
+
+      el("msg").innerHTML = "✅ ¡Tienda creada! Ya podés abrir los links.";
+    }
+
+
+
+    el("crear").addEventListener("click", crearTienda);
+
+    // 🎨 VISTA PREVIA DE PRODUCTOS POR RUBRO
+    function mostrarProductosPreview() {
+      const rubro = el("rubro").value;
+      const contenedor = el("preview-productos");
+      contenedor.innerHTML = "";
+
+      const ejemplos = {
+        carniceria: [
+          { nombre: "Asado de tira", imagen: "https://github.com/Josema1031/tiendasguay/blob/main/imag/asado%20de%20tira.jpg?raw=true" },
+          { nombre: "Chorizo parrillero", imagen: "https://cdn.pixabay.com/photo/2018/05/12/22/36/sausages-3398567_1280.jpg" }
+        ],
+        verduleria: [
+          { nombre: "Tomate", imagen: "https://cdn.pixabay.com/photo/2016/03/05/22/24/tomatoes-1239181_1280.jpg" },
+          { nombre: "Lechuga", imagen: "https://cdn.pixabay.com/photo/2018/05/18/17/50/lettuce-3417363_1280.jpg" }
+        ],
+        polleria: [
+          { nombre: "Pechuga de pollo", imagen: "https://cdn.pixabay.com/photo/2016/03/05/22/34/chicken-1239180_1280.jpg" },
+          { nombre: "Pollo trozado", imagen: "https://cdn.pixabay.com/photo/2018/04/13/21/42/chicken-3319178_1280.jpg" }
+        ],
+        kiosko: [
+          { nombre: "Gaseosa cola 500ml", imagen: "https://cdn.pixabay.com/photo/2017/01/23/19/40/coca-cola-2002370_1280.jpg" },
+          { nombre: "Papas fritas", imagen: "https://cdn.pixabay.com/photo/2016/03/05/20/07/potato-chips-1239140_1280.jpg" }
+        ],
+        ropa: [
+          { nombre: "Remera básica", imagen: "https://cdn.pixabay.com/photo/2016/03/27/21/16/t-shirt-1281840_1280.jpg" },
+          { nombre: "Pantalón jean", imagen: "https://cdn.pixabay.com/photo/2016/11/22/22/18/jeans-1853970_1280.jpg" }
+        ],
+        mates: [
+          { nombre: "Mate Imperial", imagen: "https://cdn.pixabay.com/photo/2020/07/06/16/58/mate-5379305_1280.jpg" },
+          { nombre: "Bombilla acero", imagen: "https://cdn.pixabay.com/photo/2018/09/04/21/55/bombilla-3656620_1280.jpg" }
+        ]
+      };
+
+      if (!rubro || !ejemplos[rubro]) return;
+
+      ejemplos[rubro].forEach(p => {
+        const card = document.createElement("div");
+        card.style.background = "#fff";
+        card.style.borderRadius = "10px";
+        card.style.padding = "10px";
+        card.style.textAlign = "center";
+        card.style.boxShadow = "0 3px 8px rgba(0,0,0,0.15)";
+        card.innerHTML = `
+      <img src="${p.imagen}" alt="${p.nombre}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;">
+      <p style="margin-top:8px;font-size:0.9em;color:#111;">${p.nombre}</p>`;
+        contenedor.appendChild(card);
+      });
+    }
+
 
     
 
-  </style>
-</head>
-<body>
-<div class="wrap">
-  <h1>⚡ Creador Instantáneo de Tiendas Gualeguay </h1>
-  <div class="form-group">
-  <label>Seleccioná tu plan</label>
-  <select id="plan" required>
-    <option value="Basico">Básico</option>
-    <option value="Profesional">Profesional</option>
-    <option value="Premium">Premium</option>
-  </select>
-</div>
 
-  <div class="card">
-    <div class="row">
-      <div>
-        <label>Tienda ID (sin espacios)</label>
-        <input id="tiendaId" placeholder="MATES-GUAY-LOCAL-12" />
-      </div>
-      <div>
-        <label>Nombre público</label>
-        <input id="nombre" placeholder="Mates Guay – Local 12" />
-      </div>
-    </div>
+    // 🔄 Evento al cambiar rubro
+    el("rubro").addEventListener("change", mostrarProductosPreview);
 
-    <div class="row">
-      <div>
-        <label>WhatsApp (solo números, con país)</label>
-        <input id="whatsapp" placeholder="5492644429649" />
-      </div>
-      <div>
-        <label>Imagen para redes (OpenGraph/Twitter) – opcional</label>
-        <input id="metaImage" placeholder="https://.../600x315.png" />
-      </div>
-    </div>
+    // 🪄 Vista previa en vivo
+    function actualizarVistaPrevia() {
+      const nombre = el("nombre").value || "Tu tienda";
+      const linkLogo = el("logoUrl").value.trim();
+      const file = el("logoFile").files[0];
 
-    <div class="row">
-      <div>
-        <label>Dirección</label>
-        <input id="direccion" placeholder="Calle y número, Ciudad (Prov.)" />
-      </div>
-      <div>
-        <label>Horarios</label>
-        <input id="horarios" placeholder="Lunes a Sábado 9 a 13 y 17 a 20 hs" />
-      </div>
-    </div>
+      const colorHeader = el("colorHeader").value;
+      const colorHeaderText = el("colorHeaderText").value;
+      const colorFooter = el("colorFooter").value;
+      const colorFooterText = el("colorFooterText").value;
+      const colorBoton = el("colorBoton").value;
 
-    <!-- Logo -->
-    <label>Logo de la tienda</label>
-    <input id="logoUrl" placeholder="https://.../logo.png (opcional)">
-    <p style="font-size:0.85em; opacity:0.8;">O subí una imagen desde tu dispositivo:</p>
-    <input type="file" id="logoFile" accept="image/*">
-    <img id="preview-logo-upload" src="" alt="Vista previa del logo" style="max-height:80px; margin-top:10px; display:none; border-radius:8px;">
+      const direccion = el("direccion").value || "Sin dirección";
+      const horarios = el("horarios").value || "Sin horario";
+      const whatsapp = el("whatsapp").value || "---";
 
-    <!-- 🎨 Paleta de colores -->
-    <h3 style="margin-top:20px;">🎨 Personalización de colores</h3>
-    <div class="row">
-      <div>
-        <label>Color de fondo del Header</label>
-        <input id="colorHeader" type="color" value="#007bff" />
-      </div>
-      <div>
-        <label>Color de texto del Header</label>
-        <input id="colorHeaderText" type="color" value="#ffffff" />
-      </div>
-    </div>
+      // HEADER PROFESIONAL
+      // HEADER PROFESIONAL CON LOGO DESTACADO
+      const header = document.getElementById("preview-header");
+      header.style.display = "flex";
+      header.style.alignItems = "center";
+      header.style.justifyContent = "center";
+      header.style.gap = "18px";
+      header.style.padding = "20px";
+      header.style.background = colorHeader;
+      header.style.color = colorHeaderText;
+      header.style.borderBottom = "2px solid rgba(255,255,255,0.25)";
+      header.style.flexWrap = "wrap";
 
-    <div class="row">
-      <div>
-        <label>Color de fondo del Footer</label>
-        <input id="colorFooter" type="color" value="#003366" />
-      </div>
-      <div>
-        <label>Color de texto del Footer</label>
-        <input id="colorFooterText" type="color" value="#ffffff" />
-      </div>
-    </div>
+      // TÍTULO
+      const nombreEl = document.getElementById("preview-nombre");
+      nombreEl.textContent = nombre;
+      nombreEl.style.color = colorHeaderText;
+      nombreEl.style.fontSize = "2.2rem";
+      nombreEl.style.fontWeight = "800";
+      nombreEl.style.margin = "0";
+      nombreEl.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
 
-    <div class="row">
-      <div>
-        <label>Color del botón del carrito</label>
-        <input id="colorBoton" type="color" value="#20f1f5" />
-      </div>
-    </div>
+      // LOGO GRANDE
+      const logoEl = document.getElementById("preview-logo");
+      logoEl.style.height = "90px"; // 💪 tamaño fijo más grande
+      logoEl.style.width = "auto";
+      logoEl.style.maxHeight = "none"; // elimina limitación previa
+      logoEl.style.objectFit = "contain";
+      logoEl.style.borderRadius = "10px";
+      logoEl.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+      logoEl.style.transition = "transform 0.25s ease, filter 0.25s ease";
+      logoEl.style.filter = "drop-shadow(0 3px 6px rgba(0,0,0,0.25))";
 
-    <button id="crear">Crear tienda</button>
-    <div id="msg" class="ok"></div>
-  </div>
+      logoEl.onmouseover = () => (logoEl.style.transform = "scale(1.08)");
+      logoEl.onmouseout = () => (logoEl.style.transform = "scale(1)");
 
-  <!-- 👀 Vista previa -->
-  <div class="card" style="margin-top:25px;">
-    <h3>👀 Vista previa en vivo</h3>
-    <div id="preview" style="border:1px solid #333; border-radius:10px; overflow:hidden;">
-      <header id="preview-header" style="background:#007bff; color:white; padding:15px; text-align:center;">
-        <img id="preview-logo" src="" alt="" style="max-height:60px; vertical-align:middle; margin-right:10px;">
-        <span id="preview-nombre" style="font-size:1.5em; font-weight:700;">Tu tienda</span>
-      </header>
-      <main style="padding:20px; background:#f7f7f7; color:#222;">
-        <p>🧉 Así se verá tu tienda digital.</p>
-        <div id="preview-info" style="margin-top:20px; font-size:0.95em;">
-          <p><strong>📍 Dirección:</strong> <span id="preview-direccion">Sin dirección</span></p>
-          <p><strong>🕒 Horario:</strong> <span id="preview-horario">Sin horario</span></p>
-          <p><strong>📱 WhatsApp:</strong> <span id="preview-whatsapp">---</span></p>
-        </div>
-      </main>
-      <footer id="preview-footer" style="background:#003366; color:white; text-align:center; padding:10px;">
-        <small>© 2025 Tu Tienda</small>
-      </footer>
-    </div>
-  </div>
+      // Mostrar el logo según archivo o link
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          logoEl.src = e.target.result;
+          logoEl.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      } else if (linkLogo) {
+        logoEl.src = linkLogo;
+        logoEl.style.display = "block";
+      } else {
+        logoEl.style.display = "none";
+      }
 
-  <div class="card">
-    <h3>Links rápidos</h3>
-    <p class="small">Se mostrarán cuando la tienda esté creada:</p>
-    <div class="grid">
-      <div>🔗 Tienda pública: <a id="linkPublico" class="link" target="_blank"></a></div>
-      <div>🛠️ Panel admin: <a id="linkAdmin" class="link" target="_blank"></a></div>
-    </div>
-  </div>
-</div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-  import { getFirestore, doc, setDoc, collection, addDoc,getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      // INFO
+      document.getElementById("preview-direccion").textContent = direccion;
+      document.getElementById("preview-horario").textContent = horarios;
+      document.getElementById("preview-whatsapp").textContent = whatsapp;
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA36uwBk0FBDc6rI16BAsqUNe_AXLpv62Q",
-    authDomain: "carniceriadonjose-48638.firebaseapp.com",
-    projectId: "carniceriadonjose-48638",
-    storageBucket: "carniceriadonjose-48638.appspot.com",
-    messagingSenderId: "322531750471",
-    appId: "1:322531750471:web:78e290c9c81eecc7be3762"
-  };
+      // FOOTER
+      const footer = document.getElementById("preview-footer");
+      footer.style.background = colorFooter;
+      footer.style.color = colorFooterText;
+      footer.innerHTML = `<small>© 2025 ${nombre}</small>`;
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-  const el = id => document.getElementById(id);
-
-  // 📦 CREAR TIENDA
-  async function crearTienda() {
-    const tiendaId = (el("tiendaId").value || "").trim();
-    const nombre = (el("nombre").value || "").trim();
-    const whatsapp = (el("whatsapp").value || "").trim();
-
-    // 📸 Lógica combinada de logo
-    let logoUrlFinal = "";
-    const file = el("logoFile").files[0];
-    const linkManual = el("logoUrl").value.trim();
-
-    if (file) {
-      const storageRef = ref(storage, `logos/${tiendaId}/${file.name}`);
-      await uploadBytes(storageRef, file);
-      logoUrlFinal = await getDownloadURL(storageRef);
-    } else if (linkManual) {
-      logoUrlFinal = linkManual;
-    } else {
-      logoUrlFinal = "https://via.placeholder.com/300x300?text=Sin+Logo";
+      // BOTÓN DE CARRITO SIMBÓLICO
+      let boton = document.getElementById("preview-boton");
+      if (!boton) {
+        boton = document.createElement("button");
+        boton.id = "preview-boton";
+        boton.textContent = "🛒 Ver carrito";
+        boton.style.marginTop = "15px";
+        document.getElementById("preview-info").appendChild(boton);
+      }
+      boton.style.background = colorBoton;
+      boton.style.border = "none";
+      boton.style.color = "#000";
+      boton.style.padding = "10px 20px";
+      boton.style.borderRadius = "8px";
+      boton.style.fontWeight = "600";
     }
 
-const direccion = (el("direccion").value || "").trim();
-const horarios = (el("horarios").value || "").trim();
-const metaImage = (el("metaImage").value || "").trim();
-const colorHeader = el("colorHeader").value;
-const colorFooter = el("colorFooter").value;
-const colorHeaderText = el("colorHeaderText").value;
-const colorFooterText = el("colorFooterText").value;
-const colorBoton = el("colorBoton").value;
-const plan = el("plan").value; // ✅ Mover aquí
-
-if (!tiendaId || !nombre || !whatsapp) {
-  el("msg").innerHTML = "❌ Completá Tienda ID, Nombre y WhatsApp.";
-  return;
-}
-
-const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
-const configSnap = await getDoc(configRef);
-
-if (configSnap.exists()) {
-  const confirmar = confirm(`⚠️ La tienda "${tiendaId}" ya existe.\n¿Querés actualizar su plan y configuración?`);
-  if (!confirmar) return;
-
-  // Solo actualiza datos existentes
-  await updateDoc(configRef, {
-    plan,
-    nombre, whatsapp, direccion, horarios,
-    colorHeader, colorFooter, colorHeaderText, colorFooterText, colorBoton,
-    logo: logoUrlFinal
-  });
-
-  alert("✅ Tienda actualizada correctamente");
-  return;
-}
-
-// 🔹 Guardar todo junto (una sola vez)
-await setDoc(doc(db, "tiendas", tiendaId, "config", "datos"), {
-  nombre, whatsapp, direccion, horarios, logo: logoUrlFinal,
-  colorHeader, colorFooter, colorHeaderText, colorFooterText, colorBoton,
-  plan
+  ["nombre", "logoUrl", "logoFile", "colorHeader", "colorHeaderText", "colorFooter", "colorFooterText", "colorBoton", "direccion", "horarios", "whatsapp", "rubro"].forEach(id => {
+  const input = el(id);
+  if (input) {
+    input.addEventListener("input", () => {
+      actualizarVistaPrevia();
+      if (id === "rubro") mostrarProductosPreview(); // 🔄 cuando cambie rubro, mostrar productos
+    });
+    if (input.type === "file") input.addEventListener("change", actualizarVistaPrevia);
+  }
 });
 
 
-    // ✅ crea el documento raíz para visibilidad y control
-await setDoc(doc(db, "tiendas", tiendaId), { creado: new Date().toISOString() });
-
-    const productosRef = collection(db, "tiendas", tiendaId, "productos");
-    const demo = [
-      { nombre: "Mate Imperial", precio: 18000, categoria: "Imperial", imagen: logoUrlFinal, stock: 10, orden: 0 },
-      { nombre: "Bombilla de acero", precio: 5000, categoria: "Oferta", imagen: "data:image/jpeg;base64,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WvtGxdVqteQ2HOaKeItw4WlzX8cQdjgCOHjBsVC3L5Y0taQ0mSYAH+4Hmo6nbCnTBecYLZzM4MsWHkM8Xu9OKuwmu2fky30hN8qdet+70aDKjqj69IEUQ6GtpkODyQO5DiDJOXlK7YorduxNG3aHGXElx1GpJAg5jL5ypVbcJrFjyu6LS2rsmhdMDLijTqtBkCoxrwDpIkZGCcxzW6imir9PcfZrdLC186NN34gqv+0XdaypbMuqlGztadRrQWvbQpNIOJuhDZBiRPVdAWK6tmVWOp1GtexwIc1wBDgciCDqEdl7fPnsvcP+UtQ8Ah3asIIkGabnAEHq0LsW1dwNm3AOO0pNcfjpNFJ088TInzlbWxt0bK0qGrb27WPMjFLnEA6huInD5QpxRxmonnn+ruOVV/YxTxg07t7WTo+m1zo6Pa5o/tXUbagKbGMaIa1oaB0AgfILIi7JIjllb7ERF1EREQEREBERAREQEKIgo+8Ps5o1XOq2pFCo73mRNJ/iwe4ereuRlUfb3s3vKQLmtbVHEUyXEfZIBPkCu4Ig4tsLbTiBRq92qwQcQzMCJg8YyKmqz2uDXukwMJAxESM2EiYiJzOUgdF0W92dRrCK1JlQfzta6PCRko253YoEO7MYCREAnCfFpmPJUZcX2LceT+qCbipbCSCafvEEyW8YBE9dcpGua1qm9II7o4wc+sZaCfNS+07Wpak9q0luXfEuc+NO6BAHhlnoFFuDC5xLO9iGIlsk8QIEkjLThllkqbjN9rpldMtjXdDz7xa45ubq3LvNJykwOGkcgBY92LI3NTtiQ6i1zjBzxPmPKCHHOddBIKw7F3brVi11XFSY1wOcYngZgQZgTGukacRereg2m0MY0Na0QAOCuw4/tVZ5/IyIiK9SIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIg8vYCIIBHXNeaduxubWtHgAFkRAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB//2Q==", stock: 20, orden: 1 },
-      { nombre: "Combo mate + bombilla", precio: 21000, categoria: "Combo", imagen: "data:image/jpeg;base64,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", stock: 5, orden: 2 }
-    ];
-    for (const p of demo) await addDoc(productosRef, p);
-
-    const base = window.location.origin + window.location.pathname.replace("creador.html", "");
-    const linkPublico = `${base}index.html?tienda=${encodeURIComponent(tiendaId)}`;
-    const linkAdmin = `${base}admin.html?tienda=${encodeURIComponent(tiendaId)}`;
-
-    el("linkPublico").href = linkPublico;
-    el("linkPublico").textContent = linkPublico;
-    el("linkAdmin").href = linkAdmin;
-    el("linkAdmin").textContent = linkAdmin;
-
-    el("msg").innerHTML = "✅ ¡Tienda creada! Ya podés abrir los links.";
-  }
-
-  el("crear").addEventListener("click", crearTienda);
-
-  // 🪄 Vista previa en vivo
-  function actualizarVistaPrevia() {
-    const nombre = el("nombre").value || "Tu tienda";
-    const linkLogo = el("logoUrl").value.trim();
-    const file = el("logoFile").files[0];
-
-    const colorHeader = el("colorHeader").value;
-    const colorHeaderText = el("colorHeaderText").value;
-    const colorFooter = el("colorFooter").value;
-    const colorFooterText = el("colorFooterText").value;
-    const colorBoton = el("colorBoton").value;
-
-    const direccion = el("direccion").value || "Sin dirección";
-    const horarios = el("horarios").value || "Sin horario";
-    const whatsapp = el("whatsapp").value || "---";
-
-    // HEADER PROFESIONAL
-   // HEADER PROFESIONAL CON LOGO DESTACADO
-const header = document.getElementById("preview-header");
-header.style.display = "flex";
-header.style.alignItems = "center";
-header.style.justifyContent = "center";
-header.style.gap = "18px";
-header.style.padding = "20px";
-header.style.background = colorHeader;
-header.style.color = colorHeaderText;
-header.style.borderBottom = "2px solid rgba(255,255,255,0.25)";
-header.style.flexWrap = "wrap";
-
-// TÍTULO
-const nombreEl = document.getElementById("preview-nombre");
-nombreEl.textContent = nombre;
-nombreEl.style.color = colorHeaderText;
-nombreEl.style.fontSize = "2.2rem";
-nombreEl.style.fontWeight = "800";
-nombreEl.style.margin = "0";
-nombreEl.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
-
-// LOGO GRANDE
-const logoEl = document.getElementById("preview-logo");
-logoEl.style.height = "90px"; // 💪 tamaño fijo más grande
-logoEl.style.width = "auto";
-logoEl.style.maxHeight = "none"; // elimina limitación previa
-logoEl.style.objectFit = "contain";
-logoEl.style.borderRadius = "10px";
-logoEl.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
-logoEl.style.transition = "transform 0.25s ease, filter 0.25s ease";
-logoEl.style.filter = "drop-shadow(0 3px 6px rgba(0,0,0,0.25))";
-
-logoEl.onmouseover = () => (logoEl.style.transform = "scale(1.08)");
-logoEl.onmouseout = () => (logoEl.style.transform = "scale(1)");
-
-// Mostrar el logo según archivo o link
-if (file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    logoEl.src = e.target.result;
-    logoEl.style.display = "block";
-  };
-  reader.readAsDataURL(file);
-} else if (linkLogo) {
-  logoEl.src = linkLogo;
-  logoEl.style.display = "block";
-} else {
-  logoEl.style.display = "none";
-}
+    actualizarVistaPrevia();
+    mostrarProductosPreview();
 
 
-    // INFO
-    document.getElementById("preview-direccion").textContent = direccion;
-    document.getElementById("preview-horario").textContent = horarios;
-    document.getElementById("preview-whatsapp").textContent = whatsapp;
-
-    // FOOTER
-    const footer = document.getElementById("preview-footer");
-    footer.style.background = colorFooter;
-    footer.style.color = colorFooterText;
-    footer.innerHTML = `<small>© 2025 ${nombre}</small>`;
-
-    // BOTÓN DE CARRITO SIMBÓLICO
-    let boton = document.getElementById("preview-boton");
-    if (!boton) {
-      boton = document.createElement("button");
-      boton.id = "preview-boton";
-      boton.textContent = "🛒 Ver carrito";
-      boton.style.marginTop = "15px";
-      document.getElementById("preview-info").appendChild(boton);
-    }
-    boton.style.background = colorBoton;
-    boton.style.border = "none";
-    boton.style.color = "#000";
-    boton.style.padding = "10px 20px";
-    boton.style.borderRadius = "8px";
-    boton.style.fontWeight = "600";
-  }
-
-  ["nombre", "logoUrl", "logoFile", "colorHeader", "colorHeaderText", "colorFooter", "colorFooterText", "colorBoton", "direccion", "horarios", "whatsapp"].forEach(id => {
-    const input = el(id);
-    if (input) input.addEventListener("input", actualizarVistaPrevia);
-    if (input && input.type === "file") input.addEventListener("change", actualizarVistaPrevia);
-  });
-
-  actualizarVistaPrevia();
-  
-</script>
+  </script>
 </body>
+
 </html>

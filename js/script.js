@@ -99,11 +99,14 @@ function renderBotonesCategorias(categorias) {
   const cont = document.getElementById("menu-categorias");
   cont.innerHTML = "";
 
-  // 🟢 Siempre agregar "Todos" primero
+  // 🟢 Agregar "Todos" solo si no está en la lista
+if (!categorias.includes("Todos")) {
   const btnTodos = document.createElement("button");
   btnTodos.textContent = "Todos";
   btnTodos.onclick = () => filtrarCategoria("Todos");
   cont.appendChild(btnTodos);
+}
+
 
   categorias.forEach(cat => {
     const btn = document.createElement("button");
@@ -496,7 +499,7 @@ document.addEventListener("click", e => {
 // Muestra solo productos de la categoría seleccionada
 // ============================================
 function filtrarCategoria(categoria) {
-  if (categoria === 'todo') mostrarProductos(productosCargados);
+  if (categoria === 'Todos') mostrarProductos(productosCargados);
   else {
     const filtrados = productosCargados.filter(p => p.categoria === categoria);
     mostrarProductos(filtrados);

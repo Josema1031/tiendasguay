@@ -106,6 +106,7 @@
           <th>Logo</th>
           <th>Nombre</th>
           <th>Plan</th>
+          <th>Rubro</th>
           <th>Estado</th>
           <th>Productos</th>
           <th>Acciones</th>
@@ -203,6 +204,9 @@
   const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
   const configSnap = await getDoc(configRef);
   const config = configSnap.exists() ? configSnap.data() : {}; // ✅ ahora siempre definido
+  // 🔹 Obtener rubro desde config
+const rubro = config.rubro || "—";
+
 
   const activo = data.activo !== false;
   if (activo) activas++; else off++;
@@ -216,6 +220,7 @@
     <td><img class="logo" src="${config.logo || 'https://via.placeholder.com/100'}" alt="logo"></td>
     <td>${config.nombre || tiendaId}</td>
     <td>${config.plan || data.plan || "—"}</td>
+    <td>${rubro}</td> <!-- ✅ Nueva columna Rubro -->
     <td><span class="pill ${activo ? "ok" : "off"}">${activo ? "Activa" : "Suspendida"}</span></td>
     <td>${productosSnap.size}</td>
     <td>
@@ -345,22 +350,33 @@ window.graficoTiendasInstance = new Chart(ctx, {
       }
     };
 
-    window.eliminarTienda = async (tiendaId)=>{
-      modalConfirm(`¿Eliminar permanentemente la tienda "${tiendaId}"?`, async ()=>{
-        try{
-          // borrar productos
-          const prods = await getDocs(collection(db,"tiendas",tiendaId,"productos"));
-          for (const d of prods.docs){
-            await deleteDoc(doc(db,"tiendas",tiendaId,"productos",d.id));
-          }
-          // borrar config y doc raíz
-          await deleteDoc(doc(db,"tiendas",tiendaId,"config","datos"));
-          await deleteDoc(doc(db,"tiendas",tiendaId));
-          modalMensaje("✅ Tienda eliminada","#28a745");
-          await loadPage(true);
-        }catch(e){ console.error(e); modalMensaje("❌ Error al eliminar","#dc3545"); }
-      });
-    };
+   window.eliminarTienda = async (tiendaId) => {
+  modalConfirm(`⚠️ ¿Eliminar completamente la tienda "${tiendaId}"?`, async () => {
+    try {
+      // 🔹 1. Borrar subcolección de productos
+      const productosSnap = await getDocs(collection(db, "tiendas", tiendaId, "productos"));
+      for (const prod of productosSnap.docs) {
+        await deleteDoc(prod.ref);
+      }
+
+      // 🔹 2. Borrar subcolección de configuración (por si hay más docs)
+      const configSnap = await getDocs(collection(db, "tiendas", tiendaId, "config"));
+      for (const conf of configSnap.docs) {
+        await deleteDoc(conf.ref);
+      }
+
+      // 🔹 3. Eliminar documento principal de la tienda
+      await deleteDoc(doc(db, "tiendas", tiendaId));
+
+      modalMensaje(`✅ Tienda "${tiendaId}" eliminada completamente.`, "#28a745");
+      await loadPage(true); // refresca tabla
+    } catch (error) {
+      console.error("❌ Error al eliminar tienda:", error);
+      modalMensaje("❌ No se pudo eliminar completamente la tienda.", "#dc3545");
+    }
+  });
+};
+
 
     window.mostrarQR = async (tiendaId, url, nombre)=>{
       const wrap = document.createElement("div"); wrap.className="modal-wrap";

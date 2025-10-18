@@ -1,0 +1,142 @@
+[
+  {
+    "nombre": "Tomate redondo",
+    "precio": 1800,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2016/03/05/22/24/tomatoes-1239181_1280.jpg",
+    "stock": 40
+  },
+  {
+    "nombre": "Lechuga criolla",
+    "precio": 1200,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2018/05/18/17/50/lettuce-3417363_1280.jpg",
+    "stock": 30
+  },
+  {
+    "nombre": "Zanahoria",
+    "precio": 1100,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2017/04/04/17/57/carrots-2209652_1280.jpg",
+    "stock": 45
+  },
+  {
+    "nombre": "Papa blanca",
+    "precio": 950,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2016/07/13/08/56/potatoes-1515659_1280.jpg",
+    "stock": 50
+  },
+  {
+    "nombre": "Cebolla",
+    "precio": 900,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2017/09/26/13/51/onion-2784123_1280.jpg",
+    "stock": 35
+  },
+  {
+    "nombre": "Pimiento rojo",
+    "precio": 2200,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2017/03/02/20/40/red-peppers-2113562_1280.jpg",
+    "stock": 25
+  },
+  {
+    "nombre": "Acelga",
+    "precio": 1300,
+    "categoria": "Hortalizas",
+    "imagen": "https://cdn.pixabay.com/photo/2020/05/03/08/23/chard-5123893_1280.jpg",
+    "stock": 20
+  },
+  {
+    "nombre": "Espinaca",
+    "precio": 1400,
+    "categoria": "Hortalizas",
+    "imagen": "https://cdn.pixabay.com/photo/2016/08/22/12/39/spinach-1611027_1280.jpg",
+    "stock": 20
+  },
+  {
+    "nombre": "Manzana roja",
+    "precio": 2300,
+    "categoria": "Frutas",
+    "imagen": "https://cdn.pixabay.com/photo/2016/02/22/17/25/apple-1218166_1280.jpg",
+    "stock": 40
+  },
+  {
+    "nombre": "Banana",
+    "precio": 2100,
+    "categoria": "Frutas",
+    "imagen": "https://cdn.pixabay.com/photo/2016/02/23/17/38/bananas-1218133_1280.jpg",
+    "stock": 35
+  },
+  {
+    "nombre": "Naranja jugosa",
+    "precio": 1700,
+    "categoria": "Frutas",
+    "imagen": "https://cdn.pixabay.com/photo/2017/01/20/15/06/orange-1995056_1280.jpg",
+    "stock": 45
+  },
+  {
+    "nombre": "Mandarina",
+    "precio": 1500,
+    "categoria": "Frutas",
+    "imagen": "https://cdn.pixabay.com/photo/2016/02/19/11/19/mandarins-1208336_1280.jpg",
+    "stock": 38
+  },
+  {
+    "nombre": "Papa negra",
+    "precio": 950,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2014/03/24/17/13/potato-295601_1280.png",
+    "stock": 40
+  },
+  {
+    "nombre": "Zapallo cabutia",
+    "precio": 1800,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2019/10/30/16/49/pumpkin-4589154_1280.jpg",
+    "stock": 15
+  },
+  {
+    "nombre": "Batata",
+    "precio": 1300,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2018/01/15/07/51/sweet-potato-3084117_1280.jpg",
+    "stock": 25
+  },
+  {
+    "nombre": "Perejil",
+    "precio": 600,
+    "categoria": "Hierbas",
+    "imagen": "https://cdn.pixabay.com/photo/2015/03/26/09/54/parsley-690034_1280.jpg",
+    "stock": 50
+  },
+  {
+    "nombre": "Apio",
+    "precio": 1200,
+    "categoria": "Hortalizas",
+    "imagen": "https://cdn.pixabay.com/photo/2017/07/13/11/58/celery-2494017_1280.jpg",
+    "stock": 22
+  },
+  {
+    "nombre": "Limón",
+    "precio": 1500,
+    "categoria": "Frutas",
+    "imagen": "https://cdn.pixabay.com/photo/2017/01/20/15/06/lemon-1995056_1280.jpg",
+    "stock": 30
+  },
+  {
+    "nombre": "Ajo",
+    "precio": 900,
+    "categoria": "Verduras",
+    "imagen": "https://cdn.pixabay.com/photo/2017/05/23/13/43/garlic-2332109_1280.jpg",
+    "stock": 45
+  },
+  {
+    "nombre": "Cilantro",
+    "precio": 700,
+    "categoria": "Hierbas",
+    "imagen": "https://cdn.pixabay.com/photo/2018/03/23/08/43/coriander-3252896_1280.jpg",
+    "stock": 35
+  }
+]
