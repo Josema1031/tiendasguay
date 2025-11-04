@@ -467,3 +467,42 @@ button {
     padding: 4px 6px;
   }
 }
+
+/* ==========================================================
+   🧩 CORRECCIÓN DEFINITIVA VISUALIZACIÓN COLUMNA "STOCK"
+   ========================================================== */
+
+/* Columna STOCK optimizada para pantallas grandes */
+#tabla-productos td:last-child input[type="number"] {
+  width: 55px;          /* 🔹 más angosto que antes (70px) */
+  max-width: 60px;      /* 🔹 límite de ancho */
+  text-align: center;   /* 🔹 número centrado */
+  margin: 0 auto;
+  display: block;
+  padding: 4px;         /* 🔹 menos relleno para compactar */
+  font-size: 13px;
+}
+
+/* Encabezado STOCK ajustado */
+#tabla-productos th:last-child {
+  width: 70px;           /* 🔹 ancho fijo proporcional al texto “Stock” */
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* 🔹 En pantallas chicas, se mantiene más flexible */
+@media (max-width: 768px) {
+  #tabla-productos th:last-child,
+  #tabla-productos td:last-child {
+    width: 65px !important;
+    min-width: 60px;
+  }
+
+  #tabla-productos td:last-child input[type="number"] {
+    width: 50px;
+    max-width: 55px;
+    font-size: 12px;
+    padding: 3px;
+  }
+}
+

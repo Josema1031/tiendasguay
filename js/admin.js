@@ -4,7 +4,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { getFirestore, collection, setDoc, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, setDoc, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -86,6 +86,14 @@ async function initPlanUI() {
     const configSnap = await getDoc(configRef);
     const plan = configSnap.exists() ? (configSnap.data().plan || "Basico") : "Basico";
     const f = FEATURES_BY_PLAN[plan] || FEATURES_BY_PLAN.Basico;
+    // 🟢 Mostrar panel de ventas si el plan es Premium
+    if (plan === "Premium") {
+      await initVentasPremium(plan);
+    } else {
+      const panelVentas = document.getElementById("panel-ventas");
+      if (panelVentas) panelVentas.style.display = "none";
+    }
+
 
     // ===============================
     // 💼 Botón / Modal para cambiar plan
@@ -126,21 +134,24 @@ async function initPlanUI() {
         window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, "_blank");
         modalCambiarPlan.style.display = "none";
 
-        // 🔄 Actualizar en Firestore y sincronizar productos
-        const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
-        await updateDoc(configRef, { plan: "Profesional" });
-        await sincronizarProductosPorPlan();
+        // 📩 Registrar solicitud de cambio de plan
+        const solicitudesRef = collection(db, "solicitudesCambioPlan");
+        await addDoc(solicitudesRef, {
+          tiendaId,
+          planActual: plan,
+          planSolicitado: "Profesional",
+          fecha: new Date().toLocaleString("es-AR"),
+          estado: "pendiente"
+        });
 
-        // Mostrar confirmación
         const mensajeConfirmacion = document.getElementById("mensaje-confirmacion-plan");
         if (mensajeConfirmacion) {
           mensajeConfirmacion.style.display = "block";
-          mensajeConfirmacion.style.animation = "none";
-          void mensajeConfirmacion.offsetWidth;
-          mensajeConfirmacion.style.animation = "fadeInOut 6s ease-in-out forwards";
+          mensajeConfirmacion.textContent = "✅ Solicitud enviada al SuperAdmin. Esperá su aprobación.";
           setTimeout(() => (mensajeConfirmacion.style.display = "none"), 6000);
         }
       };
+
 
 
       // Acción de cambio a Premium
@@ -150,21 +161,24 @@ async function initPlanUI() {
         window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, "_blank");
         modalCambiarPlan.style.display = "none";
 
-        // 🔄 Actualizar en Firestore y sincronizar productos
-        const configRef = doc(db, "tiendas", tiendaId, "config", "datos");
-        await updateDoc(configRef, { plan: "Premium" });
-        await sincronizarProductosPorPlan();
+        // 📩 Registrar solicitud de cambio de plan
+        const solicitudesRef = collection(db, "solicitudesCambioPlan");
+        await addDoc(solicitudesRef, {
+          tiendaId,
+          planActual: plan,
+          planSolicitado: "Premium",
+          fecha: new Date().toLocaleString("es-AR"),
+          estado: "pendiente"
+        });
 
-        // Mostrar confirmación
         const mensajeConfirmacion = document.getElementById("mensaje-confirmacion-plan");
         if (mensajeConfirmacion) {
           mensajeConfirmacion.style.display = "block";
-          mensajeConfirmacion.style.animation = "none";
-          void mensajeConfirmacion.offsetWidth;
-          mensajeConfirmacion.style.animation = "fadeInOut 6s ease-in-out forwards";
+          mensajeConfirmacion.textContent = "✅ Solicitud enviada al SuperAdmin. Esperá su aprobación.";
           setTimeout(() => (mensajeConfirmacion.style.display = "none"), 6000);
         }
       };
+
 
     }
 
@@ -451,10 +465,14 @@ async function mostrarProductos() {
 
   try {
     const productosSnap = await getDocs(collection(db, "tiendas", tiendaId, "productos"));
-    productos = productosSnap.docs.map(docSnap => ({
-      id: docSnap.id,
-      ...docSnap.data()
-    }));
+    productos = productosSnap.docs
+      .map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
+      }))
+      // 🔢 Ordenar los productos según el campo "orden" guardado en Firestore
+      .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
+
 
 
     productosOriginales = JSON.parse(JSON.stringify(productos));
@@ -662,17 +680,31 @@ function renderTabla(lista = productos, filtrado = false) {
     }
 
     // 🟢 Cargar categorías disponibles
+    // Dentro de renderTabla(), al llenar el select por fila:
     const selectCategoria = fila.querySelector(`#categoria_${inicio + index}`);
     if (selectCategoria) {
-      (window.categoriasGlobales || []).forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        selectCategoria.appendChild(opt);
-      });
-      // Asignar la categoría guardada
-      selectCategoria.value = prod.categoria || "";
+      (window.categoriasGlobales || [])
+        .filter(cat => cat !== "Todos") // 👈 evitar “Todos” en selects
+        .forEach(cat => {
+          const opt = document.createElement("option");
+          opt.value = cat;
+          opt.textContent = cat;
+          selectCategoria.appendChild(opt);
+        });
+
+      // Asignar la categoría guardada (si existe)
+      if (prod.categoria) {
+        // Si no existe en la lista, agregarla temporalmente para no perderla
+        if (![...selectCategoria.options].some(o => o.value === prod.categoria)) {
+          const opt = document.createElement("option");
+          opt.value = prod.categoria;
+          opt.textContent = prod.categoria;
+          selectCategoria.appendChild(opt);
+        }
+        selectCategoria.value = prod.categoria;
+      }
     }
+
 
     tbody.appendChild(fila);
   });
@@ -844,46 +876,58 @@ let dragSrcEl = null;
 
 //  🎯 DRAG & DROP PARA REORDENAR PRODUCTOS
 
+// ===============================
+// 🧩 DRAG & DROP — REORDENAMIENTO REAL
+// ===============================
+let dragIndex = null;
+
+// Al iniciar arrastre
 function dragStart(e) {
-  dragSrcEl = this;
+  dragIndex = [...e.target.parentNode.children].indexOf(e.target);
   e.dataTransfer.effectAllowed = "move";
-  e.dataTransfer.setData("text/html", this.innerHTML);
+  e.target.style.opacity = "0.5";
 }
 
+// Mientras arrastra sobre otra fila
 function dragOver(e) {
   e.preventDefault();
-  e.dataTransfer.dropEffect = "move";
+  const target = e.target.closest("tr");
+  if (!target) return;
+  const tbody = target.parentNode;
+  const dragging = tbody.children[dragIndex];
+  const targetIndex = [...tbody.children].indexOf(target);
+  if (dragIndex !== targetIndex) {
+    tbody.insertBefore(dragging, targetIndex > dragIndex ? target.nextSibling : target);
+    dragIndex = targetIndex;
+  }
 }
 
+// Al soltar el elemento
 async function drop(e) {
   e.preventDefault();
-  if (dragSrcEl === this) return;
+  e.target.style.opacity = "1";
 
-  const tbody = this.parentNode;
-  const draggedIndexLocal = Array.from(tbody.children).indexOf(dragSrcEl);
-  const targetIndexLocal = Array.from(tbody.children).indexOf(this);
-
-  // 🔧 Calculamos el índice real en el array global
-  const inicio = (paginaActual - 1) * productosPorPagina;
-  const draggedIndexGlobal = inicio + draggedIndexLocal;
-  const targetIndexGlobal = inicio + targetIndexLocal;
-
-  const movedItem = productos.splice(draggedIndexGlobal, 1)[0];
-  productos.splice(targetIndexGlobal, 0, movedItem);
-
-  // Reasignar orden y actualizar Firestore
-  const updates = productos.map((producto, i) => {
-    producto.orden = i;
-    if (producto.id) {
-      const ref = doc(productosRef, producto.id);
-      return updateDoc(ref, { orden: i });
-    }
+  const filas = [...document.querySelectorAll("#tabla-productos tbody tr")];
+  // 🔢 Actualizar orden local en memoria
+  productos = filas.map((tr, i) => {
+    const id = tr.getAttribute("data-id");
+    const p = productos.find(prod => prod.id === id);
+    return { ...p, orden: i };
   });
 
-  await Promise.all(updates);
+  // 💾 Guardar el nuevo orden en Firestore
+  const batchUpdates = [];
+  for (const p of productos) {
+    if (!p.id) continue;
+    const refProd = doc(db, "tiendas", tiendaId, "productos", p.id);
+    batchUpdates.push(updateDoc(refProd, { orden: p.orden }));
+  }
 
-  renderTabla();
+  await Promise.all(batchUpdates);
+  console.log("✅ Orden actualizado correctamente en Firestore");
+  alert("✅ Orden de productos actualizado correctamente.");
 }
+
 
 
 
@@ -1114,7 +1158,20 @@ function renderCategorias(categorias) {
         const catSnap = await getDoc(catRef);
         if (catSnap.exists()) {
           const lista = catSnap.data().lista.map(c => (c === cat ? nuevoNombre.trim() : c));
-          await setDoc(catRef, { lista });
+          await setDoc(catRef, { lista }); // Actualiza lista visible (chips + selects)
+
+          // 🔁 MIGRAR productos que tenían la categoría vieja -> nueva
+          const q = await getDocs(
+            query(collection(db, "tiendas", tiendaId, "productos"), where("categoria", "==", cat))
+          );
+          const updates = [];
+          q.forEach(d => {
+            updates.push(updateDoc(doc(db, "tiendas", tiendaId, "productos", d.id), {
+              categoria: nuevoNombre.trim()
+            }));
+          });
+          await Promise.all(updates);
+
           renderCategorias(lista);
           actualizarSelectsCategoria(lista);
           mostrarConfirmacionCategorias();
@@ -1135,11 +1192,25 @@ function renderCategorias(categorias) {
       if (catSnap.exists()) {
         const lista = catSnap.data().lista.filter(c => c !== cat);
         await setDoc(catRef, { lista });
+
+        // 🔁 REASIGNAR productos que tenían la categoría eliminada
+        const q = await getDocs(
+          query(collection(db, "tiendas", tiendaId, "productos"), where("categoria", "==", cat))
+        );
+        const updates = [];
+        q.forEach(d => {
+          updates.push(updateDoc(doc(db, "tiendas", tiendaId, "productos", d.id), {
+            categoria: "Sin categoría"
+          }));
+        });
+        await Promise.all(updates);
+
         renderCategorias(lista);
         actualizarSelectsCategoria(lista);
         mostrarConfirmacionCategorias();
       }
     };
+
 
     span.appendChild(btnDel);
     cont.appendChild(span);
@@ -1173,18 +1244,29 @@ function actualizarSelectsCategoria(categorias) {
   selects.forEach(select => {
     const valorActual = select.value;
     select.innerHTML = ""; // limpiar
-    categorias.forEach(cat => {
+
+    // 🚫 Excluir "Todos" de los selects de producto
+    const opciones = categorias.filter(c => c !== "Todos");
+
+    // Si el producto tenía una categoría que ya no está (p.ej. renombrando),
+    // la agregamos temporalmente para no dejar el select vacío.
+    const debeIncluirActual = valorActual && !opciones.includes(valorActual);
+    const listaParaSelect = debeIncluirActual ? [...opciones, valorActual] : opciones;
+
+    listaParaSelect.forEach(cat => {
       const opt = document.createElement("option");
       opt.value = cat;
       opt.textContent = cat;
       select.appendChild(opt);
     });
-    // Restaurar valor previo si aún existe
-    if (categorias.includes(valorActual)) {
+
+    // Restaurar el valor previo si existe; si no, dejar primera opción
+    if (valorActual && listaParaSelect.includes(valorActual)) {
       select.value = valorActual;
     }
   });
 }
+
 
 // ✅ Mostrar mensaje animado de confirmación
 function mostrarConfirmacionCategorias() {
@@ -1218,5 +1300,447 @@ document.getElementById("btnConfigTienda").addEventListener("click", () => {
   const seccion = document.getElementById("configuracion-tienda");
   if (seccion) {
     seccion.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+});
+// =========================================================
+// 💵 REGISTRO DE VENTAS Y CIERRE DE CAJA (solo Plan Premium)
+// =========================================================
+async function initVentasPremium(plan) {
+  const panelVentas = document.getElementById("panel-ventas");
+  if (!panelVentas) return;
+
+  if (plan !== "Premium") {
+    panelVentas.style.display = "none";
+    return;
+  }
+
+  panelVentas.style.display = "block";
+
+  const ventasRef = collection(db, "tiendas", tiendaId, "ventas");
+  const cierresRef = collection(db, "tiendas", tiendaId, "cierresCaja");
+  const cuerpoTabla = document.querySelector("#tablaVentas tbody");
+  const totalCaja = document.getElementById("totalCaja");
+  const inputProducto = document.getElementById("productoVendido");
+  const inputMonto = document.getElementById("montoVenta");
+  let totalDia = 0;
+
+  // ===============================
+  // 🔹 Cargar lista de productos del catálogo (autocompletado)
+  // ===============================
+  const listaProductos = document.getElementById("listaProductos");
+  const productosSnap = await getDocs(collection(db, "tiendas", tiendaId, "productos"));
+  const productosCatalogo = [];
+  productosSnap.forEach(doc => {
+    const data = doc.data();
+    if (data.nombre && data.precio) {
+      productosCatalogo.push({ id: doc.id, nombre: data.nombre, precio: data.precio });
+    }
+  });
+
+  listaProductos.innerHTML = productosCatalogo.map(p => `<option value="${p.nombre}"></option>`).join("");
+  inputProducto.addEventListener("change", () => {
+    const seleccionado = productosCatalogo.find(p => p.nombre === inputProducto.value);
+    if (seleccionado) {
+      inputMonto.value = seleccionado.precio;
+    }
+  });
+
+  // ===============================
+  // 🧾 Cargar ventas existentes del día
+  // ===============================
+  const ventasSnap = await getDocs(ventasRef);
+  cuerpoTabla.innerHTML = "";
+  totalDia = 0;
+
+  ventasSnap.forEach(v => {
+    const data = v.data();
+    totalDia += data.monto;
+    agregarFilaVenta(v.id, data.producto, data.monto, data.fecha);
+  });
+
+  totalCaja.textContent = `Total del día: $${totalDia.toFixed(2)}`;
+
+  // ===============================
+  // ➕ Registrar nueva venta
+  // ===============================
+  document.getElementById("btnRegistrarVenta").onclick = async () => {
+    const producto = inputProducto.value.trim();
+    const monto = parseFloat(inputMonto.value);
+
+    if (!producto || isNaN(monto) || monto <= 0) {
+      alert("Por favor completá los datos correctamente.");
+      return;
+    }
+
+    const docRef = await addDoc(ventasRef, {
+      producto,
+      monto,
+      fecha: new Date().toLocaleString("es-AR"),
+      timestamp: serverTimestamp()
+    });
+
+    totalDia += monto;
+    totalCaja.textContent = `Total del día: $${totalDia.toFixed(2)}`;
+    agregarFilaVenta(docRef.id, producto, monto, new Date().toLocaleDateString());
+
+    inputProducto.value = "";
+    inputMonto.value = "";
+  };
+
+  // ===============================
+  // 🗑️ Eliminar venta (y actualizar total)
+  // ===============================
+  function agregarFilaVenta(id, producto, monto, fecha) {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${fecha}</td>
+      <td>${producto}</td>
+      <td>$${monto}</td>
+      <td>
+        <button style="background:#dc3545;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;"
+          onclick="eliminarVenta('${id}', ${monto})">🗑️</button>
+      </td>
+    `;
+    cuerpoTabla.appendChild(fila);
+  }
+
+  // ✅ Función global para eliminar
+  window.eliminarVenta = async (id, monto) => {
+    if (!confirm("¿Eliminar esta venta?")) return;
+    await deleteDoc(doc(ventasRef, id));
+    totalDia -= monto;
+    if (totalDia < 0) totalDia = 0;
+    totalCaja.textContent = `Total del día: $${totalDia.toFixed(2)}`;
+    cuerpoTabla.innerHTML = ""; // limpiar y recargar
+    initVentasPremium(plan);
+  };
+
+  // ===============================
+  // 📦 Cierre de caja con PDF profesional
+  // ===============================
+
+  // ===============================
+  // 📦 Cierre de caja profesional con PDF completo
+  // ===============================
+  document.getElementById("btnCierreCaja").onclick = async () => {
+    if (!confirm("¿Confirmás el cierre de caja? Se guardará el total y se generará un PDF profesional.")) return;
+
+    // 🧾 Guardar cierre en Firestore
+    await addDoc(cierresRef, {
+      totalDia,
+      fecha: new Date().toLocaleString("es-AR"),
+      timestamp: serverTimestamp()
+    });
+
+    const egresos = parseFloat(prompt("💸 Ingresá el total de egresos (si no hay, poné 0):", "0")) || 0;
+    const observaciones = prompt("📝 Observaciones del día (opcional):", "") || "";
+    const saldoFinal = totalDia - egresos;
+
+
+    // 🧠 Generar PDF profesional
+    try {
+      const { jsPDF } = window.jspdf;
+      const docPDF = new jsPDF("p", "mm", "a4");
+
+      const nombreTienda = tiendaId || "Mi Tienda";
+      const fechaCierre = new Date().toLocaleString("es-AR");
+      const cajero = auth.currentUser?.email || "Administrador";
+
+      // ===============================
+      // 🎨 ESTILO Y CONFIGURACIÓN
+      // ===============================
+      docPDF.setFont("helvetica", "normal");
+      docPDF.setTextColor(40, 40, 40);
+      const azulSuave = [0, 102, 204];
+      const grisSuave = [150, 150, 150];
+
+      // ===============================
+      // 🏷️ ENCABEZADO
+      // ===============================
+      docPDF.setFontSize(20);
+      docPDF.setFont("helvetica", "bold");
+      docPDF.setTextColor(...azulSuave);
+      docPDF.text(`Cierre de Caja — ${nombreTienda}`, 105, 20, { align: "center" });
+
+      docPDF.setFont("helvetica", "normal");
+      docPDF.setFontSize(12);
+      docPDF.setTextColor(60, 60, 60);
+      docPDF.text(`Fecha: ${fechaCierre}`, 105, 28, { align: "center" });
+      docPDF.text(`Cajero: ${cajero}`, 105, 34, { align: "center" });
+
+      docPDF.setDrawColor(...grisSuave);
+      docPDF.line(14, 40, 196, 40);
+
+      // ===============================
+      // 💵 DETALLE DE VENTAS
+      // ===============================
+      let y = 50;
+      docPDF.setFont("helvetica", "bold");
+      docPDF.setFontSize(13);
+      docPDF.setTextColor(...azulSuave);
+      docPDF.text("Detalle de Ventas", 14, y);
+      y += 6;
+
+      docPDF.setTextColor(40, 40, 40);
+      docPDF.setFontSize(11);
+      docPDF.text("Producto", 14, y);
+      docPDF.text("Monto ($)", 180, y, { align: "right" });
+      docPDF.line(14, y + 2, 196, y + 2);
+      y += 8;
+
+      const filas = document.querySelectorAll("#tablaVentas tbody tr");
+      docPDF.setFont("helvetica", "normal");
+      filas.forEach(fila => {
+        const cols = fila.querySelectorAll("td");
+        if (cols.length >= 3) {
+          const producto = cols[1].textContent.trim();
+          const monto = cols[2].textContent.trim();
+          docPDF.text(producto.substring(0, 50), 14, y);
+          docPDF.text(monto, 180, y, { align: "right" });
+          y += 7;
+          if (y > 260) {
+            docPDF.addPage();
+            y = 20;
+          }
+        }
+      });
+
+      docPDF.setDrawColor(...grisSuave);
+      docPDF.line(14, y, 196, y);
+      y += 10;
+
+      // ===============================
+      // 📊 RESUMEN DEL DÍA
+      // ===============================
+      docPDF.setFont("helvetica", "bold");
+      docPDF.setFontSize(13);
+      docPDF.setTextColor(...azulSuave);
+      docPDF.text("Resumen del Día", 14, y);
+      y += 8;
+
+      docPDF.setFont("helvetica", "normal");
+      docPDF.setFontSize(11);
+      docPDF.setTextColor(40, 40, 40);
+      docPDF.text(`Ingresos (ventas):  $${totalDia.toLocaleString("es-AR")}`, 14, y);
+      y += 6;
+      docPDF.text(`Egresos:              $${egresos.toLocaleString("es-AR")}`, 14, y);
+      y += 6;
+      docPDF.setFont("helvetica", "bold");
+      docPDF.text(`Saldo final en caja:  $${(totalDia - egresos).toLocaleString("es-AR")}`, 14, y);
+      y += 10;
+
+      // ===============================
+      // ✍️ OBSERVACIONES (ajuste automático)
+      // ===============================
+      if (observaciones) {
+        docPDF.setFont("helvetica", "bold");
+        docPDF.setFontSize(12);
+        docPDF.setTextColor(...azulSuave);
+        docPDF.text("Observaciones:", 14, y);
+        y += 6;
+
+        docPDF.setFont("helvetica", "normal");
+        docPDF.setTextColor(40, 40, 40);
+        const maxAncho = 180;
+        const lineas = docPDF.splitTextToSize(observaciones, maxAncho);
+        docPDF.text(lineas, 14, y);
+        y += lineas.length * 6 + 4;
+      }
+
+      // ===============================
+      // ✒️ BLOQUE DE FIRMAS
+      // ===============================
+      docPDF.setDrawColor(...grisSuave);
+      docPDF.line(14, y + 20, 90, y + 20);
+      docPDF.line(120, y + 20, 196, y + 20);
+      docPDF.setFont("helvetica", "italic");
+      docPDF.setFontSize(10);
+      docPDF.text("Firma del Cajero", 14, y + 25);
+      docPDF.text("Firma del Supervisor", 140, y + 25);
+
+      // ===============================
+      // 📄 PIE DE PÁGINA
+      // ===============================
+      docPDF.setFont("helvetica", "italic");
+      docPDF.setFontSize(9);
+      docPDF.setTextColor(120, 120, 120);
+      docPDF.text("Documento generado automáticamente por Vidriera Virtual", 105, 285, { align: "center" });
+
+      // 💾 Guardar PDF
+      const nombreArchivo = `CierreCaja_${nombreTienda}_${new Date().toLocaleDateString("es-AR").replace(/\//g, "-")}.pdf`;
+      docPDF.save(nombreArchivo);
+    } catch (error) {
+      console.error("❌ Error al generar PDF:", error);
+      alert("⚠️ El cierre se guardó, pero hubo un error al generar el PDF.");
+    }
+    // ===============================
+    // 🧹 ELIMINAR REGISTROS DE VENTAS TRAS EL CIERRE DE CAJA
+    // ===============================
+    try {
+      const ventasRef = collection(db, "ventas"); // Cambiá "ventas" por el nombre real de tu colección
+      const snapshot = await getDocs(ventasRef);
+
+      let totalEliminadas = 0;
+      for (const docu of snapshot.docs) {
+        await deleteDoc(doc(db, "ventas", docu.id));
+        totalEliminadas++;
+      }
+
+      console.log(`🧹 ${totalEliminadas} registros de ventas eliminados tras el cierre de caja.`);
+    } catch (error) {
+      console.error("⚠️ Error eliminando ventas:", error);
+      alert("⚠️ Hubo un error al eliminar las ventas del día. Revisa la consola para más detalles.");
+    }
+
+
+    // 🔁 Reiniciar datos
+    alert(`✅ Cierre de caja registrado correctamente ($${totalDia.toFixed(2)}).`);
+    totalDia = 0;
+    totalCaja.textContent = "Total del día: $0";
+    cuerpoTabla.innerHTML = "";
+  };
+
+
+}
+// =====================================
+// 🧾 GENERADOR DE FOLLETO PDF — AJUSTABLE MANUALMENTE
+// =====================================
+document.getElementById("btnGenerarFolleto").addEventListener("click", async () => {
+  try {
+    const { jsPDF } = window.jspdf;
+    const docPDF = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+    const anchoPagina = docPDF.internal.pageSize.getWidth();
+    const altoPagina = docPDF.internal.pageSize.getHeight();
+    const margenX = 10;
+    const margenY = 20;
+
+    // 🏷️ Configuración visual
+    const cols = 3;        // 👈 cantidad de columnas
+    const espacio = 6;     // 👈 separación entre columnas y filas
+    const altoItem = 65;   // 👈 altura total de cada bloque (aumentar = menos filas)
+    const anchoItem = (anchoPagina - margenX * 2 - espacio * (cols - 1)) / cols;
+
+    const nombreTienda = document.getElementById("MATES-GUAY").textContent || "Mi Tienda";
+    const fecha = new Date().toLocaleDateString("es-AR");
+
+    // ===========================
+    // ENCABEZADO
+    // ===========================
+    docPDF.setFont("helvetica", "bold");
+    docPDF.setFontSize(18);
+    docPDF.setTextColor(0, 150, 0);
+    docPDF.text(nombreTienda, anchoPagina / 2, 12, { align: "center" });
+    docPDF.setFontSize(10);
+    docPDF.setTextColor(100);
+    docPDF.text(`Catálogo de productos — ${fecha}`, margenX, 18);
+    docPDF.setDrawColor(180);
+    docPDF.line(10, 20, anchoPagina - 10, 20);
+
+    // ===========================
+    // CUADRÍCULA DE PRODUCTOS
+    // ===========================
+    let x = margenX;
+    let y = margenY + 5;
+    let contador = 0;
+
+    for (const p of productos) {
+      if (!p.nombre || !p.precio) continue;
+
+      // IMAGEN DEL PRODUCTO
+      if (p.imagen) {
+        try {
+          const img = await fetch(p.imagen);
+          const blob = await img.blob();
+          const reader = new FileReader();
+          await new Promise((resolve) => {
+            reader.onload = () => {
+              // 👇 Cambiá el último número para ajustar el alto de la imagen (ej. 35 → 40 o 25)
+              docPDF.addImage(reader.result, "JPEG", x + 5, y, anchoItem - 10, 35, "", "FAST");
+              resolve();
+            };
+            reader.readAsDataURL(blob);
+          });
+        } catch (e) {
+          console.log("⚠️ Imagen no cargada:", e);
+        }
+      }
+
+      // NOMBRE DEL PRODUCTO
+      docPDF.setFont("helvetica", "bold");
+      docPDF.setFontSize(10.5);
+      docPDF.setTextColor(0);
+      const nombreCorto = docPDF.splitTextToSize(p.nombre, anchoItem - 10);
+      docPDF.text(nombreCorto, x + 5, y + 40);
+
+      // 🧮 Calcular automáticamente la posición Y según la cantidad de líneas
+      const alturaTexto = nombreCorto.length * 5; // cada línea ocupa aprox 5mm
+      let posY = y + 40 + alturaTexto; // 🔹 el precio se acomoda debajo del texto
+
+      // PRECIO PRINCIPAL
+      docPDF.setFont("helvetica", "bold");
+      docPDF.setFontSize(11);
+      docPDF.setTextColor(0, 150, 0);
+      docPDF.text(`$${p.precio}`, x + 5, posY);
+
+
+      // PRECIO MAYORISTA (opcional)
+      if (p.precioMayorista) {
+        docPDF.setFont("helvetica", "normal");
+        docPDF.setFontSize(9.5);
+        docPDF.setTextColor(0, 102, 204);
+        docPDF.text(`Mayorista: $${p.precioMayorista}`, x + 5, posY + 5);
+      }
+
+      // DESCUENTO VISUAL
+      if (p.descuento && p.precioAnterior) {
+        docPDF.setFont("helvetica", "normal");
+        docPDF.setFontSize(9.5);
+        docPDF.setTextColor(150);
+        docPDF.text(`$${p.precioAnterior}`, x + 5, posY - 4);
+        const anchoTxt = docPDF.getTextWidth(`$${p.precioAnterior}`);
+        docPDF.setDrawColor(150);
+        docPDF.line(x + 5, posY - 5.5, x + 5 + anchoTxt, posY - 5.5);
+
+        docPDF.setFont("helvetica", "bold");
+        docPDF.setFontSize(11);
+        docPDF.setTextColor(200, 0, 0);
+        docPDF.text(`-${p.descuento}%`, x + 5 + anchoTxt + 4, posY - 4);
+      }
+
+      // POSICIONAMIENTO EN GRILLA
+      contador++;
+      if (contador % cols === 0) {
+        x = margenX;
+        y += altoItem + espacio;
+      } else {
+        x += anchoItem + espacio;
+      }
+
+      // NUEVA PÁGINA SI SE LLENA
+      if (y + altoItem > altoPagina - 15) {
+        docPDF.addPage();
+        y = margenY + 5;
+        x = margenX;
+        docPDF.setFont("helvetica", "bold");
+        docPDF.setFontSize(18);
+        docPDF.setTextColor(0, 150, 0);
+        docPDF.text(nombreTienda, margenX, 12);
+        docPDF.setFontSize(10);
+        docPDF.setTextColor(100);
+        docPDF.text(`Catálogo de productos — ${fecha}`, margenX, 18);
+        docPDF.line(10, 20, anchoPagina - 10, 20);
+      }
+    }
+
+    // PIE DE PÁGINA
+    docPDF.setFontSize(9);
+    docPDF.setTextColor(150);
+    docPDF.text(`Generado automáticamente por MultiTiendas Gualeguay`, 10, altoPagina - 5);
+
+    docPDF.save(`Catalogo-${nombreTienda}.pdf`);
+  } catch (error) {
+    console.error("Error generando PDF:", error);
+    alert("⚠️ Error al generar el PDF.");
   }
 });

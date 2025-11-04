@@ -90,6 +90,13 @@
         style="background:#198754; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:15px; font-weight:600; transition:all 0.3s ease;">
         💾 Guardar Cambios
       </button>
+      <button id="btnGenerarFolleto"
+  style="background:#0dcaf0; color:white; border:none; padding:10px 18px;
+  border-radius:8px; cursor:pointer; font-size:15px; font-weight:600;
+  transition:all 0.3s ease;">
+  🧾 Generar Folleto PDF
+</button>
+
 
       <button onclick="cerrarSesion()"
         style="background:#dc3545; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:15px; font-weight:600; transition:all 0.3s ease;">
@@ -164,6 +171,46 @@
       <h2 style="text-align:center; color:#0b5ed7;">📊 Estadísticas de Productos</h2>
       <canvas id="grafico-categorias" height="120"></canvas>
     </section>
+    <!-- 💵 Registro de Ventas y Cierre de Caja (Solo Plan Premium) -->
+<section id="panel-ventas" style="display:none; margin-top:30px; background:#f5f5f5; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08);">
+  <h2 style="text-align:center; color:#0b5ed7; margin-bottom:20px;">💵 Registro de Ventas y Cierre de Caja</h2>
+
+  <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:25px;">
+   <input list="listaProductos" id="productoVendido" placeholder="Producto vendido..." 
+  style="padding:10px 12px; border:1px solid #ccc; border-radius:8px; width:220px; font-size:15px;">
+<datalist id="listaProductos"></datalist>
+
+    <input type="number" id="montoVenta" placeholder="Monto ($)" 
+      style="padding:10px 12px; border:1px solid #ccc; border-radius:8px; width:140px; font-size:15px;">
+    <button id="btnRegistrarVenta" 
+      style="background:#198754; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600;">
+      ➕ Registrar Venta
+    </button>
+  </div>
+
+<table id="tablaVentas" style="width:100%; border-collapse:collapse;">
+  <thead>
+    <tr style="background:#0b5ed7; color:white;">
+      <th style="padding:10px;">Fecha</th>
+      <th style="padding:10px;">Producto</th>
+      <th style="padding:10px;">Monto</th>
+      <th style="padding:10px;">Acciones</th> <!-- ✅ NUEVA COLUMNA -->
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+
+  <p id="totalCaja" style="text-align:center; margin-top:20px; font-weight:bold;">Total del día: $0</p>
+
+  <div style="text-align:center; margin-top:20px;">
+    <button id="btnCierreCaja" 
+      style="background:#f59e0b; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+      📦 Cerrar Caja
+    </button>
+  </div>
+</section>
+
     <!-- 🏷️ Sección de Categorías -->
     <section id="categorias-panel"
       style="margin-top:30px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.08);">
@@ -255,12 +302,12 @@
       </div>
 
       <div>
-        <label>Color Header:</label>
+        <label>Color Banner inferior:</label>
         <input type="color" id="colorHeaderTienda" class="campo-config">
       </div>
 
       <div>
-        <label>Color Footer:</label>
+        <label>Color Banner superior:</label>
         <input type="color" id="colorFooterTienda" class="campo-config">
       </div>
 
@@ -330,6 +377,8 @@
 
   <script type="module" src="js/login.js"></script>
   <script type="module" src="js/admin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 
 </body>
 

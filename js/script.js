@@ -621,15 +621,14 @@ window.addEventListener("storage", e => {
 })();
 
 
-
-// ============================================
 // 🚀 INICIALIZACIÓN AUTOMÁTICA
-// Carga los productos y muestra el carrito al abrir la tienda
-// ============================================
+// Solo carga los productos, pero NO muestra el carrito
 (async () => {
   await cargarProductos();
-  mostrarCarrito();
+  actualizarCarrito(); // carga los datos sin abrirlo
+  document.getElementById("carrito-contenido").classList.add("oculto"); // lo oculta al inicio
 })();
+
 // ============================================
 // 📴 MODO SIN CONEXIÓN
 // Muestra un aviso cuando el usuario pierde Internet
