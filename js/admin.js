@@ -1612,14 +1612,22 @@ document.getElementById("btnGenerarFolleto").addEventListener("click", async () 
 
     const anchoPagina = docPDF.internal.pageSize.getWidth();
     const altoPagina = docPDF.internal.pageSize.getHeight();
-    const margenX = 10;
-    const margenY = 20;
 
-    // 🏷️ Configuración visual
-    const cols = 3;        // 👈 cantidad de columnas
-    const espacio = 6;     // 👈 separación entre columnas y filas
-    const altoItem = 65;   // 👈 altura total de cada bloque (aumentar = menos filas)
-    const anchoItem = (anchoPagina - margenX * 2 - espacio * (cols - 1)) / cols;
+    // ===========================
+    // 📐 CONFIGURACIÓN VISUAL — 4 filas x 3 columnas (bajada del contenido)
+    // ===========================
+    const margenX = 12;        // margen lateral
+    const margenY = 22;        // 🔹 antes 14 → aumenta = baja toda la grilla
+    const cols = 3;
+    const filas = 4;
+    const espacio = 8;
+
+    const altoDisponible = altoPagina - margenY * 2 - 5; // 🔹 antes -15 → reduce margen inferior
+    const altoItem = (altoDisponible - (filas - 1) * espacio) / filas * 0.88;
+    const anchoItem = (anchoPagina - margenX * 2 - (cols - 1) * espacio) / cols;
+
+
+
 
     const nombreTienda = document.getElementById("MATES-GUAY").textContent || "Mi Tienda";
     const fecha = new Date().toLocaleDateString("es-AR");
@@ -1680,8 +1688,9 @@ document.getElementById("btnGenerarFolleto").addEventListener("click", async () 
       // PRECIO PRINCIPAL
       docPDF.setFont("helvetica", "bold");
       docPDF.setFontSize(11);
-      docPDF.setTextColor(0, 150, 0);
-      docPDF.text(`$${p.precio}`, x + 5, posY);
+      docPDF.setTextColor(0);
+      docPDF.text(`$${p.precio}`, x + 5, posY + 6);
+
 
 
       // PRECIO MAYORISTA (opcional)
@@ -1689,23 +1698,41 @@ document.getElementById("btnGenerarFolleto").addEventListener("click", async () 
         docPDF.setFont("helvetica", "normal");
         docPDF.setFontSize(9.5);
         docPDF.setTextColor(0, 102, 204);
-        docPDF.text(`Mayorista: $${p.precioMayorista}`, x + 5, posY + 5);
+        docPDF.text(`Mayorista: $${p.precioMayorista}`, x + 5, posY + 10);
       }
 
-      // DESCUENTO VISUAL
+      // DESCUENTO VISUAL (precio anterior arriba del precio actual)
       if (p.descuento && p.precioAnterior) {
-        docPDF.setFont("helvetica", "normal");
-        docPDF.setFontSize(9.5);
-        docPDF.setTextColor(150);
-        docPDF.text(`$${p.precioAnterior}`, x + 5, posY - 4);
-        const anchoTxt = docPDF.getTextWidth(`$${p.precioAnterior}`);
-        docPDF.setDrawColor(150);
-        docPDF.line(x + 5, posY - 5.5, x + 5 + anchoTxt, posY - 5.5);
+        // 🔴 Etiqueta roja de descuento (proporcional)
+        const etiquetaX = x + 6;
+        const etiquetaY = y + 4;
+        const etiquetaW = 10;
+        const etiquetaH = 6;
+
+        docPDF.setFillColor(255, 0, 0);
+        docPDF.roundedRect(etiquetaX, etiquetaY, etiquetaW, etiquetaH, 1, 1, "F");
 
         docPDF.setFont("helvetica", "bold");
-        docPDF.setFontSize(11);
-        docPDF.setTextColor(200, 0, 0);
-        docPDF.text(`-${p.descuento}%`, x + 5 + anchoTxt + 4, posY - 4);
+        docPDF.setFontSize(7.5);
+        docPDF.setTextColor(255, 255, 255);
+        docPDF.text(`-${p.descuento}%`, etiquetaX + 1.8, etiquetaY + 4.5);
+
+        /// 💲 Precio anterior tachado (encima del precio verde)
+        docPDF.setFont("helvetica", "normal");
+        docPDF.setFontSize(9);
+        docPDF.setTextColor(150);
+        const yAnterior = posY + 1.5; // 🔹 sube 1.5mm sobre el precio verde
+
+        // Texto completo
+        docPDF.text(`Precio anterior:$${p.precioAnterior}`, x + 5, yAnterior);
+
+        // Línea de tachado (solo sobre el número, no sobre "Precio anterior:")
+        const anchoEtiqueta = docPDF.getTextWidth("Precio anterior:"); // mide solo la palabra
+        const anchoNumero = docPDF.getTextWidth(`$${p.precioAnterior}`);
+        const inicioLinea = x + 5 + anchoEtiqueta + 1.5; // arranca después de "Precio anterior:"
+        docPDF.setDrawColor(150);
+        docPDF.line(inicioLinea, yAnterior - 1.5, inicioLinea + anchoNumero, yAnterior - 1.5);
+
       }
 
       // POSICIONAMIENTO EN GRILLA
@@ -1744,3 +1771,4 @@ document.getElementById("btnGenerarFolleto").addEventListener("click", async () 
     alert("⚠️ Error al generar el PDF.");
   }
 });
+

@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
     content="Tienda online lista en minutos. Catálogo, QR y pedidos por WhatsApp. Vidriera Virtual." />
-  <link rel="icon" href="imag/imagenes-tienda/logo-tienda-vidriera.jpg" />
+  <link rel="icon" href="imag/logo-512.png" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -348,6 +348,33 @@
         padding: 8px 12px;
       }
     }
+
+    /* ✅ MODAL DE VIDEO */
+.modal-video {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.modal-video-content {
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+/* Cierre al hacer click afuera */
+.modal-video.show {
+  display: flex;
+}
+
   </style>
 </head>
 
@@ -355,7 +382,7 @@
   <header>
     <nav>
       <div style="display:flex;align-items:center;gap:10px">
-        <img src="imag/imagenes-tienda/logo-tienda-vidriera.jpg" alt="Logo" height="34" />
+        <img src="imag/logo-512.png" alt="Logo" height="34" />
 
       </div>
       <div>
@@ -387,7 +414,7 @@
       </div>
     </div>
     <div>
-      <img src="imag/imagenes-tienda/logo-tienda-vidriera.jpg" alt="Vista previa"
+      <img src="imag/logo-512.png" alt="Vista previa"
         style="width:100%;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.18)">
     </div>
   </section>
@@ -465,7 +492,15 @@
     </div>
   </section>
 
-  
+  <!-- ✅ MODAL DE VIDEO AL INICIAR -->
+<div id="modalVideo" class="modal-video">
+  <div class="modal-video-content">
+    <video id="videoPresentacion" controls autoplay style="width:100%;border-radius:12px;">
+      <source src="presentación de pagina.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
 
   <footer>
     <div class="fwrap">
@@ -531,6 +566,35 @@
     document.getElementById("y").textContent = new Date().getFullYear();
     cargarEjemplos();
   </script>
+
+ <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const modal = document.getElementById("modalVideo");
+    const video = document.getElementById("videoPresentacion");
+
+    // ✅ Mostrar siempre el modal al cargar la página
+    modal.classList.add("show");
+
+    // ✅ Primera vez: reproducir automáticamente
+    if (!sessionStorage.getItem("videoReproducido")) {
+      video.play();
+      sessionStorage.setItem("videoReproducido", "1");
+    }
+
+    // ✅ Cerrar si clickea afuera
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.remove("show");
+        video.pause();
+      }
+    });
+
+  });
+</script>
+
+
+
 </body>
 
 </html>
