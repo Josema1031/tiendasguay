@@ -218,19 +218,28 @@ let favicon = document.querySelector("link[rel='shortcut icon']");
 if (!favicon) {
   favicon = document.createElement("link");
   favicon.rel = "shortcut icon";
-  document.head.appendChild(favicon);
+
 }
 
 favicon.href = cfg.logo || "https://via.placeholder.com/512"; // fallback
 
-// 2) CREAR MANIFEST DINÁMICO EN MEMORIA
+
+// 2) MANIFEST INDEPENDIENTE POR TIENDA
 const manifest = {
+  id: tiendaId,   // 🔥 ID ÚNICO POR TIENDA
   name: cfg.nombre || tiendaId,
   short_name: cfg.nombre || tiendaId,
-  start_url: `index.html?tienda=${tiendaId}`,
+
+  // 🔥 SCOPE ÚNICO (hace que Chrome diferencie tiendas)
+  scope: `/?tienda=${tiendaId}`,
+
+  // 🔥 START_URL ÚNICO (evita que se mezclen al abrir)
+  start_url: `/?tienda=${tiendaId}`,
+
   display: "standalone",
   background_color: "#ffffff",
   theme_color: cfg.colorHeader || "#007bff",
+
   icons: [
     {
       src: cfg.logo,
@@ -246,11 +255,9 @@ const manifest = {
 };
 
 // Crear Blob del manifest
-const manifestBlob = new Blob([JSON.stringify(manifest)], {
-  type: "application/json"
-});
+const manifestBlob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
 
-// Crear URL temporal
+// Crear URL temporal del manifest
 const manifestURL = URL.createObjectURL(manifestBlob);
 
 // 3) INYECTAR MANIFEST EN <head>
@@ -262,6 +269,7 @@ if (!manifestLink) {
 }
 
 manifestLink.href = manifestURL;
+
 // ===================================================================
 
       // 🏷️ Cambiar color del título

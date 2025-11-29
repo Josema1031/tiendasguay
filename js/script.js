@@ -38,6 +38,7 @@ const firebaseConfig = {
 // Inicialización de Firebase y Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+let enBusqueda = false;
 
 // ===========================================
 // 👀 CONTADOR DE VISITAS (crear/actualizar y mostrar)
@@ -179,20 +180,22 @@ window.ocultarCarrito = false;
 
 // ✅ Función que oculta/rehace el comportamiento del carrito
 function aplicarOcultarCarritoEnUI() {
+  if (enBusqueda) return;  // 🛑 No tocar el carrito mientras se busca
+
   const ocultar = window.ocultarCarrito === true;
 
-  // Carrito: panel y botón 🛒 por CLASE, no por style.display
   const cont = document.getElementById("carrito-contenido");
   const btn = document.getElementById("toggle-carrito");
+
   if (cont) cont.classList.toggle("oculto", ocultar);
   if (btn)  btn.classList.toggle("oculto", ocultar);
 
-  // Botones “Agregar” de todas las cards (incluye las nuevas)
   document.querySelectorAll(".card button").forEach(b => {
     const txt = (b.textContent || "").trim().toLowerCase();
     if (txt.includes("agregar")) b.style.display = ocultar ? "none" : "";
   });
 }
+
 
 
 // ============================================
@@ -228,24 +231,22 @@ async function cargarProductos() {
 // Evita duplicados y limpia el contenedor
 // ============================================
 document.getElementById("buscador").addEventListener("input", e => {
+  enBusqueda = true;  // 🟦 Inicia modo búsqueda
+
   const texto = e.target.value.toLowerCase().trim();
   const contenedor = document.getElementById("contenedor-productos");
-
-  // 🧹 Limpiar el contenedor antes de renderizar nuevamente
   if (contenedor) contenedor.innerHTML = "";
 
-  // 🧩 Filtrar evitando duplicados por nombre
   const filtrados = productosCargados.filter((p, index, self) =>
     p.nombre.toLowerCase().includes(texto) &&
-    index === self.findIndex(
-      x => x.nombre.toLowerCase() === p.nombre.toLowerCase()
-    )
+    index === self.findIndex(x => x.nombre.toLowerCase() === p.nombre.toLowerCase())
   );
 
   mostrarProductos(filtrados);
-  aplicarOcultarCarritoEnUI();
 
+  enBusqueda = false; // 🟩 Desactiva modo búsqueda
 });
+
 
 
 // ============================================
