@@ -243,17 +243,20 @@ async function initPlanUI() {
         ? ""
         : "Función disponible desde el plan Profesional";
     }
-    const seccionConfig = document.getElementById("configuracion-tienda");
-    if (seccionConfig) {
-      if (plan === "Basico") {
-        seccionConfig.innerHTML = `
+   const seccionConfig = document.getElementById("configuracion-tienda");
+if (seccionConfig) {
+  if (plan === "Basico") {
+    seccionConfig.innerHTML = `
       <div style="text-align:center;padding:40px;">
         <h3 style="color:#0b5ed7;">🔒 Función no disponible en el plan Básico</h3>
-        <p style="color:#555;">Actualizá a <strong>Profesional</strong> o <strong>Premium</strong> para personalizar tu tienda.</p>
+        <p style="color:#555;">Actualizá a Profesional o Premium para personalizar tu tienda.</p>
       </div>
     `;
-      }
-    }
+  } else {
+    seccionConfig.style.display = "block";  // 👉 ESTA ES LA LÍNEA QUE RESUELVE TU PROBLEMA
+  }
+}
+
 
 
 

@@ -352,27 +352,46 @@ window.graficoTiendasInstance = new Chart(ctx, {
         console.error(e); modalMensaje("❌ No se pudo cambiar el estado","#dc3545");
       }
     };
-
-   window.eliminarTienda = async (tiendaId) => {
+window.eliminarTienda = async (tiendaId) => {
   modalConfirm(`⚠️ ¿Eliminar completamente la tienda "${tiendaId}"?`, async () => {
     try {
-      // 🔹 1. Borrar subcolección de productos
-      const productosSnap = await getDocs(collection(db, "tiendas", tiendaId, "productos"));
-      for (const prod of productosSnap.docs) {
-        await deleteDoc(prod.ref);
+
+      // 1️⃣ Listar todas las subcolecciones conocidas hasta hoy
+      const posiblesColecciones = [
+        "productos",
+        "config",
+        "categorias",
+        "cierresCaja",
+        "usuarios",
+        "clientes",
+        "proveedores",
+        "ventas",
+        "estadisticas",
+        "caja",
+        "imagenes",
+        "notificaciones",
+        "opciones",
+      ];
+
+      // 2️⃣ Detectar cuáles realmente existen
+      const existentes = [];
+      for (const col of posiblesColecciones) {
+        const snap = await getDocs(collection(db, "tiendas", tiendaId, col));
+        if (!snap.empty) existentes.push(col);
       }
 
-      // 🔹 2. Borrar subcolección de configuración (por si hay más docs)
-      const configSnap = await getDocs(collection(db, "tiendas", tiendaId, "config"));
-      for (const conf of configSnap.docs) {
-        await deleteDoc(conf.ref);
+      // 3️⃣ Eliminar todas las subcolecciones detectadas
+      for (const col of existentes) {
+        const snap = await getDocs(collection(db, "tiendas", tiendaId, col));
+        for (const docu of snap.docs) {
+          await deleteDoc(docu.ref);
+        }
       }
 
-      // 🔹 3. Eliminar documento principal de la tienda
+      // 4️⃣ Eliminar documento raíz
       await deleteDoc(doc(db, "tiendas", tiendaId));
 
-      modalMensaje(`✅ Tienda "${tiendaId}" eliminada completamente.`, "#28a745");
-   
+      modalMensaje(`✅ Tienda "${tiendaId}" eliminada COMPLETAMENTE.`, "#28a745");
 
     } catch (error) {
       console.error("❌ Error al eliminar tienda:", error);
