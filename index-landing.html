@@ -64,16 +64,7 @@
       background: var(--c1d)
     }
 
-    .hero {
-      max-width: 1100px;
-      margin: 30px auto;
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 24px;
-      align-items: center;
-      padding: 0 16px
-    }
-
+  
     .tag {
       display: inline-block;
       background: #eaf2ff;
@@ -179,21 +170,10 @@
       align-items: center
     }
 
-    @media(max-width:900px) {
-      .hero {
-        grid-template-columns: 1fr
-      }
-    }
+  
 
     @media (max-width: 600px) {
-      .hero {
-        text-align: center;
-        padding: 10px;
-      }
-
-      h1 {
-        font-size: 28px;
-      }
+      
 
       .cards {
         grid-template-columns: 1fr;
@@ -244,31 +224,56 @@
       }
     }
 
-    /* 🔹 Celular */
+    /* 📱 Celular */
+    /* 📱 Header universal para todos los celulares */
     @media (max-width: 480px) {
+
       nav {
+        display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 0;
+        width: 100%;
+        text-align: center;
       }
 
+      /* Logo correctamente centrado y visible */
       nav img {
-        height: 150px;
+        height: 120px !important;
+        width: auto !important;
+        display: block;
+        margin: 0 auto;
       }
 
-      nav .cta {
-        display: block;
-        font-size: 13px;
-        padding: 6px 10px;
-        width: auto;
-        border-radius: 6px;
+      /* 🔥 Menú en una sola línea bien centrada */
+      nav>div:last-child {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
       }
 
       nav a {
-        margin-left: 10px;
-        font-size: 13px;
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      /* Botón siempre alineado, mismo tamaño en todos los celulares */
+      nav .cta {
+        font-size: 15px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        white-space: nowrap;
       }
     }
+
+
+
 
     /* === Borde uniforme para todas las cards === */
     .plan {
@@ -350,29 +355,226 @@
     }
 
     /* ✅ MODAL DE VIDEO */
-.modal-video {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  z-index: 9999;
+    .modal-video {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+
+    .modal-video-content {
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Cierre al hacer click afuera */
+    .modal-video.show {
+      display: flex;
+    }
+
+    /* ------------------------------ */
+    /* VIDEO HERO COMPLETO */
+    /* ------------------------------ */
+    .hero-video {
+      position: relative;
+      width: 100%;
+      height: auto;
+      /* antes: 70vh */
+      overflow: hidden;
+    }
+
+
+    .hero-video video {
+      width: 100%;
+      height: 100%;
+
+    }
+
+    .overlay-text {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, .6);
+    }
+
+    .overlay-text h1 {
+      font-size: 38px;
+      margin: 0;
+      font-weight: 800;
+    }
+
+    .overlay-text p {
+      font-size: 20px;
+      margin: 6px 0 16px 0;
+    }
+
+    .btn-whatsapp-hero {
+      background: #25D366;
+      padding: 12px 22px;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+    }
+
+    /* ------------------------------ */
+    /* ASESORES */
+    /* ------------------------------ */
+    .asesores {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 16px;
+      text-align: center;
+    }
+
+    .asesores h2 {
+      font-size: 32px;
+      margin-bottom: 28px;
+      color: var(--c1);
+      font-weight: 800;
+    }
+
+    .asesores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 26px;
+    }
+
+    .asesor-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 6px 22px rgba(0, 0, 0, .1);
+    }
+
+    .asesor-card img {
+      width: 100%;
+      border-radius: 14px;
+      margin-bottom: 12px;
+    }
+
+    .asesor-card h3 {
+      margin: 8px 0 4px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .asesor-card p {
+      color: #666;
+      margin-bottom: 16px;
+    }
+
+    .btn-whatsapp {
+      display: block;
+      background: #25D366;
+      padding: 12px 18px;
+      text-decoration: none;
+      color: #fff;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+    }
+
+    /* ⭐ Precio Antes (tachado elegante) */
+    .precio-antes {
+      font-size: 18px;
+      color: #888;
+      text-decoration: line-through;
+      margin: 6px 0 -4px;
+      font-weight: 600;
+    }
+
+    /* ⭐ Precio Ahora (destacado) */
+    .precio-ahora {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--c1);
+      margin: 0 0 12px;
+    }
+
+    /* ⭐ Off Tag */
+    .badge-off {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: #ff3b30;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .2);
+    }
+    .tachado li {
+  text-decoration: line-through !important;
+  color: #777 !important;
 }
 
-.modal-video-content {
-  background: #fff;
-  border-radius: 14px;
-  padding: 10px;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+
+    /* Asegurar que la tarjeta permita contenido absoluto */
+    .plan {
+      position: relative;
+    }
+
+    /* ======================= */
+/* ⭐ FOOTER SIMPLIFICADO  */
+/* ======================= */
+
+.footer {
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 40px 20px;
+  margin-top: 40px;
 }
 
-/* Cierre al hacer click afuera */
-.modal-video.show {
-  display: flex;
+.footer-container {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+
+.footer-col h4 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.footer-col a {
+  display: block;
+  color: #cbd5e1;
+  text-decoration: none;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.footer-col a:hover {
+  color: #fff;
+}
+
+.footer-col p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+/* 📱 Responsive */
+@media(max-width: 500px) {
+  .footer {
+    text-align: center;
+  }
 }
 
   </style>
@@ -388,36 +590,53 @@
       <div>
         <a href="#planes">Planes</a>
         <a href="#ejemplos">Tiendas activas</a>
-        <a class="cta" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20mi%20tienda%20online">Quiero mi
+        <a class="cta" href="https://wa.me/5493444518917?text=Hola!%20Quiero%20mi%20tienda%20online">Quiero mi
           tienda</a>
       </div>
     </nav>
   </header>
 
-  <section class="hero">
-    <div>
-      <span class="tag">Tu tienda online en minutos</span>
-      <h1>Digitalizamos tu negocio con <span style="color:var(--c1)">catálogo + QR + WhatsApp</span></h1>
-      <p>Mostrá tus productos, generá pedidos por WhatsApp y compartí un código QR listo para imprimir. Sin vueltas, sin
-        programar.</p>
-      <div class="botones-landing">
-        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20mi%20tienda%20online">Hablar por
-          WhatsApp</a>
-        <a class="cta" href="#planes">Ver planes</a>
-      </div>
+  <!-- ========================================================= -->
+  <!-- 🎬 HERO CON VIDEO A PANTALLA COMPLETA -->
+  <!-- ========================================================= -->
+  <section class="hero-video">
+    <video src="presentación de pagina.mp4" autoplay muted playsinline loop></video>
+  </section>
 
 
-      <div class="cards">
-        <div class="card"><strong>QR incluido</strong><br />Descargá PNG y PDF listos para el local.</div>
-        <div class="card"><strong>Pedidos fáciles</strong><br />Tus clientes te escriben directo a WhatsApp.</div>
-        <div class="card"><strong>Diseño simple</strong><br />Claro, rápido y funciona en cualquier celular.</div>
+  <!-- ========================================================= -->
+  <!-- 🧑‍💼 ASESORES DE VENTAS -->
+  <!-- ========================================================= -->
+  <section class="asesores">
+    <h2>Asesores de Ventas</h2>
+
+    <div class="asesores-grid">
+
+      <!-- ASESOR 1 -->
+      <div class="asesor-card">
+        <img src="imag/ASESORA-VENTAS.jpg" alt="Asesor 1">
+        <h3>Nombre Apellido</h3>
+        <p>Asesor Comercial</p>
+
+        <a class="btn-whatsapp" href="https://wa.me/549XXXXXXXXX">
+          WhatsApp del Asesor
+        </a>
       </div>
-    </div>
-    <div>
-      <img src="imag/logo-512.png" alt="Vista previa"
-        style="width:100%;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.18)">
+
+      <!-- ASESOR 2 -->
+      <div class="asesor-card">
+        <img src="imag/ASESORA-VENTAS.jpg" alt="Asesor 2">
+        <h3>Nombre Apellido</h3>
+        <p>Asesor Comercial</p>
+
+        <a class="btn-whatsapp" href="https://wa.me/549XXXXXXXXX">
+          WhatsApp del Asesor
+        </a>
+      </div>
+
     </div>
   </section>
+
 
   <section id="ejemplos" class="precios">
     <h2>Tiendas activas en la plataforma</h2>
@@ -429,9 +648,17 @@
   <section id="planes" class="precios">
     <h2>Planes y precios</h2>
     <div class="planes">
-      <div class="plan">
+      <div class="plan basico">
+
+        <!-- ETIQUETA DE DESCUENTO -->
+        <div class="badge-off">30% OFF</div>
+
         <strong>Básico</strong>
-        <p>$29.999 / mes</p>
+
+        <!-- PRECIO ANTES Y AHORA -->
+        <p class="precio-antes">$43.000</p>
+        <p class="precio-ahora">$29.999 / mes</p>
+
         <ul>
           <li>Hasta 40 productos</li>
           <li>Productos cargados predeterminados</li>
@@ -439,7 +666,8 @@
           <li>Pedidos por WhatsApp</li>
           <li>Capacitación en carga de productos</li>
         </ul>
-        <ul class="tachado" style="text-decoration: line-through;">
+
+        <ul class="tachado">
           <li>Configuración logo y colores</li>
           <li>Estadísticas</li>
           <li>Soporte prioritario</li>
@@ -447,12 +675,22 @@
           <li>Registro de ventas</li>
           <li>Registro de clientes y Proveedores</li>
         </ul>
-        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20el%20Plan%20B%C3%A1sico">Elegir
-          Básico</a>
+
+        <a class="btn" href="https://wa.me/5493444518917?text=Hola!%20Quiero%20el%20Plan%20B%C3%A1sico">
+          Elegir Básico
+        </a>
       </div>
-      <div class="plan">
+      <div class="plan profesional">
+
+        <!-- ETIQUETA DE DESCUENTO -->
+        <div class="badge-off">25% OFF</div>
+
         <strong>Profesional</strong>
-        <p>$39.999 / mes</p>
+
+        <!-- PRECIO ANTES Y AHORA -->
+        <p class="precio-antes">$59.000</p>
+        <p class="precio-ahora">$49.999 / mes</p>
+
         <ul>
           <li>Hasta 100 productos</li>
           <li>Productos cargados predeterminados</li>
@@ -464,18 +702,30 @@
           <li>Soporte prioritario</li>
           <li>Difusion Orgánica y en RRSS</li>
         </ul>
-         <ul class="tachado" style="text-decoration: line-through;">
+
+        <ul class="tachado">
           <li>Registro de ventas</li>
           <li>Registro de clientes y Proveedores</li>
         </ul>
-        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20el%20Plan%20Profesional">Elegir
-          Profesional</a>
+
+        <a class="btn" href="https://wa.me/5493444518917?text=Hola!%20Quiero%20el%20Plan%20Profesional">
+          Elegir Profesional
+        </a>
       </div>
-      <div class="plan">
+
+      <div class="plan premium">
+
+        <!-- ETIQUETA DE DESCUENTO -->
+        <div class="badge-off">20% OFF</div>
+
         <strong>Premium</strong>
-        <p>$49.999 / mes</p>
+
+        <!-- PRECIO ANTES Y AHORA -->
+        <p class="precio-antes">$84.000</p>
+        <p class="precio-ahora">$69.990 / mes</p>
+
         <ul>
-          <li>Produtos Ilimitados</li>
+          <li>Productos Ilimitados</li>
           <li>Productos cargados predeterminados</li>
           <li>QR descargable</li>
           <li>Pedidos por WhatsApp/catálogo</li>
@@ -487,27 +737,54 @@
           <li>Registro de ventas</li>
           <li>Registro de clientes y Proveedores</li>
         </ul>
-        <a class="btn" href="https://wa.me/5492644429649?text=Hola!%20Quiero%20el%20Plan%20Premium">Elegir Premium</a>
+
+        <a class="btn" href="https://wa.me/5493444518917?text=Hola!%20Quiero%20el%20Plan%20Premium">
+          Elegir Premium
+        </a>
       </div>
-    </div>
+
   </section>
 
   <!-- ✅ MODAL DE VIDEO AL INICIAR -->
-<div id="modalVideo" class="modal-video">
-  <div class="modal-video-content">
-    <video id="videoPresentacion" controls autoplay style="width:100%;border-radius:12px;">
-      <source src="presentación de pagina.mp4" type="video/mp4">
-    </video>
-  </div>
-</div>
-
-
-  <footer>
-    <div class="fwrap">
-      <div>© <span id="y"></span> Vidriera Virtual</div>
-      <div>Hecho con ❤️ en Gualeguay</div>
+  <!--<div id="modalVideo" class="modal-video">
+    <div class="modal-video-content">
+      <video id="videoPresentacion" controls autoplay style="width:100%;border-radius:12px;">
+        <source src="presentación de pagina.mp4" type="video/mp4">
+      </video>
     </div>
-  </footer>
+  </div>-->
+
+
+  <footer class="footer">
+  <div class="footer-container">
+
+    <!-- Columna 1 -->
+    <div class="footer-col">
+      <h4>Plataforma</h4>
+      <a href="#planes">Planes</a>
+      <a href="#ejemplos">Tiendas activas</a>
+      <a href="https://wa.me/5493444518917">Crear tienda</a>
+    </div>
+
+    <!-- Columna 2 -->
+    <div class="footer-col">
+      <h4>Soporte</h4>
+      <a href="https://wa.me/5493444518917" target="_blank">WhatsApp</a>
+      <a href="mailto:contacto@vidrieravirtual.com">Email</a>
+      <a href="https://www.instagram.com/vidrieravirtual.guay/" target="_blank">Instagram</a>
+    </div>
+
+    <!-- Columna 3 -->
+    <div class="footer-col">
+      <h4>Vidriera Virtual</h4>
+      <p>Hecho con ❤️ en Gualeguay</p>
+      <p>© <span id="y"></span> Todos los derechos reservados.</p>
+    </div>
+
+  </div>
+</footer>
+
+
 
   <!-- Firebase + carga dinámica de ejemplos -->
   <script type="module">
@@ -567,32 +844,32 @@
     cargarEjemplos();
   </script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
 
-    const modal = document.getElementById("modalVideo");
-    const video = document.getElementById("videoPresentacion");
+      const modal = document.getElementById("modalVideo");
+      const video = document.getElementById("videoPresentacion");
 
-    // ✅ Mostrar el modal SIEMPRE al cargar
-    modal.classList.add("show");
+      // ✅ Mostrar el modal SIEMPRE al cargar
+      modal.classList.add("show");
 
-    // ✅ Primera visita: autoplay (Chrome lo permite solo si está muted)
-    if (!sessionStorage.getItem("videoReproducido")) {
-      video.muted = true;   // 🔥 Necesario aunque el video no tenga audio
-      video.play();
-      sessionStorage.setItem("videoReproducido", "1");
-    }
-
-    // ✅ Cerrar al hacer click afuera
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.classList.remove("show");
-        video.pause();
+      // ✅ Primera visita: autoplay (Chrome lo permite solo si está muted)
+      if (!sessionStorage.getItem("videoReproducido")) {
+        video.muted = true;   // 🔥 Necesario aunque el video no tenga audio
+        video.play();
+        sessionStorage.setItem("videoReproducido", "1");
       }
-    });
 
-  });
-</script>
+      // ✅ Cerrar al hacer click afuera
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.remove("show");
+          video.pause();
+        }
+      });
+
+    });
+  </script>
 
 
 

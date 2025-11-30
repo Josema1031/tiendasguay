@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,18 +10,20 @@
 
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="Mates Guay - Mates y Accesorios de Calidad" />
-  <meta property="og:description" content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!" />
+  <meta property="og:description"
+    content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!" />
   <meta property="og:image" content="https://josema1031.github.io/matesguay/imag/logo_600x315.png" />
   <meta property="og:url" content="https://josema1031.github.io/matesguay/" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mates Guay - Mates y Accesorios de Calidad">
-  <meta name="twitter:description" content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!">
+  <meta name="twitter:description"
+    content="Descubrí nuestros mates, bombillas y accesorios artesanales. ¡Envíos a todo el país!">
   <meta name="twitter:image" content="https://josema1031.github.io/matesguay/imag/logo_600x315.png">
 </head>
 
 <body>
-  
+
   <div id="loader" style="
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
@@ -47,18 +50,19 @@
       letter-spacing:1px;"></h1>
   </header>
 
- <!-- <p style="text-align:center; margin-top:8px; font-size:1.1rem; font-weight:500; color:#222;">
+  <!-- <p style="text-align:center; margin-top:8px; font-size:1.1rem; font-weight:500; color:#222;">
     Diseño, tradición y sabor en un solo mate
   </p>-->
 
 
-<!-- MENÚ DE CATEGORÍAS DINÁMICAS -->
-<div id="menu-categorias"></div>
+  <!-- MENÚ DE CATEGORÍAS DINÁMICAS -->
+  <div id="menu-categorias"></div>
 
 
   <!-- PRODUCTOS -->
   <main>
-    <input type="text" id="buscador" placeholder="Buscar productos..." style="width: 35%; padding: 10px; margin-bottom: 20px; font-size: 16px;">
+    <input type="text" id="buscador" placeholder="Buscar productos..."
+      style="width: 35%; padding: 10px; margin-bottom: 20px; font-size: 16px;">
     <div class="productos" id="contenedor-productos"></div>
     <div style="text-align:center; margin: 20px;">
       <button id="btn-mostrar-mas" onclick="mostrarMasProductos()">Mas productos</button>
@@ -89,9 +93,9 @@
     </div>
   </div>
 
- <p id="contador-visitas" style="text-align:center; color:#444; font-size:14px; margin-top:10px;">
-  👁️ Visitas: <span id="contador-visitas-numero">0</span>
-</p>
+  <p id="contador-visitas" style="text-align:center; color:#444; font-size:14px; margin-top:10px;">
+    👁️ Visitas: <span id="contador-visitas-numero">0</span>
+  </p>
 
 
 
@@ -145,7 +149,7 @@
     async function aplicarConfig() {
       const cfg = await cargarConfig();
       if (!cfg) return;
-      
+
 
       // Header
       const header = document.getElementById("header-tienda");
@@ -207,107 +211,96 @@
         btnCarrito.style.fontWeight = "600";
       }
 
-// ===================================================================
-// 🟦 MANIFEST DINÁMICO Y FAVICON POR TIENDA
-// CARGA EL LOGO REAL COMO ÍCONO DE INSTALACIÓN (PWA / ACCESO DIRECTO)
-// ===================================================================
+      // ===================================================================
+      // 🟦 MANIFEST DINÁMICO Y FAVICON POR TIENDA
+      // CARGA EL LOGO REAL COMO ÍCONO DE INSTALACIÓN (PWA / ACCESO DIRECTO)
+      // ===================================================================
 
-// 1) FAVICON DINÁMICO
-let favicon = document.querySelector("link[rel='shortcut icon']");
+      // 1) FAVICON DINÁMICO
+      let favicon = document.querySelector("link[rel='shortcut icon']");
 
-if (!favicon) {
-  favicon = document.createElement("link");
-  favicon.rel = "shortcut icon";
+      if (!favicon) {
+        favicon = document.createElement("link");
+        favicon.rel = "shortcut icon";
 
-}
+      }
 
-favicon.href = cfg.logo || "https://via.placeholder.com/512"; // fallback
+      favicon.href = cfg.logo || "https://via.placeholder.com/512"; // fallback
+
+      // 2) MANIFEST INDEPENDIENTE POR TIENDA
+      const baseURL = window.location.origin + window.location.pathname;
+
+      const manifest = {
+        id: tiendaId,
+        name: cfg.nombre || tiendaId,
+        short_name: cfg.nombre || tiendaId,
+
+        // 🔥 Scope y Start URL ABSOLUTOS (evita "start_url not valid")
+        scope: `${baseURL}?tienda=${tiendaId}`,
+        start_url: `${baseURL}?tienda=${tiendaId}`,
+
+        display: "standalone",
+        background_color: "#ffffff",
+        theme_color: cfg.colorHeader || "#007bff",
+
+        icons: [
+          { src: cfg.logo, sizes: "192x192", type: "image/png" },
+          { src: cfg.logo, sizes: "512x512", type: "image/png" }
+        ]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+
+      // 3) INYECTAR MANIFEST EN <head>
+      let manifestLink = document.querySelector("link[rel='manifest']");
+      if (!manifestLink) {
+        manifestLink = document.createElement("link");
+        manifestLink.rel = "manifest";
+        document.head.appendChild(manifestLink);
+      }
+
+      manifestLink.href = manifestURL;
 
 
-// 2) MANIFEST INDEPENDIENTE POR TIENDA
-const manifest = {
-  id: tiendaId,   // 🔥 ID ÚNICO POR TIENDA
-  name: cfg.nombre || tiendaId,
-  short_name: cfg.nombre || tiendaId,
-
-  // 🔥 SCOPE ÚNICO (hace que Chrome diferencie tiendas)
-  scope: `/?tienda=${tiendaId}`,
-
-  // 🔥 START_URL ÚNICO (evita que se mezclen al abrir)
-  start_url: `/?tienda=${tiendaId}`,
-
-  display: "standalone",
-  background_color: "#ffffff",
-  theme_color: cfg.colorHeader || "#007bff",
-
-  icons: [
-    {
-      src: cfg.logo,
-      sizes: "192x192",
-      type: "image/png"
-    },
-    {
-      src: cfg.logo,
-      sizes: "512x512",
-      type: "image/png"
-    }
-  ]
-};
-
-// Crear Blob del manifest
-const manifestBlob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
-
-// Crear URL temporal del manifest
-const manifestURL = URL.createObjectURL(manifestBlob);
-
-// 3) INYECTAR MANIFEST EN <head>
-let manifestLink = document.querySelector("link[rel='manifest']");
-if (!manifestLink) {
-  manifestLink = document.createElement("link");
-  manifestLink.rel = "manifest";
-  document.head.appendChild(manifestLink);
-}
-
-manifestLink.href = manifestURL;
-
-// ===================================================================
+      // ===================================================================
 
       // 🏷️ Cambiar color del título
-if (cfg.colorTitulo) {
-  const titulo = document.querySelector(".titulo-tienda, h1, h2");
-  if (titulo) titulo.style.color = cfg.colorTitulo;
-}
+      if (cfg.colorTitulo) {
+        const titulo = document.querySelector(".titulo-tienda, h1, h2");
+        if (titulo) titulo.style.color = cfg.colorTitulo;
+      }
 
       // ============================================
-// 🎨 NUEVAS CONFIGURACIONES VISUALES
-// ============================================
+      // 🎨 NUEVAS CONFIGURACIONES VISUALES
+      // ============================================
 
-// 🛒 Cambiar color del botón flotante del carrito (colorCarrito)
-if (cfg.colorCarrito) {
-  const botonCarrito = document.getElementById("toggle-carrito");
-  if (botonCarrito) {
-    botonCarrito.style.backgroundColor = cfg.colorCarrito;
-    botonCarrito.style.borderColor = cfg.colorCarrito;
+      // 🛒 Cambiar color del botón flotante del carrito (colorCarrito)
+      if (cfg.colorCarrito) {
+        const botonCarrito = document.getElementById("toggle-carrito");
+        if (botonCarrito) {
+          botonCarrito.style.backgroundColor = cfg.colorCarrito;
+          botonCarrito.style.borderColor = cfg.colorCarrito;
 
-    // Detectar brillo del color para texto legible (blanco o negro)
-    const rgb = parseInt(cfg.colorCarrito.replace("#", ""), 16);
-    const r = (rgb >> 16) & 255;
-    const g = (rgb >> 8) & 255;
-    const b = rgb & 255;
-    const brillo = (r * 299 + g * 587 + b * 114) / 1000;
-    botonCarrito.style.color = brillo < 140 ? "#fff" : "#000";
-  }
-}
+          // Detectar brillo del color para texto legible (blanco o negro)
+          const rgb = parseInt(cfg.colorCarrito.replace("#", ""), 16);
+          const r = (rgb >> 16) & 255;
+          const g = (rgb >> 8) & 255;
+          const b = rgb & 255;
+          const brillo = (r * 299 + g * 587 + b * 114) / 1000;
+          botonCarrito.style.color = brillo < 140 ? "#fff" : "#000";
+        }
+      }
 
-// ✏️ Cambiar color del texto del footer (Dirección, Horario, WhatsApp)
-if (cfg.colorTexto) {
-  const footer = document.getElementById("footer");
-  if (footer) {
-    footer.querySelectorAll("p, a, strong").forEach(el => {
-      el.style.color = cfg.colorTexto;
-    });
-  }
-}
+      // ✏️ Cambiar color del texto del footer (Dirección, Horario, WhatsApp)
+      if (cfg.colorTexto) {
+        const footer = document.getElementById("footer");
+        if (footer) {
+          footer.querySelectorAll("p, a, strong").forEach(el => {
+            el.style.color = cfg.colorTexto;
+          });
+        }
+      }
 
 
       document.title = cfg.nombre || "Tienda";
@@ -316,4 +309,5 @@ if (cfg.colorTexto) {
     aplicarConfig();
   </script>
 </body>
+
 </html>
