@@ -2102,3 +2102,74 @@ window.imprimirRegistros = async function () {
 
   pdf.save(`Registro_Clientes_Proveedores_${tiendaId}.pdf`);
 };
+
+
+// ===============================================
+// 📘 TÉRMINOS Y CONDICIONES – SISTEMA PROFESIONAL
+// ===============================================
+
+// 🔹 Texto de Términos y Condiciones (convertido desde DOCX)
+const textoTyC = `
+:contentReference[oaicite:3]{index=3}
+`;
+
+// 🔹 Cargar contenido en el modal
+window.mostrarTyC = function () {
+  document.getElementById("contenidoTyC").innerHTML =
+    textoTyC.replace(/\n/g, "<br>");
+  document.getElementById("modalTyC").style.display = "block";
+};
+
+// 🔹 Consultar si el usuario ya aceptó
+async function usuarioAceptoTyC(userId) {
+  const ref = doc(db, "usuarios", userId);
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    return snap.data().aceptoTyC === true;
+  }
+
+  return false;
+}
+
+// 🔹 Guardar aceptación
+async function guardarAceptacionTyC(userId) {
+  const ref = doc(db, "usuarios", userId);
+
+  await setDoc(ref, { aceptoTyC: true }, { merge: true });
+
+  // Guardar localmente por si recarga
+  localStorage.setItem("aceptoTyC_" + tiendaId, "true");
+}
+
+// =======================================================
+// 📌 VERIFICACIÓN AUTOMÁTICA DESPUÉS DEL LOGIN
+// =======================================================
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    const aceptoLocal = localStorage.getItem("aceptoTyC_" + tiendaId);
+    const aceptoDB = await usuarioAceptoTyC(user.uid);
+
+    // SI NO ACEPTÓ → bloquear panel y mostrar modal
+    if (!aceptoLocal && !aceptoDB) {
+      mostrarTyC();
+      document.getElementById("admin-panel").style.display = "none";
+    } else {
+      document.getElementById("admin-panel").style.display = "block";
+    }
+  }
+});
+
+// =======================================================
+// 📌 BOTÓN "ACEPTO"
+// =======================================================
+document.getElementById("btnAceptarTyC").onclick = async function () {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  await guardarAceptacionTyC(user.uid);
+
+  // Cerrar modal y permitir acceso
+  document.getElementById("modalTyC").style.display = "none";
+  document.getElementById("admin-panel").style.display = "block";
+};
