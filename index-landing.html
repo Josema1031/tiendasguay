@@ -11,7 +11,7 @@
   <meta property="og:description"
     content="Creá tu tienda online en minutos. Catálogo, QR y pedidos por WhatsApp. Mostrate al mundo, desde tu lugar." />
   <meta property="og:image"
-    content="https://josema1031.github.io/vidrieravirtual/index-landing.html/imag/logo-192.png" />
+    content="https://josema1031.github.io/vidrieravirtual/imag/logo-192.png" />
   <meta property="og:url" content="https://josema1031.github.io/vidrieravirtual/index-landing.html" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Vidriera Virtual" />
@@ -19,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
     content="Tienda online lista en minutos. Catálogo, QR y pedidos por WhatsApp. Vidriera Virtual." />
-  <link rel="icon" href="imag/logo-512.png" />
+  <link rel="icon" href="imag/logo-192.png" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -880,7 +880,7 @@
     }
     const BASE_URL = getBaseURL();
 
-    // Carga algunas tiendas (hasta 8) y arma cards con logo y link
+    // Carga algunas tiendas (hasta 12) y arma cards con logo y link
     async function cargarEjemplos() {
       const grid = document.getElementById("grid-tiendas");
       try {
@@ -900,7 +900,7 @@
             <small>Ver tienda →</small>
           `;
           grid.appendChild(div);
-          if (++count >= 8) break;
+          if (++count >= 12) break;
         }
       } catch (e) {
         grid.innerHTML = "<div class='ti'>No se pudieron cargar ejemplos por ahora.</div>";

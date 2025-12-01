@@ -215,7 +215,7 @@ async function initPlanUI() {
       panelEst.style.display = f.permitirEstadisticas ? "block" : "none";
       if (f.permitirEstadisticas && typeof renderGraficoCategorias === "function") {
         // Renderizar gráfico después de cargar productos
-        
+
       }
     }
 
@@ -1197,7 +1197,7 @@ function renderGraficoCategorias(productos) {
       }
     }
   });
- 
+
 }
 
 // ===============================
@@ -1765,15 +1765,57 @@ document.getElementById("btnGenerarFolleto").addEventListener("click", async () 
     docPDF.setDrawColor(180);
     docPDF.line(10, 20, anchoPagina - 10, 20);
 
+
     // ===========================
     // CUADRÍCULA DE PRODUCTOS
     // ===========================
     let x = margenX;
     let y = margenY + 5;
     let contador = 0;
+    
 
-    for (const p of productos) {
-      if (!p.nombre || !p.precio) continue;
+    // 🛒 ORDEN DE SUPERMERCADO (primero Verduras, luego Frutas, etc.)
+    const ordenCategorias = ["Verduras", "Frutas", "Hierbas", "Hortalizas"];
+
+    // 🧮 Ordenar productos por categoría en el orden definido
+    const productosOrdenados = [...productos].sort((a, b) => {
+      const idxA = ordenCategorias.indexOf(a.categoria);
+      const idxB = ordenCategorias.indexOf(b.categoria);
+
+      // Si la categoría no está en la lista, la mandamos al final
+      return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+    });
+
+    let categoriaActual = "";
+
+for (const p of productosOrdenados) {
+
+  // 🟢 SUBTÍTULO DE CATEGORÍA
+  if (p.categoria !== categoriaActual) {
+
+    categoriaActual = p.categoria;
+
+    // Si no es el primer título, hacemos un salto visual
+    if (contador !== 0) {
+      y += altoItem + 10;
+      x = margenX;
+    }
+
+    // TÍTULO DE CATEGORÍA
+    docPDF.setFont("helvetica", "bold");
+    docPDF.setFontSize(14);
+    docPDF.setTextColor(0, 120, 0); // verde profesional
+    docPDF.text(categoriaActual, margenX, y - 4);
+
+    // Línea decorativa
+    docPDF.setDrawColor(180);
+    docPDF.line(margenX, y - 2, anchoPagina - margenX, y - 2);
+
+    // separar un poco del primer producto
+    y += 4;
+  }
+
+
 
       // IMAGEN DEL PRODUCTO
       if (p.imagen) {
