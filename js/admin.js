@@ -1772,7 +1772,6 @@ document.getElementById("btnGenerarFolleto").addEventListener("click", async () 
     let x = margenX;
     let y = margenY + 5;
     let contador = 0;
-    
 
     // 🛒 ORDEN DE SUPERMERCADO (primero Verduras, luego Frutas, etc.)
     const ordenCategorias = ["Verduras", "Frutas", "Hierbas", "Hortalizas"];
@@ -1786,34 +1785,7 @@ document.getElementById("btnGenerarFolleto").addEventListener("click", async () 
       return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
     });
 
-    let categoriaActual = "";
-
-for (const p of productosOrdenados) {
-
-  // 🟢 SUBTÍTULO DE CATEGORÍA
-  if (p.categoria !== categoriaActual) {
-
-    categoriaActual = p.categoria;
-
-    // Si no es el primer título, hacemos un salto visual
-    if (contador !== 0) {
-      y += altoItem + 10;
-      x = margenX;
-    }
-
-    // TÍTULO DE CATEGORÍA
-    docPDF.setFont("helvetica", "bold");
-    docPDF.setFontSize(14);
-    docPDF.setTextColor(0, 120, 0); // verde profesional
-    docPDF.text(categoriaActual, margenX, y - 4);
-
-    // Línea decorativa
-    docPDF.setDrawColor(180);
-    docPDF.line(margenX, y - 2, anchoPagina - margenX, y - 2);
-
-    // separar un poco del primer producto
-    y += 4;
-  }
+    for (const p of productosOrdenados) {
 
 
 
