@@ -80,6 +80,14 @@
 
     <h1>Panel de Administración de Productos</h1>
 
+    <!-- ENLACE PARA VER TYC PAGANDO -->
+    <p style="text-align:center; margin:20px 0;">
+      <a href="#" onclick="abrirTyC()" style="color:#0b5ed7; font-weight:bold;">
+        📘 Ver Términos y Condiciones
+      </a>
+    </p>
+
+
     <div id="acciones" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:20px;">
       <button onclick="agregarProducto()"
         style="background:#0b5ed7; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:15px; font-weight:600; transition:all 0.3s ease;">
@@ -432,40 +440,247 @@
     </div>
   </div>
 
-<!-- ====================== -->
-<!-- 📘 MODAL TÉRMINOS Y CONDICIONES -->
-<!-- ====================== -->
-<div id="modalTyC"
-     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-     background:rgba(0,0,0,0.5); z-index:9999;">
+  <!-- 📄 Modal TÉRMINOS Y CONDICIONES (resumido) -->
+  <div id="modalTyC" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.55); z-index:9999;">
 
-  <div style="background:white; width:90%; max-width:650px; margin:60px auto;
-       padding:25px; border-radius:14px; max-height:80vh; overflow-y:auto;">
+    <div style="background:white; max-width:650px; width:92%; margin:40px auto;
+      padding:25px 30px; border-radius:14px; max-height:85vh; overflow-y:auto;
+      box-shadow:0 8px 30px rgba(0,0,0,0.25); position:relative;">
 
-    <h2 style="text-align:center; color:#0b5ed7; margin-bottom:20px;">
-      Términos y Condiciones
-    </h2>
+      <h2 style="text-align:center; margin-bottom:8px;">📜 Términos y Condiciones</h2>
 
-    <div id="contenidoTyC" style="color:#333; line-height:1.6; font-size:15px;">
-      Cargando...
-    </div>
+      <!-- 📌 RESUMEN CORTO -->
+      <p style="font-size:14px; color:#444; line-height:1.6;">
+        Para usar el Panel de Administración de <b>Vidriera Virtual</b>, el propietario debe aceptar los
+        Términos y Condiciones que regulan:
+      </p>
 
-    <div style="text-align:center; margin-top:25px;">
-      <button id="btnAceptarTyC"
-        style="background:#198754; color:white; border:none; padding:10px 20px;
-        border-radius:8px; cursor:pointer; font-weight:bold;">
-        ✔ Acepto los Términos y Condiciones
+      <ul style="font-size:14px; color:#444; line-height:1.6; margin-left:15px;">
+        <li>✔ Responsabilidad del propietario por la información cargada</li>
+        <li>✔ Normas de uso del sistema y de la plataforma</li>
+        <li>✔ Políticas de publicación y contenido permitido</li>
+        <li>✔ Planes de suscripción y obligaciones de pago</li>
+        <li>✔ Protección de datos personales (Ley 25.326)</li>
+        <li>✔ Política de suspensión por mal uso o incumplimiento</li>
+      </ul>
+
+      <p style="font-size:13px; color:#555;">
+        Este es un <b>resumen</b>. Si desea leer el documento completo, puede desplegarlo aquí abajo:
+      </p>
+
+      <!-- 🔽 BOTÓN PARA DESPLEGAR TODO EL DOCUMENTO -->
+      <button onclick="toggleTyCCompleto()" style="background:#0b5ed7; color:white; border:none; padding:8px 15px;
+      border-radius:8px; cursor:pointer; font-weight:bold; margin-bottom:10px;">
+        📄 Ver Términos y Condiciones completos
       </button>
+
+      <!-- 🔽 CONTENIDO COMPLETO (OCULTO) -->
+      <div id="tycCompleto" style="display:none; margin-top:15px;">
+        <hr style="margin:10px 0;">
+
+        <div style="font-size:14px; color:#333; line-height:1.55; max-height:45vh; overflow-y:auto;
+                  padding-right:10px;">
+          <!-- 🔻 Aquí pegamos todo el documento completo que subiste -->
+          <!-- ================================ -->
+          <!--      TEXTO COMPLETO AQUÍ        -->
+          <!-- ================================ -->
+          <div style="font-size:14px; color:#333; line-height:1.7; text-align:justify;">
+
+            <h3 style="margin-top:0;">TÉRMINOS Y CONDICIONES DE USO</h3>
+
+            <p><b>Fecha de última actualización:</b> 29/11/2025</p>
+
+            <p>
+              Bienvenido a <b>VIDRIERA VIRTUAL</b>.
+              Los presentes Términos y Condiciones regulan el acceso y uso del sitio web (ACA VA EL DOMINIO
+              DEFINITIVO), así como los servicios ofrecidos por José Manuel Carrizo (CUIT 20-33728252-1) y
+              María Soledad Farias (CUIT 27-35121404-5), con domicilio en Boulevard San Juan S/N, Gualeguay,
+              Entre Ríos, Argentina.
+            </p>
+
+            <p>
+              Al acceder o utilizar la Plataforma, el “emprendedor” o “usuario” acepta plenamente y sin
+              reservas estos Términos y Condiciones. En caso contrario, deberá abstenerse de utilizar el
+              sitio y los servicios prestados.
+            </p>
+
+            <h3>1. Objeto de la Plataforma</h3>
+
+            <p>
+              La Plataforma actúa como un espacio digital de exposición y difusión para que distintos
+              emprendimientos, comercios y profesionales independientes publiquen información sobre sus
+              productos o servicios.
+            </p>
+
+            <p>
+              La Empresa no comercializa directamente los productos o servicios publicados, salvo indicación
+              expresa. Cada emprendedor es responsable de la información cargada, disponibilidad de sus
+              productos, calidad del servicio y cumplimiento de la legislación vigente.
+            </p>
+
+            <h3>2. Registro de Usuario</h3>
+
+            <p>
+              Para acceder a determinadas funciones, el emprendedor podrá crear una cuenta con datos veraces,
+              completos y actualizados.
+            </p>
+
+            <p>El emprendedor es responsable de:</p>
+
+            <ul style="margin-left:20px;">
+              <li>La confidencialidad de sus credenciales;</li>
+              <li>Toda actividad realizada mediante su cuenta;</li>
+              <li>Informar usos no autorizados de su cuenta.</li>
+            </ul>
+
+            <p>
+              La Empresa podrá rechazar solicitudes de registro que considere incompatibles con un uso correcto
+              y seguro de la Plataforma.
+            </p>
+
+            <h3>3. Publicación de Contenidos</h3>
+
+            <p>
+              Los emprendedores podrán cargar información, imágenes y descripciones sobre sus productos o
+              servicios. Al hacerlo, declaran que:
+            </p>
+
+            <ul style="margin-left:20px;">
+              <li>La información es veraz y actualizada;</li>
+              <li>Poseen derechos o autorización para publicar contenido;</li>
+              <li>Cumplen normativas civiles, comerciales, de consumo y de datos personales.</li>
+            </ul>
+
+            <p>
+              La Empresa podrá limitar, corregir o eliminar contenidos inapropiados, falsos o que violen
+              derechos de terceros.
+            </p>
+
+            <h3>4. Planes de Suscripción y Pagos</h3>
+
+            <p>
+              El emprendedor podrá acceder a diferentes planes, los cuales brindan funcionalidades específicas
+              como mayor visibilidad, herramientas avanzadas o soporte técnico.
+            </p>
+
+            <h4 style="margin-top:15px;">4.1. Modalidades de pago</h4>
+
+            <p>
+              El pago deberá efectuarse por los medios habilitados. Pueden aplicarse renovaciones automáticas
+              salvo que el usuario lo desactive previamente.
+            </p>
+
+            <h4 style="margin-top:15px;">4.2. Falta de pago</h4>
+
+            <p>
+              La falta de pago faculta a la Empresa a suspender o dar de baja el servicio, sin responsabilidad
+              por eventuales pérdidas o daños.
+            </p>
+
+            <h4 style="margin-top:15px;">4.3. Renovaciones</h4>
+
+            <p>
+              Las suscripciones podrán renovarse automáticamente por períodos iguales.
+            </p>
+
+            <h3>5. Relación entre Usuarios y Emprendedores</h3>
+
+            <p>
+              La Empresa no garantiza la veracidad o disponibilidad de los productos ofrecidos por los
+              emprendedores. Toda relación contractual será exclusiva entre ambas partes.
+            </p>
+
+            <h3>6. Responsabilidades de la Empresa</h3>
+
+            <p>La Empresa no será responsable por:</p>
+
+            <ul style="margin-left:20px;">
+              <li>Contenidos incorrectos publicados por emprendedores;</li>
+              <li>Interacciones o transacciones entre usuarios;</li>
+              <li>Interrupciones, fallas o pérdida de datos;</li>
+              <li>Decisiones comerciales basadas en información publicada.</li>
+            </ul>
+
+            <h3>7. Obligaciones del Usuario</h3>
+
+            <p>El usuario se compromete a:</p>
+
+            <ul style="margin-left:20px;">
+              <li>Usar la Plataforma de forma lícita;</li>
+              <li>No publicar contenido ofensivo o ilegal;</li>
+              <li>No comprometer la seguridad del sitio.</li>
+            </ul>
+
+            <h3>8. Protección de Datos Personales</h3>
+
+            <p>
+              La Empresa tratará los datos conforme a la Ley N.º 25.326.
+              El titular podrá ejercer sus derechos escribiendo a:
+              <b>vidrieravirtualguay@gmail.com</b>.
+            </p>
+
+            <h3>9. Propiedad Intelectual</h3>
+
+            <p>
+              Los elementos propios de la Plataforma son propiedad de la Empresa.
+              Los contenidos cargados por emprendedores siguen siendo suyos, otorgando licencia de
+              exhibición a la Empresa.
+            </p>
+
+            <h3>10. Modificaciones</h3>
+
+            <p>
+              La Empresa podrá modificar los Términos y Condiciones; el uso continuado implica aceptación.
+            </p>
+
+            <h3>11. Jurisdicción</h3>
+
+            <p>
+              Rigen las leyes de la República Argentina.
+              Las partes se someten a los tribunales de Gualeguay, Entre Ríos.
+            </p>
+
+            <h3>12. Contacto</h3>
+
+            <p>
+              Correo electrónico: <b>vidrieravirtualguay@gmail.com</b><br>
+              Teléfono: <b>+54 9 3444-518917</b>
+            </p>
+
+          </div>
+
+
+
+          <p><b>Fecha de última actualización:</b> 29/11/2025</p>
+
+          <!-- Copio tu texto completo aquí, ya adaptado -->
+          <p><strong>Bienvenido a VIDRIERA VIRTUAL.</strong></p>
+          <p>Los presentes Términos y Condiciones regulan el acceso... (todo tu documento completo)...</p>
+
+          <!-- 👉 (Aquí va el texto COMPLETO tal cual lo subiste) -->
+          <!-- Puedo pegarlo entero si querés, solo decímelo -->
+        </div>
+      </div>
+
+      <!-- ✔ BOTÓN ACEPTAR -->
+      <button id="btnAceptarTyC" style="background:#198754; color:white; border:none; padding:12px 20px;
+      border-radius:8px; cursor:pointer; font-weight:bold; margin-top:20px; width:100%; font-size:15px;">
+        ✔ Acepto Términos y Condiciones
+      </button>
+
     </div>
   </div>
-</div>
 
-<!-- Link permanente para ver los TyC -->
-<div style="text-align:center; margin:40px 0;">
-  <a href="#" onclick="mostrarTyC()" style="color:#0b5ed7; font-weight:600;">
-    Ver Términos y Condiciones
-  </a>
-</div>
+
+  <script>
+    function toggleTyCCompleto() {
+      const box = document.getElementById("tycCompleto");
+      box.style.display = box.style.display === "none" ? "block" : "none";
+    }
+  </script>
+
+
 
 
 

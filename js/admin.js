@@ -2,7 +2,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut,createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   initializeFirestore,
@@ -215,7 +215,7 @@ async function initPlanUI() {
       panelEst.style.display = f.permitirEstadisticas ? "block" : "none";
       if (f.permitirEstadisticas && typeof renderGraficoCategorias === "function") {
         // Renderizar gráfico después de cargar productos
-        setTimeout(() => renderGraficoCategorias(window.productos || []), 1500);
+        
       }
     }
 
@@ -243,19 +243,19 @@ async function initPlanUI() {
         ? ""
         : "Función disponible desde el plan Profesional";
     }
-   const seccionConfig = document.getElementById("configuracion-tienda");
-if (seccionConfig) {
-  if (plan === "Basico") {
-    seccionConfig.innerHTML = `
+    const seccionConfig = document.getElementById("configuracion-tienda");
+    if (seccionConfig) {
+      if (plan === "Basico") {
+        seccionConfig.innerHTML = `
       <div style="text-align:center;padding:40px;">
         <h3 style="color:#0b5ed7;">🔒 Función no disponible en el plan Básico</h3>
         <p style="color:#555;">Actualizá a Profesional o Premium para personalizar tu tienda.</p>
       </div>
     `;
-  } else {
-    seccionConfig.style.display = "block";  // 👉 ESTA ES LA LÍNEA QUE RESUELVE TU PROBLEMA
-  }
-}
+      } else {
+        seccionConfig.style.display = "block";  // 👉 ESTA ES LA LÍNEA QUE RESUELVE TU PROBLEMA
+      }
+    }
 
 
 
@@ -451,26 +451,27 @@ async function verificarPrimerAdmin() {
 onAuthStateChanged(auth, async user => {
   const login = document.getElementById("login-container");
   const panel = document.getElementById("admin-panel");
-
   const loginManual = sessionStorage.getItem("loginManual");
 
   if (user && loginManual === "true") {
     login.style.display = "none";
     panel.style.display = "block";
+
     await cargarRubroTienda();
-    await cargarCategorias(); // 🟢 AGREGAR AQUÍ TAMBIÉN
+    await cargarCategorias();
     mostrarProductos();
     await initPlanUI();
 
+    // 🟦 Verificar Términos y Condiciones
+    await verificarTyC(user);
 
-
- } else {
-  login.style.display = "block";
-  panel.style.display = "none";
-  verificarPrimerAdmin();   // 👈 AGREGADO
-}
-
+  } else {
+    login.style.display = "block";
+    panel.style.display = "none";
+    verificarPrimerAdmin();   // 👈 NECESARIO para ocultar "Crear cuenta nueva"
+  }
 });
+
 
 //  🚪 FUNCIÓN CERRAR SESIÓN
 
@@ -576,6 +577,11 @@ async function mostrarProductos() {
   } finally {
     document.getElementById("loader").style.display = "none";
   }
+
+  // Después de que productos están cargados en window.productos
+  renderGraficoCategorias(productos);
+
+
 
 }
 
@@ -1191,6 +1197,7 @@ function renderGraficoCategorias(productos) {
       }
     }
   });
+ 
 }
 
 // ===============================
@@ -1450,34 +1457,34 @@ async function initVentasPremium(plan) {
 
 
 
-// ===============================
-// 📅 Filtrar SOLO ventas del día actual
-// ===============================
-const hoy = new Date();
-hoy.setHours(0, 0, 0, 0);
+  // ===============================
+  // 📅 Filtrar SOLO ventas del día actual
+  // ===============================
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
 
-const inicioDia = hoy;
-const finDia = new Date();
-finDia.setHours(23, 59, 59, 999);
+  const inicioDia = hoy;
+  const finDia = new Date();
+  finDia.setHours(23, 59, 59, 999);
 
-const qHoy = query(
-  ventasRef,
-  where("timestamp", ">=", inicioDia),
-  where("timestamp", "<=", finDia)
-);
+  const qHoy = query(
+    ventasRef,
+    where("timestamp", ">=", inicioDia),
+    where("timestamp", "<=", finDia)
+  );
 
-const ventasSnap = await getDocs(qHoy);
+  const ventasSnap = await getDocs(qHoy);
 
-cuerpoTabla.innerHTML = "";
-totalDia = 0;
+  cuerpoTabla.innerHTML = "";
+  totalDia = 0;
 
-ventasSnap.forEach(v => {
-  const data = v.data();
-  totalDia += data.monto;
-  agregarFilaVenta(v.id, data.producto, data.monto, data.fecha);
-});
+  ventasSnap.forEach(v => {
+    const data = v.data();
+    totalDia += data.monto;
+    agregarFilaVenta(v.id, data.producto, data.monto, data.fecha);
+  });
 
-totalCaja.textContent = `Total del día: $${totalDia.toFixed(2)}`;
+  totalCaja.textContent = `Total del día: $${totalDia.toFixed(2)}`;
 
 
 
@@ -1536,7 +1543,7 @@ totalCaja.textContent = `Total del día: $${totalDia.toFixed(2)}`;
     initVentasPremium(plan);
   };
 
-  
+
 
   // ===============================
   // 📦 Cierre de caja profesional con PDF completo
@@ -1693,16 +1700,16 @@ totalCaja.textContent = `Total del día: $${totalDia.toFixed(2)}`;
       alert("⚠️ El cierre se guardó, pero hubo un error al generar el PDF.");
     }
 
-// ===============================
-// 🧹 Eliminar SOLO ventas del día tras el cierre
-// ===============================
-const snapDia = await getDocs(qHoy); // usamos el filtro del día actual
+    // ===============================
+    // 🧹 Eliminar SOLO ventas del día tras el cierre
+    // ===============================
+    const snapDia = await getDocs(qHoy); // usamos el filtro del día actual
 
-for (const docu of snapDia.docs) {
-  await deleteDoc(doc(ventasRef, docu.id));
-}
+    for (const docu of snapDia.docs) {
+      await deleteDoc(doc(ventasRef, docu.id));
+    }
 
-console.log("Ventas del día eliminadas correctamente.");
+    console.log("Ventas del día eliminadas correctamente.");
 
 
 
@@ -2103,73 +2110,44 @@ window.imprimirRegistros = async function () {
   pdf.save(`Registro_Clientes_Proveedores_${tiendaId}.pdf`);
 };
 
+// ==============================
+// 📜 TÉRMINOS Y CONDICIONES
+// ==============================
 
-// ===============================================
-// 📘 TÉRMINOS Y CONDICIONES – SISTEMA PROFESIONAL
-// ===============================================
+async function verificarTyC(user) {
+  const userRef = doc(db, "usuarios", user.uid);
+  const userSnap = await getDoc(userRef);
 
-// 🔹 Texto de Términos y Condiciones (convertido desde DOCX)
-const textoTyC = `
-:contentReference[oaicite:3]{index=3}
-`;
+  if (!userSnap.exists()) return;
 
-// 🔹 Cargar contenido en el modal
-window.mostrarTyC = function () {
-  document.getElementById("contenidoTyC").innerHTML =
-    textoTyC.replace(/\n/g, "<br>");
-  document.getElementById("modalTyC").style.display = "block";
-};
+  const data = userSnap.data();
 
-// 🔹 Consultar si el usuario ya aceptó
-async function usuarioAceptoTyC(userId) {
-  const ref = doc(db, "usuarios", userId);
-  const snap = await getDoc(ref);
-
-  if (snap.exists()) {
-    return snap.data().aceptoTyC === true;
+  // Si NO aceptó TyC → mostrar modal
+  if (!data.aceptoTerminosyCondiciones) {
+    document.getElementById("modalTyC").style.display = "block";
   }
-
-  return false;
 }
 
-// 🔹 Guardar aceptación
-async function guardarAceptacionTyC(userId) {
-  const ref = doc(db, "usuarios", userId);
-
-  await setDoc(ref, { aceptoTyC: true }, { merge: true });
-
-  // Guardar localmente por si recarga
-  localStorage.setItem("aceptoTyC_" + tiendaId, "true");
-}
-
-// =======================================================
-// 📌 VERIFICACIÓN AUTOMÁTICA DESPUÉS DEL LOGIN
-// =======================================================
-onAuthStateChanged(auth, async user => {
-  if (user) {
-    const aceptoLocal = localStorage.getItem("aceptoTyC_" + tiendaId);
-    const aceptoDB = await usuarioAceptoTyC(user.uid);
-
-    // SI NO ACEPTÓ → bloquear panel y mostrar modal
-    if (!aceptoLocal && !aceptoDB) {
-      mostrarTyC();
-      document.getElementById("admin-panel").style.display = "none";
-    } else {
-      document.getElementById("admin-panel").style.display = "block";
-    }
-  }
-});
-
-// =======================================================
-// 📌 BOTÓN "ACEPTO"
-// =======================================================
-document.getElementById("btnAceptarTyC").onclick = async function () {
+// Guardar aceptación
+window.aceptarTyC = async function () {
   const user = auth.currentUser;
   if (!user) return;
 
-  await guardarAceptacionTyC(user.uid);
+  const userRef = doc(db, "usuarios", user.uid);
+  await updateDoc(userRef, { aceptoTerminosyCondiciones: true });
 
-  // Cerrar modal y permitir acceso
   document.getElementById("modalTyC").style.display = "none";
-  document.getElementById("admin-panel").style.display = "block";
+
+  alert("✔ Gracias. Ya aceptaste los Términos y Condiciones.");
 };
+
+// Abrir cuando el propietario quiera
+window.abrirTyC = function () {
+  document.getElementById("modalTyC").style.display = "block";
+};
+
+// Vincular botón
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("btnAceptarTyC");
+  if (btn) btn.onclick = aceptarTyC;
+});
