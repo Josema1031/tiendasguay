@@ -99,10 +99,24 @@
 
 
 
-  <!-- FOOTER -->
   <footer id="footer" style="text-align:left; padding:20px; background:#003366; color:white;">
-    <p><strong>📍 Ubicación:</strong> Calle Juan Castares N° 374, Gualeguay (ER)</p>
-    <p><strong>🕒 Horario de atención:</strong> Lunes a Viernes de 8:30 a 12:30 y Sábado de 08:00 a 10:00 hs</p>
+    <p>
+      <strong>📍 Dirección:</strong>
+      <span id="footer-direccion-calle"></span>
+      <span id="footer-direccion-numero"></span>,
+      <span id="footer-direccion-localidad"></span>
+      (<span id="footer-direccion-provincia"></span>)
+    </p>
+
+    <p>
+      <strong>🕒 Horario:</strong>
+      <span id="footer-horarios"></span>
+    </p>
+
+    <p>
+      <strong>📞 WhatsApp:</strong>
+      <a id="footer-whatsapp" href="#" target="_blank" style="color:inherit;"></a>
+    </p>
   </footer>
 
   <!-- SCRIPT PRINCIPAL -->
@@ -186,20 +200,54 @@
       nombreEl.style.fontWeight = "900";
       nombreEl.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
 
-      // Footer
+      // ================================
+      // 📍 FOOTER - DIRECCIÓN SEPARADA
+      // ================================
       const footer = document.getElementById("footer");
       if (footer) {
         footer.style.background = cfg.colorFooter || "#003366";
         footer.style.color = cfg.colorFooterText || "#ffffff";
-        footer.innerHTML = `
-          <p><strong>📍 Dirección:</strong> ${cfg.direccion || "Sin dirección especificada"}</p>
-          <p><strong>🕒 Horario:</strong> ${cfg.horarios || "Horario no disponible"}</p>
-          <p><strong>📞 WhatsApp:</strong> 
-            <a href="https://wa.me/${cfg.whatsapp}" target="_blank" style="color:${cfg.colorFooterText || "#fff"};">
-              ${cfg.whatsapp}
-            </a>
-          </p>
-        `;
+
+        // Campos separados
+        const calle = (cfg.direccionCalle || "").trim();
+        const numero = (cfg.direccionNumero || "").trim();
+        const localidad = (cfg.direccionLocalidad || "").trim();
+        const provincia = (cfg.direccionProvincia || "").trim();
+
+        // Compatibilidad con tiendas viejas
+        const direccionFallback = cfg.direccion || "";
+
+        // Elementos
+        const elCalle = document.getElementById("footer-direccion-calle");
+        const elNumero = document.getElementById("footer-direccion-numero");
+        const elLocalidad = document.getElementById("footer-direccion-localidad");
+        const elProvincia = document.getElementById("footer-direccion-provincia");
+        const elHorario = document.getElementById("footer-horarios");
+        const elWhatsapp = document.getElementById("footer-whatsapp");
+
+        if (calle || numero || localidad || provincia) {
+          if (elCalle) elCalle.textContent = calle;
+          if (elNumero) elNumero.textContent = numero ? `N° ${numero}` : "";
+          if (elLocalidad) elLocalidad.textContent = localidad;
+          if (elProvincia) elProvincia.textContent = provincia;
+        } else {
+          // fallback si es tienda vieja
+          if (elCalle) elCalle.textContent = direccionFallback;
+          if (elNumero) elNumero.textContent = "";
+          if (elLocalidad) elLocalidad.textContent = "";
+          if (elProvincia) elProvincia.textContent = "";
+        }
+
+        if (elHorario) {
+          elHorario.textContent = cfg.horarios || "Horario no disponible";
+
+        }
+
+        if (elWhatsapp && cfg.whatsapp) {
+          elWhatsapp.textContent = cfg.whatsapp;
+          elWhatsapp.href = `https://wa.me/${cfg.whatsapp}`;
+          elWhatsapp.style.color = cfg.colorFooterText || "#fff";
+        }
       }
 
       // Botón carrito

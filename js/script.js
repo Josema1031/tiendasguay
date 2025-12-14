@@ -188,7 +188,7 @@ function aplicarOcultarCarritoEnUI() {
   const btn = document.getElementById("toggle-carrito");
 
   if (cont) cont.classList.toggle("oculto", ocultar);
-  if (btn)  btn.classList.toggle("oculto", ocultar);
+  if (btn) btn.classList.toggle("oculto", ocultar);
 
   document.querySelectorAll(".card button").forEach(b => {
     const txt = (b.textContent || "").trim().toLowerCase();
@@ -603,6 +603,34 @@ window.addEventListener("storage", e => {
       botonCarrito.style.color = brillo < 140 ? "#fff" : "#000";
     }
   }
+
+  // 📍 DIRECCIÓN SEPARADA EN FOOTER (número / localidad / provincia)
+  const calle = (config.direccionCalle || "").trim();
+  const numero = (config.direccionNumero || "").trim();
+  const localidad = (config.direccionLocalidad || "").trim();
+  const provincia = (config.direccionProvincia || "").trim();
+
+  // Compatibilidad: si una tienda vieja solo tiene "direccion"
+  const direccionArmada = (
+    [[calle, numero].filter(Boolean).join(" ").trim(), localidad, provincia]
+      .filter(Boolean).join(", ")
+  ) || (config.direccion || "");
+
+  // Si en tu HTML existen estos IDs, los completa:
+  const elCalle = document.getElementById("footer-direccion-calle");
+  const elNum = document.getElementById("footer-direccion-numero");
+  const elLoc = document.getElementById("footer-direccion-localidad");
+  const elProv = document.getElementById("footer-direccion-provincia");
+
+  // (opcional) un campo completo si ya tenías uno
+  const elCompleta = document.getElementById("footer-direccion");
+
+  if (elCalle) elCalle.textContent = calle;
+  if (elNum) elNum.textContent = numero;
+  if (elLoc) elLoc.textContent = localidad;
+  if (elProv) elProv.textContent = provincia;
+  if (elCompleta) elCompleta.textContent = direccionArmada;
+
 
   // ✏️ Cambiar color del texto de las descripciones
   if (config.colorTexto) {

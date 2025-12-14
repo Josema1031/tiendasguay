@@ -70,14 +70,142 @@
 
       <div class="row">
         <div>
-          <label>Dirección</label>
-          <input id="direccion" placeholder="Calle y número, Ciudad (Prov.)" />
+          <label>Calle</label>
+          <input id="direccionCalle" placeholder="San Martín" />
         </div>
         <div>
-          <label>Horarios</label>
-          <input id="horarios" placeholder="Lunes a Sábado 9 a 13 y 17 a 20 hs" />
+          <label>Número</label>
+          <input id="direccionNumero" placeholder="123" />
         </div>
       </div>
+
+      <div class="row">
+        <div>
+          <label>Localidad</label>
+          <input id="direccionLocalidad" placeholder="Gualeguay" />
+        </div>
+        <div>
+          <label>Provincia</label>
+          <input id="direccionProvincia" placeholder="Entre Ríos" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div style="width:100%;">
+          <label>Horarios (Opción A: por días)</label>
+
+          <!-- ✅ Campo oculto para compatibilidad (se llena solo) -->
+          <input id="horarios" type="hidden" />
+
+          <div class="horarios-wrap"
+            style="border:1px solid #e5e7eb; border-radius:12px; padding:12px; display:grid; gap:12px;">
+
+            <!-- Lunes a Viernes -->
+            <div style="border:1px dashed #d1d5db; border-radius:12px; padding:12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <strong>🗓️ Lunes a Viernes</strong>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                  <input type="checkbox" id="lv_cerrado">
+                  Cerrado
+                </label>
+              </div>
+
+              <div class="horarios-grid-4"
+                style="display:grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap:10px; margin-top:10px;">
+
+                <div>
+                  <label style="font-size:12px;">Desde (mañana)</label>
+                  <input type="time" id="lv_desde1">
+                </div>
+                <div>
+                  <label style="font-size:12px;">Hasta (mañana)</label>
+                  <input type="time" id="lv_hasta1">
+                </div>
+                <div>
+                  <label style="font-size:12px;">Desde (tarde)</label>
+                  <input type="time" id="lv_desde2">
+                </div>
+                <div>
+                  <label style="font-size:12px;">Hasta (tarde)</label>
+                  <input type="time" id="lv_hasta2">
+                </div>
+              </div>
+            </div>
+
+            <!-- Sábado -->
+            <div style="border:1px dashed #d1d5db; border-radius:12px; padding:12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <strong>🗓️ Sábado</strong>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                  <input type="checkbox" id="sa_cerrado">
+                  Cerrado
+                </label>
+              </div>
+
+              <div class="horarios-grid-4"
+                style="display:grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap:10px; margin-top:10px;">
+
+                <div>
+                  <label style="font-size:12px;">Desde (mañana)</label>
+                  <input type="time" id="sa_desde1">
+                </div>
+                <div>
+                  <label style="font-size:12px;">Hasta (mañana)</label>
+                  <input type="time" id="sa_hasta1">
+                </div>
+                <div>
+                  <label style="font-size:12px;">Desde (tarde)</label>
+                  <input type="time" id="sa_desde2">
+                </div>
+                <div>
+                  <label style="font-size:12px;">Hasta (tarde)</label>
+                  <input type="time" id="sa_hasta2">
+                </div>
+              </div>
+            </div>
+
+            <!-- Domingo -->
+            <div style="border:1px dashed #d1d5db; border-radius:12px; padding:12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <strong>🗓️ Domingo</strong>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                  <input type="checkbox" id="do_cerrado" checked>
+                  Cerrado
+                </label>
+              </div>
+
+              <div class="horarios-grid-4"
+                style="display:grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap:10px; margin-top:10px;">
+
+                <div>
+                  <label style="font-size:12px;">Desde (mañana)</label>
+                  <input type="time" id="do_desde1" disabled>
+                </div>
+                <div>
+                  <label style="font-size:12px;">Hasta (mañana)</label>
+                  <input type="time" id="do_hasta1" disabled>
+                </div>
+                <div>
+                  <label style="font-size:12px;">Desde (tarde)</label>
+                  <input type="time" id="do_desde2" disabled>
+                </div>
+                <div>
+                  <label style="font-size:12px;">Hasta (tarde)</label>
+                  <input type="time" id="do_hasta2" disabled>
+                </div>
+              </div>
+            </div>
+
+            <small style="opacity:.8;">
+              Se guardará un texto automático (para el footer) y también un objeto “horariosDetalle” (por si después
+              querés mostrarlo más lindo).
+            </small>
+
+          </div>
+        </div>
+      </div>
+
+
 
       <!-- Logo -->
       <label>Logo de la tienda</label>
@@ -189,6 +317,81 @@
     });
 
 
+    // funcion del horario
+    function setDisabledGrupo(prefix, disabled) {
+      ["desde1", "hasta1", "desde2", "hasta2"].forEach(k => {
+        const elx = document.getElementById(`${prefix}_${k}`);
+        if (elx) elx.disabled = disabled;
+      });
+    }
+
+    function getGrupo(prefix, label) {
+      const cerrado = document.getElementById(`${prefix}_cerrado`)?.checked ?? false;
+
+      const desde1 = document.getElementById(`${prefix}_desde1`)?.value || "";
+      const hasta1 = document.getElementById(`${prefix}_hasta1`)?.value || "";
+      const desde2 = document.getElementById(`${prefix}_desde2`)?.value || "";
+      const hasta2 = document.getElementById(`${prefix}_hasta2`)?.value || "";
+
+      return {
+        label,
+        cerrado,
+        turnos: [
+          { desde: desde1, hasta: hasta1 },
+          { desde: desde2, hasta: hasta2 }
+        ]
+      };
+    }
+
+    function formatearTurno(t) {
+      if (!t?.desde || !t?.hasta) return "";
+      return `${t.desde} a ${t.hasta}`;
+    }
+
+    function construirHorarioTexto(h) {
+      // h = { lv:..., sa:..., do:... }
+      const partes = [];
+
+      const pushGrupo = (g) => {
+        if (!g) return;
+        if (g.cerrado) {
+          partes.push(`${g.label}: Cerrado`);
+          return;
+        }
+        const t1 = formatearTurno(g.turnos?.[0]);
+        const t2 = formatearTurno(g.turnos?.[1]);
+        const turnosTxt = [t1, t2].filter(Boolean).join(" y ");
+        partes.push(`${g.label}: ${turnosTxt || "Horario no definido"}`);
+      };
+
+      pushGrupo(h.lv);
+      pushGrupo(h.sa);
+      pushGrupo(h.do);
+
+      return partes.join(" — ");
+    }
+
+    function leerHorariosDetalle() {
+      return {
+        lv: getGrupo("lv", "Lun a Vie"),
+        sa: getGrupo("sa", "Sáb"),
+        do: getGrupo("do", "Dom")
+      };
+    }
+
+    function actualizarHorariosEnHiddenYPreview() {
+      const detalle = leerHorariosDetalle();
+      const texto = construirHorarioTexto(detalle);
+
+      // ✅ compatibilidad: el #horarios se guarda como string
+      const hidden = document.getElementById("horarios");
+      if (hidden) hidden.value = texto;
+
+      // ✅ vista previa
+      const prev = document.getElementById("preview-horario");
+      if (prev) prev.textContent = texto || "Sin horario";
+    }
+
     // 📦 CREAR TIENDA
     async function crearTienda() {
       const tiendaId = (el("tiendaId").value || "").trim();
@@ -222,7 +425,23 @@
         logoUrlFinal = logosSugeridos[rubroSeleccionado] || "https://placehold.co/300x300?text=Sin+Logo";
       }
 
-      const direccion = (el("direccion").value || "").trim();
+      const direccionCalle = (el("direccionCalle").value || "").trim();
+      const direccionNumero = (el("direccionNumero").value || "").trim();
+      const direccionLocalidad = (el("direccionLocalidad").value || "").trim();
+      const direccionProvincia = (el("direccionProvincia").value || "").trim();
+
+      // (compatibilidad) armamos un string “direccion” como antes
+      const direccion = [
+        [direccionCalle, direccionNumero].filter(Boolean).join(" ").trim(),
+        direccionLocalidad,
+        direccionProvincia
+      ].filter(Boolean).join(", ");
+
+
+      // ✅ Generar horarios desde Opción A (y llenar #horarios)
+      const horariosDetalle = leerHorariosDetalle();
+      actualizarHorariosEnHiddenYPreview(); // asegura #horarios actualizado
+
       const horarios = (el("horarios").value || "").trim();
       const metaImage = (el("metaImage").value || "").trim();
       const colorHeader = el("colorHeader").value;
@@ -254,7 +473,11 @@
           plan,
           nombre,
           whatsapp,
-          direccion,
+          direccion, // (string armado)
+          direccionCalle,
+          direccionNumero,
+          direccionLocalidad,
+          direccionProvincia,
           horarios,
           colorHeader,
           colorFooter,
@@ -265,6 +488,7 @@
           rubro
         });
 
+
         alert("✅ Tienda actualizada correctamente");
         return;
       }
@@ -273,7 +497,11 @@
       await setDoc(doc(db, "tiendas", tiendaId, "config", "datos"), {
         nombre,
         whatsapp,
-        direccion,
+        direccion, // (string armado)
+        direccionCalle,
+        direccionNumero,
+        direccionLocalidad,
+        direccionProvincia,
         horarios,
         logo: logoUrlFinal,
         colorHeader,
@@ -284,6 +512,7 @@
         plan,
         rubro
       });
+
 
       // ✅ Documento raíz
       await setDoc(doc(db, "tiendas", tiendaId), { creado: new Date().toISOString() });
@@ -349,6 +578,33 @@
 
 
     el("crear").addEventListener("click", crearTienda);
+    // ✅ Horarios Opción A: habilitar/deshabilitar por "Cerrado"
+    ["lv", "sa", "do"].forEach(prefix => {
+      const chk = document.getElementById(`${prefix}_cerrado`);
+      if (chk) {
+        chk.addEventListener("change", () => {
+          setDisabledGrupo(prefix, chk.checked);
+          actualizarHorariosEnHiddenYPreview();
+          actualizarVistaPrevia(); // mantiene tu preview general
+        });
+
+        // estado inicial
+        setDisabledGrupo(prefix, chk.checked);
+      }
+
+      // escuchar cambios en los time inputs
+      ["desde1", "hasta1", "desde2", "hasta2"].forEach(k => {
+        const inp = document.getElementById(`${prefix}_${k}`);
+        if (inp) inp.addEventListener("input", () => {
+          actualizarHorariosEnHiddenYPreview();
+          actualizarVistaPrevia();
+        });
+      });
+    });
+
+    // inicial
+    actualizarHorariosEnHiddenYPreview();
+
 
     // 🎨 VISTA PREVIA DE PRODUCTOS POR RUBRO
     function mostrarProductosPreview() {
@@ -445,11 +701,21 @@
       const colorFooterText = el("colorFooterText").value;
       const colorBoton = el("colorBoton").value;
 
-      const direccion = el("direccion").value || "Sin dirección";
+      const direccionCalle = el("direccionCalle")?.value || "";
+      const direccionNumero = el("direccionNumero")?.value || "";
+      const direccionLocalidad = el("direccionLocalidad")?.value || "";
+      const direccionProvincia = el("direccionProvincia")?.value || "";
+
+      const direccion = [
+        [direccionCalle, direccionNumero].filter(Boolean).join(" ").trim(),
+        direccionLocalidad,
+        direccionProvincia
+      ].filter(Boolean).join(", ") || "Sin dirección";
+
       const horarios = el("horarios").value || "Sin horario";
       const whatsapp = el("whatsapp").value || "---";
 
-    
+
       // HEADER PROFESIONAL CON LOGO DESTACADO
       const header = document.getElementById("preview-header");
       header.style.display = "flex";
@@ -521,7 +787,7 @@
         boton.style.marginTop = "-30px";
         document.getElementById("preview-info").appendChild(boton);
       }
-      
+
       boton.style.float = "right";// 🟦 POSICIONAR A LA DERECHA AL CARRITO
       boton.style.background = colorBoton;
       boton.style.border = "none";
@@ -531,7 +797,7 @@
       boton.style.fontWeight = "600";
     }
 
-    ["nombre", "logoUrl", "logoFile", "colorHeader", "colorHeaderText", "colorFooter", "colorFooterText", "colorBoton", "direccion", "horarios", "whatsapp", "rubro"].forEach(id => {
+    ["nombre", "logoUrl", "logoFile", "colorHeader", "colorHeaderText", "colorFooter", "colorFooterText", "colorBoton", "direccionCalle", "direccionNumero", "direccionLocalidad", "direccionProvincia", "horarios", "whatsapp", "rubro"].forEach(id => {
       const input = el(id);
       if (input) {
         input.addEventListener("input", () => {

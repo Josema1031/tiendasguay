@@ -1,104 +1,224 @@
 body {
-      font-family: system-ui, Arial, sans-serif;
-      background: #0a0f1e;
-      color: #fff;
-      margin: 0;
-      padding: 20px;
-    }
+  font-family: system-ui, Arial, sans-serif;
+  background: #0a0f1e;
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
 
-    .wrap {
-      max-width: 900px;
-      margin: auto;
-    }
+.wrap {
+  max-width: 900px;
+  margin: auto;
+}
 
-    h1 {
-      margin: 10px 0 20px;
-      text-align: center;
-    }
+h1 {
+  margin: 10px 0 20px;
+  text-align: center;
+}
 
-    .card {
-      background: #101935;
-      border: 1px solid #1f2a48;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    }
+.card {
+  background: #101935;
+  border: 1px solid #1f2a48;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
 
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: 600;
-    }
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+}
 
-    input {
-      width: 50%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #2b3b6b;
-      background: #0b1430;
-      color: #e6eefc;
-      margin-top: 6px;
-    }
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #2b3b6b;
+  background: #0b1430;
+  color: #e6eefc;
+  margin-top: 6px;
+}
 
-    button {
-      margin-top: 16px;
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(135deg, #20f1f5, #2d8efd);
-      color: #0a0f1e;
-    }
 
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+button {
+  margin-top: 16px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, #20f1f5, #2d8efd);
+  color: #0a0f1e;
+}
 
-    .ok {
-      color: #66ffcc;
-      margin-top: 8px;
-    }
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
 
-    .small {
-      font-size: 0.9rem;
-      opacity: 0.85;
-    }
+.ok {
+  color: #66ffcc;
+  margin-top: 8px;
+}
 
-    a.link {
-      color: #66d9ff;
-      word-break: break-all;
-    }
+.small {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+a.link {
+  color: #66d9ff;
+  word-break: break-all;
+}
 
-    form {
-      display: grid;
-      gap: 16px;
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
 
-    @media (max-width: 600px) {
-      form {
-        padding: 14px;
-        box-shadow: none;
-      }
+form {
+  display: grid;
+  gap: 16px;
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-      input,
-      select,
-      button {
-        font-size: 16px;
-      }
-    }
+@media (max-width: 600px) {
+  form {
+    padding: 14px;
+    box-shadow: none;
+  }
+
+  input,
+  select,
+  button {
+    font-size: 16px;
+  }
+}
+
+/* ✅ Evitar scroll horizontal */
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* ✅ En móvil, las grillas de 4 columnas pasan a 2 */
+@media (max-width: 520px) {
+  .horarios-grid-4 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* ✅ IMPORTANTE: dentro de grillas, el input NO debe ser 50% */
+  .horarios-grid-4 input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ✅ Dentro de grillas, inputs al 100% */
+.row input,
+.grid input {
+  width: 100%;
+  min-width: 0;
+}
+/* =========================================
+   📱 MEJORA VISUAL HORARIOS EN MÓVIL
+   ========================================= */
+@media (max-width: 520px) {
+
+  /* Más aire dentro de cada bloque (Lun-Vie, Sáb, Dom) */
+  .horarios-grid-4 {
+    gap: 14px !important;
+    margin-top: 14px !important;
+  }
+
+  /* Separar mejor cada grupo de día */
+  .horarios-grid-4 > div {
+    margin-bottom: 6px;
+  }
+
+  /* Labels más claros y separados */
+  .horarios-grid-4 label {
+    font-size: 13px !important;
+    margin-bottom: 6px;
+    display: block;
+    opacity: 0.9;
+  }
+
+  /* Inputs más altos y con aire */
+  .horarios-grid-4 input[type="time"] {
+    padding: 12px 14px !important;
+    height: 46px;
+    border-radius: 12px;
+    font-size: 15px;
+  }
+
+  /* Separar mañana / tarde visualmente */
+  .horarios-grid-4 > div:nth-child(1),
+  .horarios-grid-4 > div:nth-child(2) {
+    margin-bottom: 10px;
+  }
+
+  /* Títulos (Lunes a Viernes, Sábado, Domingo) */
+  strong {
+    font-size: 15px;
+    display: block;
+    margin-bottom: 6px;
+  }
+}
+@media (max-width: 520px) {
+  /* Bloque punteado de cada día */
+  .card > div > div[style*="border:1px dashed"] {
+    padding: 14px !important;
+  }
+}
+
+
+/* ================================
+   ✅ ARREGLO HORARIOS (MÓVIL + GRID)
+   ================================ */
+
+/* En horarios, los inputs SIEMPRE al 100% (anula input{width:50%}) */
+.horarios-wrap input,
+.horarios-wrap input[type="time"]{
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Separación y tamaño más cómodo */
+.horarios-wrap label{
+  margin-top: 0 !important;
+}
+
+/* Ajustes específicos en celular */
+@media (max-width: 520px){
+  /* Las grillas 4 pasan a 2 columnas y con más aire */
+  .horarios-grid-4{
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+    margin-top: 12px !important;
+  }
+
+  /* Inputs más cómodos */
+  .horarios-wrap input[type="time"]{
+    height: 48px;
+    padding: 12px 12px !important;
+    border-radius: 14px;
+    font-size: 15px;
+  }
+
+  /* Un poquito más de espacio entre “mañana” y “tarde” */
+  .horarios-grid-4 > div{
+    margin-bottom: 8px;
+  }
+}
